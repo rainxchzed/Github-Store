@@ -1,4 +1,4 @@
-package zed.rainxch.githubstore.core.presentation.designsystems.theme
+package zed.rainxch.githubstore.core.presentation.theme
 
 
 import androidx.compose.foundation.isSystemInDarkTheme

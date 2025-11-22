@@ -1,44 +1,67 @@
 package zed.rainxch.githubstore.feature.auth.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.app_icon
+import githubstore.composeapp.generated.resources.ic_github
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.githubstore.core.presentation.components.GithubStoreButton
 import zed.rainxch.githubstore.feature.auth.data.copyToClipboard
 import zed.rainxch.githubstore.core.presentation.utils.openBrowser
 import zed.rainxch.githubstore.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.githubstore.core.presentation.designsystems.theme.GithubStoreTheme
+import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.githubstore.feature.auth.data.DeviceStart
 
 @Composable
 fun AuthenticationRoot(
+    onNavigateToMain: () -> Unit,
     viewModel: AuthenticationViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            is AuthenticationEffects.OpenBrowser -> openBrowser(event.url)
-            is AuthenticationEffects.CopyToClipboard -> copyToClipboard(event.label, event.text)
+            is AuthenticationEvents.OpenBrowser -> openBrowser(event.url)
+            is AuthenticationEvents.CopyToClipboard -> copyToClipboard(event.label, event.text)
+            AuthenticationEvents.OnNavigateToMain -> {
+                onNavigateToMain()
+            }
         }
     }
 
@@ -60,32 +83,34 @@ fun AuthenticationScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(vertical = 32.dp, horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Image(
+                painter = painterResource(Res.drawable.app_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(RoundedCornerShape(32.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(Modifier.height(16.dp))
+
             when (val authState = state.loginState) {
                 is AuthLoginState.LoggedOut -> {
-
+                    StateLoggedOut(
+                        onAction = onAction
+                    )
                 }
 
                 is AuthLoginState.DevicePrompt -> {
-                    var copied by remember { mutableStateOf(authState.copied) }
-                    Text("Enter this code on GitHub:")
-                    Spacer(Modifier.height(8.dp))
-                    SelectionContainer {
-                        Text(authState.start.userCode, style = MaterialTheme.typography.headlineMedium)
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Button(onClick = {
-                            onAction(AuthenticationAction.CopyCode(authState.start))
-                            copied = true
-                        }) { Text(if (copied) "Copied" else "Copy code") }
-                        Spacer(Modifier.height(0.dp))
-                    }
-                    Spacer(Modifier.height(16.dp))
-                    Button(onClick = {
-                        onAction(AuthenticationAction.OpenGitHub(authState.start))
-                    }) { Text("Open GitHub") }
+                    StateDevicePrompt(
+                        state = state,
+                        authState = authState,
+                        onAction = onAction
+                    )
                 }
 
                 is AuthLoginState.Pending -> {
@@ -96,21 +121,171 @@ fun AuthenticationScreen(
 
                 is AuthLoginState.LoggedIn -> {
                     Text("Signed in!", style = MaterialTheme.typography.titleLarge)
+
                     Spacer(Modifier.height(8.dp))
-                    Text("You can now use the app.")
+
+                    Text("You can now use the app. Redirecting...")
                 }
 
                 is AuthLoginState.Error -> {
-                    Text("Error: ${authState.message}", color = MaterialTheme.colorScheme.error)
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = "Error: ${authState.message}",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.error
+                    )
+
                     Spacer(Modifier.height(12.dp))
-                    Button(onClick = { onAction(AuthenticationAction.StartLogin("read:user repo")) }) {
-                        Text(
-                            "Try again"
-                        )
-                    }
+
+                    GithubStoreButton(
+                        text = "Try again",
+                        onClick = {
+                            onAction(AuthenticationAction.StartLogin("read:user repo"))
+                        },
+                        modifier = Modifier.fillMaxWidth(.7f)
+                    )
+                    Spacer(Modifier.weight(2f))
                 }
             }
         }
+    }
+}
+
+@Composable
+fun StateDevicePrompt(
+    state: AuthenticationState,
+    authState: AuthLoginState.DevicePrompt,
+    onAction: (AuthenticationAction) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.weight(1f))
+
+        Text(
+            text = "Enter this code on GitHub:",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = authState.start.userCode,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+            )
+
+            IconButton(
+                onClick = {
+                    onAction(AuthenticationAction.CopyCode(authState.start))
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
+            ) {
+                Icon(
+                    imageVector = if (state.copied) {
+                        Icons.Default.DoneAll
+                    } else Icons.Default.ContentCopy,
+                    contentDescription = "Copy the code"
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        GithubStoreButton(
+            text = "Open GitHub",
+            onClick = {
+                onAction(AuthenticationAction.OpenGitHub(authState.start))
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_github),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+        )
+
+        Spacer(Modifier.weight(2f))
+
+    }
+}
+
+@Composable
+fun StateLoggedOut(
+    onAction: (AuthenticationAction) -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            text = "Unlock the Full\nExperience",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(Modifier.height(32.dp))
+
+        Card(
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.OpenWith,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = "More Requests",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Text(
+                    text = "Sign in to get higher API rate limits and avoid interruptions.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        GithubStoreButton(
+            text = "Sign in with Github",
+            onClick = {
+                onAction(AuthenticationAction.StartLogin("read:user repo"))
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_github),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
@@ -119,7 +294,45 @@ fun AuthenticationScreen(
 private fun Preview() {
     GithubStoreTheme {
         AuthenticationScreen(
-            state = AuthenticationState(),
+            state = AuthenticationState(
+                loginState = AuthLoginState.Error(
+                    message = "Halo"
+                )
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview1() {
+    GithubStoreTheme {
+        AuthenticationScreen(
+            state = AuthenticationState(
+                loginState = AuthLoginState.LoggedOut
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview2() {
+    GithubStoreTheme {
+        AuthenticationScreen(
+            state = AuthenticationState(
+                loginState = AuthLoginState.DevicePrompt(
+                    DeviceStart(
+                        deviceCode = "",
+                        userCode = "2102-UHHUF",
+                        verificationUri = "",
+                        expiresInSec = 10
+
+                    )
+                )
+            ),
             onAction = {}
         )
     }

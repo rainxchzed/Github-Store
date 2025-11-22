@@ -33,7 +33,7 @@ class AuthenticationViewModel(
     private val _state: MutableStateFlow<AuthenticationState> =
         MutableStateFlow(AuthenticationState())
 
-    private val _events = Channel<AuthenticationEffects>()
+    private val _events = Channel<AuthenticationEvents>()
     val events = _events.receiveAsFlow()
 
     val state = _state
@@ -45,7 +45,10 @@ class AuthenticationViewModel(
                             it.copy(
                                 loginState = if (token.isNullOrEmpty()) {
                                     AuthLoginState.LoggedOut
-                                } else AuthLoginState.LoggedIn
+                                } else {
+                                    _events.trySend(AuthenticationEvents.OnNavigateToMain)
+                                    AuthLoginState.LoggedIn
+                                }
                             )
                         }
                     }
@@ -66,8 +69,8 @@ class AuthenticationViewModel(
             is AuthenticationAction.CopyCode -> copyCode(action.start)
             is AuthenticationAction.OpenGitHub -> openGitHub(action.start)
             is AuthenticationAction.Logout -> logout()
-            AuthenticationAction.MarkLoggedIn -> _state.update { it.copy(AuthLoginState.LoggedIn) }
-            AuthenticationAction.MarkLoggedOut -> _state.update { it.copy(AuthLoginState.LoggedOut) }
+            AuthenticationAction.MarkLoggedIn -> _state.update { it.copy(loginState = AuthLoginState.LoggedIn) }
+            AuthenticationAction.MarkLoggedOut -> _state.update { it.copy(loginState = AuthLoginState.LoggedOut) }
         }
     }
 
@@ -75,39 +78,56 @@ class AuthenticationViewModel(
         scope.launch {
             try {
                 val start = startDeviceFlow(scopeText)
-                _state.update { it.copy(AuthLoginState.DevicePrompt(start, copied = false)) }
+                _state.update {
+                    it.copy(
+                        loginState = AuthLoginState.DevicePrompt(start),
+                        copied = false
+                    )
+                }
 
                 _events.trySend(
-                    AuthenticationEffects.CopyToClipboard(
+                    AuthenticationEvents.CopyToClipboard(
                         "GitHub Code",
                         start.userCode
                     )
                 )
 
                 awaitDeviceToken(start)
-                _state.update { it.copy(AuthLoginState.LoggedIn) }
-            } catch (e: CancellationException) {
-                _state.update { it.copy(AuthLoginState.Error("Cancelled")) }
+                _state.update { it.copy(loginState = AuthLoginState.LoggedIn) }
+                _events.trySend(AuthenticationEvents.OnNavigateToMain)
+            } catch (_: CancellationException) {
+                _state.update { it.copy(loginState = AuthLoginState.Error("Cancelled")) }
             } catch (t: Throwable) {
-                _state.update { it.copy(AuthLoginState.Error(t.message ?: "Unknown error")) }
+                _state.update {
+                    it.copy(
+                        loginState = AuthLoginState.Error(
+                            t.message ?: "Unknown error"
+                        )
+                    )
+                }
             }
         }
     }
 
     private fun openGitHub(start: DeviceStart) {
         val url = start.verificationUriComplete ?: start.verificationUri
-        _events.trySend(AuthenticationEffects.OpenBrowser(url))
+        _events.trySend(AuthenticationEvents.OpenBrowser(url))
     }
 
     private fun copyCode(start: DeviceStart) {
-        _state.update { it.copy(AuthLoginState.DevicePrompt(start, copied = true)) }
-        _events.trySend(AuthenticationEffects.CopyToClipboard("GitHub Code", start.userCode))
+        _state.update {
+            it.copy(
+                loginState = AuthLoginState.DevicePrompt(start),
+                copied = true
+            )
+        }
+        _events.trySend(AuthenticationEvents.CopyToClipboard("GitHub Code", start.userCode))
     }
 
     private fun logout() {
         scope.launch {
             logoutUc()
-            _state.update { it.copy(AuthLoginState.LoggedOut) }
+            _state.update { it.copy(loginState = AuthLoginState.LoggedOut) }
         }
     }
 

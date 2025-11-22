@@ -17,9 +17,6 @@ class MainActivity : ComponentActivity() {
         // Initialize app context for opening browser from shared code
         AppContextHolder.appContext = applicationContext
 
-        // Start Koin DI
-        initKoin()
-
         setContent {
             App()
         }
