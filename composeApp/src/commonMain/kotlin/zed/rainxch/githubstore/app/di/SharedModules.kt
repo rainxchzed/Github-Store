@@ -12,6 +12,10 @@ import zed.rainxch.githubstore.feature.auth.data.repository.AuthRepositoryImpl
 import zed.rainxch.githubstore.feature.auth.domain.*
 import zed.rainxch.githubstore.feature.auth.domain.repository.AuthRepository
 import zed.rainxch.githubstore.feature.auth.presentation.AuthenticationViewModel
+import zed.rainxch.githubstore.feature.home.data.repository.HomeRepositoryImpl
+import zed.rainxch.githubstore.feature.home.data.repository.getPlatform
+import zed.rainxch.githubstore.feature.home.domain.repository.HomeRepository
+import zed.rainxch.githubstore.feature.home.presentation.HomeViewModel
 
 // Core/shared modules
 val coreModule: Module = module {
@@ -33,4 +37,16 @@ val authModule: Module = module {
 
     // Presentation
     viewModel { AuthenticationViewModel(get(), get(), get(), get()) }
+}
+
+val homeModule: Module = module {
+    single<HomeRepository> {
+        HomeRepositoryImpl(
+            githubNetworkClient = get(),
+            platform = getPlatform()
+        )
+    }
+
+    // Presentation
+    viewModel { HomeViewModel(get(), get()) }
 }

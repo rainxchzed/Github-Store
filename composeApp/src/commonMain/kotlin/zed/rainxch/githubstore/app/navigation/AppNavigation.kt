@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.MainViewModel
 import zed.rainxch.githubstore.feature.auth.presentation.AuthenticationRoot
+import zed.rainxch.githubstore.feature.home.presentation.HomeRoot
 
 @Composable
 fun AppNavigation(
@@ -42,7 +43,7 @@ fun AppNavigation(
         } else GithubStoreGraph.AuthenticationScreen
     ) {
         composable<GithubStoreGraph.HomeScreen> {
-            Text(text = "Home")
+            HomeRoot()
         }
 
         composable<GithubStoreGraph.AuthenticationScreen> {

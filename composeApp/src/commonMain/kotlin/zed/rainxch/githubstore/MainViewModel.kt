@@ -24,7 +24,6 @@ class MainViewModel(
             tokenDataSource
                 .tokenFlow
                 .drop(1)
-                .distinctUntilChanged()
                 .collect { authInfo ->
                     _state.update {
                         it.copy(
