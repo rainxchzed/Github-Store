@@ -12,12 +12,8 @@ actual fun openBrowser(
     try {
         when {
             os.contains("linux") -> {
-                val process = Runtime.getRuntime().exec(arrayOf("xdg-open", url))
-
-                Thread.sleep(100)
-                if (process.isAlive || process.exitValue() != 0) {
-                    throw Exception("xdg-open failed")
-                }
+                // Just execute and don't wait - browser opening is async
+                Runtime.getRuntime().exec(arrayOf("xdg-open", url))
             }
 
             Desktop.isDesktopSupported() && Desktop.getDesktop()
@@ -26,11 +22,11 @@ actual fun openBrowser(
             }
 
             else -> {
-                error("Cannot open browser automatically. Please visit: $url")
+                onError("Cannot open browser automatically. Please visit: $url")
             }
         }
     } catch (e: Exception) {
-        println("Failed to open browser: ${e.message}")
-        println("Please open this URL manually: $url")
+        // Only if the command itself fails to execute
+        onError("Failed to open browser: ${e.message}. Please visit: $url")
     }
 }
