@@ -3,7 +3,7 @@ package zed.rainxch.githubstore.feature.details.data
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.githubstore.feature.home.data.repository.PlatformType
+import zed.rainxch.githubstore.core.domain.model.PlatformType
 import java.awt.Desktop
 import java.io.File
 import java.io.IOException

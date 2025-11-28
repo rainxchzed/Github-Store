@@ -1,6 +1,6 @@
 package zed.rainxch.githubstore.feature.details.data
 
-import zed.rainxch.githubstore.feature.home.data.repository.PlatformType
+import zed.rainxch.githubstore.core.domain.model.PlatformType
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
@@ -13,8 +13,8 @@ class DesktopFileLocationsProvider(
         val baseDir = when (platform) {
             PlatformType.WINDOWS -> {
                 // Use AppData/Local for Windows
-                val appData = System.getenv("LOCALAPPDATA") 
-                    ?: System.getProperty("user.home") + "\\AppData\\Local"
+                val appData = System.getenv("LOCALAPPDATA")
+                    ?: (System.getProperty("user.home") + "\\AppData\\Local")
                 File(appData, "GithubStore\\Downloads")
             }
             PlatformType.MACOS -> {
