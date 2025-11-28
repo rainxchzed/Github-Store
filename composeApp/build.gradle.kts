@@ -145,15 +145,19 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "zed.rainxch.githubstore.MainKt"
-        // Pass GitHub client id to the desktop runtime via JVM property
-        if (localGithubClientId.isNotEmpty()) {
-            jvmArgs("-DGITHUB_CLIENT_ID=${localGithubClientId}")
-        }
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "zed.rainxch.githubstore"
             packageVersion = "1.0.0"
+
+            // Important: include modules used by Ktor / HttpClient
+            modules(
+                "java.sql",
+                "java.desktop",
+                "java.logging",
+                "java.net.http"
+            )
         }
     }
 }
