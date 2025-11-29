@@ -1,6 +1,7 @@
 package zed.rainxch.githubstore.feature.auth.data
 
 import kotlinx.serialization.json.Json
+import zed.rainxch.githubstore.BuildConfig
 import zed.rainxch.githubstore.core.domain.model.DeviceTokenSuccess
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
@@ -17,7 +18,7 @@ actual fun getGithubClientId(): String {
     val fromEnv = System.getenv("GITHUB_CLIENT_ID")?.trim().orEmpty()
     if (fromEnv.isNotEmpty()) return fromEnv
 
-    return (findLocalPropertiesValue("GITHUB_CLIENT_ID") ?: "").trim()
+    return BuildConfig.GITHUB_CLIENT_ID
 }
 
 private fun findLocalPropertiesValue(key: String): String? {

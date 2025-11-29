@@ -18,6 +18,26 @@ val localProps = Properties().apply {
 }
 val localGithubClientId = (localProps.getProperty("GITHUB_CLIENT_ID") ?: "").trim()
 
+// Generate BuildConfig for JVM (Configuration Cache Compatible)
+val generateJvmBuildConfig = tasks.register("generateJvmBuildConfig") {
+    val outputDir = layout.buildDirectory.dir("generated/buildconfig/jvm")
+    val clientId = localGithubClientId
+
+    outputs.dir(outputDir)
+
+    doLast {
+        val file = outputDir.get().asFile.resolve("zed/rainxch/githubstore/BuildConfig.kt")
+        file.parentFile.mkdirs()
+        file.writeText("""
+            package zed.rainxch.githubstore
+            
+            object BuildConfig {
+                const val GITHUB_CLIENT_ID = "$clientId"
+            }
+        """.trimIndent())
+    }
+}
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -80,25 +100,31 @@ kotlin {
 
             implementation(libs.multiplatform.markdown.renderer)
             implementation(libs.multiplatform.markdown.renderer.coil3)
-
-//            implementation(libs.material.html.text)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
-            // Koin core
-            implementation(libs.koin.core)
-            // Ktor client for JVM Desktop
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.java)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.serialization.json)
+        jvmMain {
+            kotlin.srcDir(layout.buildDirectory.dir("generated/buildconfig/jvm"))
+
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutinesSwing)
+                // Koin core
+                implementation(libs.koin.core)
+                // Ktor client for JVM Desktop
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.java)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.kotlinx.serialization.json)
+            }
         }
     }
+}
+
+tasks.named("compileKotlinJvm") {
+    dependsOn(generateJvmBuildConfig)
 }
 
 android {
