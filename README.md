@@ -23,7 +23,8 @@ It discovers repositories that ship real installable binaries and lets you insta
 
 ### All screenshots can be found in [screenshots/](screenshots/) folder.
 
-[//]: # (<img src="/screenshots/preview.gif" align="right" width="320"/>)
+<img src="/screenshots/preview.gif" align="right" width="320"/>
+
 
 ## ✨ What is GithubStore?
 
@@ -39,7 +40,7 @@ The repository is currently private while the core is being stabilized, but it w
 ---
 
 ## 🔃 Download
-Go to the [Releases](https://github.com/rainxchzed/Github-Store/releases) to download the latest APK.
+Go to the [Releases](https://github.com/rainxchzed/Github-Store/releases) to download the latest Installer.
 
 ## 🚀 Features
 
