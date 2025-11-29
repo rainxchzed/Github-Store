@@ -169,6 +169,15 @@ GithubStore uses a GitHub OAuth app for authentication and API rate‑limit isol
 
 ---
 
+## ⚠️ Disclaimer
+
+GithubStore only helps you discover and download release assets that are already published on GitHub by third‑party developers.  
+The contents, safety, and behavior of those downloads are entirely the responsibility of their respective authors and distributors, not this project.  
+
+By using GithubStore, you understand and agree that you install and run any downloaded software at your own risk.  
+This project does not review, validate, or guarantee that any installer is safe, free of malware, or fit for any particular purpose.
+
+
 ## 📄 License
 
 GithubStore will be released under the **Apache License, Version 2.0**.
