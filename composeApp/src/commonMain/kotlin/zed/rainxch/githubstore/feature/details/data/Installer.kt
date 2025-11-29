@@ -16,5 +16,5 @@ interface Installer {
 
     fun isAssetInstallable(assetName: String): Boolean
     fun choosePrimaryAsset(assets: List<GithubAsset>): GithubAsset?
-    fun getSystemArchitecture(): Architecture
+    fun detectSystemArchitecture(): Architecture
 }

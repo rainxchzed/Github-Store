@@ -19,14 +19,14 @@ class DesktopInstaller(
 ) : Installer {
 
     private val linuxPackageType: LinuxPackageType by lazy {
-        detectLinuxPackageType()
+        determineLinuxPackageType()
     }
 
     private val systemArchitecture: Architecture by lazy {
-        detectSystemArchitecture()
+        determineSystemArchitecture()
     }
 
-    override fun getSystemArchitecture(): Architecture = systemArchitecture
+    override fun detectSystemArchitecture(): Architecture = systemArchitecture
 
     override fun isAssetInstallable(assetName: String): Boolean {
         val name = assetName.lowercase()
@@ -83,7 +83,7 @@ class DesktopInstaller(
         }
     }
 
-    private fun detectSystemArchitecture(): Architecture {
+    private fun determineSystemArchitecture(): Architecture {
         if (platform == PlatformType.MACOS) {
             try {
                 val process = ProcessBuilder("uname", "-m").start()
@@ -102,7 +102,7 @@ class DesktopInstaller(
         return Architecture.fromString(osArch)
     }
 
-    private fun detectLinuxPackageType(): LinuxPackageType {
+    private fun determineLinuxPackageType(): LinuxPackageType {
         if (platform != PlatformType.LINUX) return LinuxPackageType.UNIVERSAL
 
         return try {

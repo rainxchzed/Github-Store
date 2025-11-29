@@ -114,7 +114,7 @@ class DetailsViewModel(
                     installableAssets = installable,
                     primaryAsset = primary,
                     userProfile = userProfile,
-                    systemArchitecture = installer.getSystemArchitecture()
+                    systemArchitecture = installer.detectSystemArchitecture()
                 )
             } catch (t: Throwable) {
                 Logger.e { "Details load failed: ${t.message}" }
