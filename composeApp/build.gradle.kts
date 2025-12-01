@@ -135,8 +135,8 @@ android {
         applicationId = "zed.rainxch.githubstore"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
         // Expose GitHub client id to Android BuildConfig (do NOT commit secrets; read from local.properties)
         buildConfigField("String", "GITHUB_CLIENT_ID", "\"${localGithubClientId}\"")
     }
@@ -173,7 +173,7 @@ compose.desktop {
         mainClass = "zed.rainxch.githubstore.MainKt"
         nativeDistributions {
             packageName = "github-store"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.1"
             vendor = "rainxchzed"
             includeAllModules = true
             targetFormats(
@@ -196,8 +196,8 @@ compose.desktop {
             }
             linux {
                 iconFile.set(project.file("logo/app_icon.png"))
-                appRelease = "1"
-                debPackageVersion = "1.0.0"
+                appRelease = "2"
+                debPackageVersion = "1.0.1"
                 menuGroup = "Development"
                 appCategory = "Development"
             }

@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore.feature.auth.data.repository
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -24,47 +25,120 @@ class AuthRepositoryImpl(
     override suspend fun startDeviceFlow(scope: String): DeviceStart =
         withContext(Dispatchers.Default) {
             val clientId = getGithubClientId()
-            require(clientId.isNotBlank()) { "Missing GitHub CLIENT_ID. Add GITHUB_CLIENT_ID to local.properties (Android/Desktop) or env (iOS)." }
-            GitHubAuthApi.startDeviceFlow(clientId, scope.ifBlank { scopeText })
+            require(clientId.isNotBlank()) {
+                "Missing GitHub CLIENT_ID. Add GITHUB_CLIENT_ID to local.properties."
+            }
+
+            try {
+                val result = GitHubAuthApi.startDeviceFlow(clientId, scope.ifBlank { scopeText })
+                Logger.d { "✅ Device flow started. User code: ${result.userCode}" }
+                result
+            } catch (e: Exception) {
+                Logger.d { "❌ Failed to start device flow: ${e.message}" }
+                throw Exception(
+                    "Failed to start GitHub authentication. " +
+                            "Please check your internet connection and try again.",
+                    e
+                )
+            }
         }
 
     override suspend fun awaitDeviceToken(start: DeviceStart): DeviceTokenSuccess =
         withContext(Dispatchers.Default) {
             val clientId = getGithubClientId()
-            val expirationTime = System.currentTimeMillis() + (start.expiresInSec * 1000L)
-            var intervalMs = (start.intervalSec.coerceAtLeast(1)) * 1000L
+            val timeoutMs = start.expiresInSec * 1000L
+            var remainingMs = timeoutMs
+            var intervalMs = (start.intervalSec.coerceAtLeast(5)) * 1000L
+            var consecutiveErrors = 0
+            val maxConsecutiveErrors = 3
 
-            while (true) {
-                if (System.currentTimeMillis() >= expirationTime) {
-                    throw CancellationException("Device code expired")
-                }
+            Logger.d { "⏱️ Starting token polling. Expires in: ${start.expiresInSec}s, Interval: ${start.intervalSec}s" }
 
-                val res = GitHubAuthApi.pollDeviceToken(clientId, start.deviceCode)
-                val success = res.getOrNull()
+            while (remainingMs > 0) {
+                try {
+                    val res = GitHubAuthApi.pollDeviceToken(clientId, start.deviceCode)
+                    val success = res.getOrNull()
 
-                if (success != null) {
-                    tokenDataSource.save(success)
-                    return@withContext success
-                }
-
-                val msg = (res.exceptionOrNull()?.message ?: "").lowercase()
-                when {
-                    "authorization_pending" in msg -> {
-                        delay(intervalMs)
+                    if (success != null) {
+                        Logger.d { "✅ Token received successfully!" }
+                        tokenDataSource.save(success)
+                        return@withContext success
                     }
-                    "slow_down" in msg -> {
-                        intervalMs += 2000
-                        delay(intervalMs)
+
+                    val error = res.exceptionOrNull()
+                    val msg = (error?.message ?: "").lowercase()
+
+                    Logger.d { "📡 Poll response: $msg" }
+
+                    when {
+                        "authorization_pending" in msg -> {
+                            consecutiveErrors = 0
+                            delay(intervalMs)
+                            remainingMs -= intervalMs
+                        }
+
+                        "slow_down" in msg -> {
+                            consecutiveErrors = 0
+                            intervalMs += 5000
+                            Logger.d { "⚠️ Slowing down polling to ${intervalMs}ms" }
+                            delay(intervalMs)
+                            remainingMs -= intervalMs
+                        }
+
+                        "access_denied" in msg -> {
+                            throw CancellationException("You denied access to the app")
+                        }
+
+                        "expired_token" in msg || "expired_device_code" in msg -> {
+                            throw CancellationException(
+                                "Authorization timed out. Please try again."
+                            )
+                        }
+
+                        "unable to resolve" in msg || "no address" in msg -> {
+                            consecutiveErrors++
+                            if (consecutiveErrors >= maxConsecutiveErrors) {
+                                throw Exception(
+                                    "Network connection lost during authentication. " +
+                                            "Please check your connection and try again."
+                                )
+                            }
+                            Logger.d { "⚠️ Network error, retrying... ($consecutiveErrors/$maxConsecutiveErrors)" }
+                            delay(intervalMs)
+                            remainingMs -= intervalMs
+                        }
+
+                        else -> {
+                            consecutiveErrors++
+                            if (consecutiveErrors >= maxConsecutiveErrors) {
+                                throw Exception("Authentication failed: $msg")
+                            }
+                            Logger.d { "⚠️ Unknown error, retrying... ($consecutiveErrors/$maxConsecutiveErrors)" }
+                            delay(intervalMs)
+                            remainingMs -= intervalMs
+                        }
                     }
-                    "access_denied" in msg -> throw CancellationException("User denied access")
-                    "expired_token" in msg || "expired_device_code" in msg ->
-                        throw CancellationException("Device code expired")
-                    else -> error("Unexpected error: $msg")
+
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Logger.d { "❌ Poll error: ${e.message}" }
+                    consecutiveErrors++
+                    if (consecutiveErrors >= maxConsecutiveErrors) {
+                        throw Exception(
+                            "Authentication failed after multiple attempts. " +
+                                    "Please try again.",
+                            e
+                        )
+                    }
+                    delay(intervalMs)
+                    remainingMs -= intervalMs
                 }
             }
 
-            @Suppress("UNREACHABLE_CODE")
-            error("Unreachable")  // This line will never execute but satisfies the compiler
+            throw CancellationException(
+                "Authentication timed out. Please try again and complete the process faster."
+            )
         }
 
     override suspend fun logout() {
