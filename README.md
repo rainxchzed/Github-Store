@@ -190,7 +190,9 @@ If your repo meets these conditions, Github Store can find it through search and
 
 ---
 
-<p align="center"><i>If you like the idea, give the repo a ⭐ — it helps visibility!</i></p>
+## Find this repository useful? ❤️
+Support it by joining [stargazers](https://github.com/rainxchzed/Github-Store/stargazers) for this repository. ⭐
+And [follow](https://github.com/rainxchzed/) me for my next creations! 🤩
 
 
 ## 🔑 Configuration
