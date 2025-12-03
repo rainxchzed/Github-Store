@@ -5,7 +5,6 @@ sealed interface DetailsAction {
 
     data object Retry : DetailsAction
 
-    // In-app download & install
     data object InstallPrimary : DetailsAction
     data class DownloadAsset(val assetName: String, val downloadUrl: String, val sizeBytes: Long) : DetailsAction
     data object CancelCurrentDownload : DetailsAction

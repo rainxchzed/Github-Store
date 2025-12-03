@@ -22,7 +22,6 @@ actual val platformModule: Module = module {
     single<Installer> {
         AndroidInstaller(
             context = get(),
-            files = get()
         )
     }
 

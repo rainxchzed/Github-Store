@@ -14,7 +14,6 @@ import zed.rainxch.githubstore.core.domain.model.GithubAsset
 
 class AndroidInstaller(
     private val context: Context,
-    private val files: FileLocationsProvider,
 ) : Installer {
 
     override fun detectSystemArchitecture(): Architecture {

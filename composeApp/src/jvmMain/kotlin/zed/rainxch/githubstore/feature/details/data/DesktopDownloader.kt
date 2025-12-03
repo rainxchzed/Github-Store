@@ -31,10 +31,8 @@ class DesktopDownloader(
                     .ifBlank { "asset-${UUID.randomUUID()}" })
             val outFile = File(dir, safeName)
 
-            // Check if file already exists (from a previous download)
             if (outFile.exists() && outFile.length() > 0) {
                 Logger.d { "File already exists: ${outFile.absolutePath}" }
-                // Emit 100% progress immediately
                 trySend(DownloadProgress(outFile.length(), outFile.length(), 100))
                 close()
                 return@withContext
@@ -71,7 +69,6 @@ class DesktopDownloader(
 
             Logger.d { "Download complete: ${outFile.absolutePath}" }
 
-            // Final emit
             trySend(DownloadProgress(total ?: outFile.length(), total, 100))
             close()
         }
@@ -85,13 +82,11 @@ class DesktopDownloader(
 
         val outFile = File(dir, safeName)
 
-        // Check if file already exists and is valid
         if (outFile.exists() && outFile.length() > 0) {
             Logger.d { "File already exists: ${outFile.absolutePath}" }
             return@withContext outFile.absolutePath
         }
 
-        // File doesn't exist, download it
         Logger.w { "saveToFile called but file doesn't exist, downloading..." }
         download(url, suggestedFileName).collect { }
 

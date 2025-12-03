@@ -23,20 +23,19 @@ fun buildGitHubHttpClient(getAccessToken: () -> String?): HttpClient {
     val json = Json { ignoreUnknownKeys = true }
     return HttpClient {
         install(ContentNegotiation) { json(json) }
-        // In your Ktor HttpClient Config
+
         install(HttpTimeout) {
-            requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS // Infinite
+            requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
             connectTimeoutMillis = 30_000
-            socketTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS // Infinite
+            socketTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
         }
         install(HttpRequestRetry) {
             maxRetries = 2
             retryIf { _, response ->
                 val code = response.status.value
-                code in 500..<600 // retry on 5xx
+                code in 500..<600
             }
             retryOnExceptionIf { _, cause ->
-                // Retry on timeouts and transient network failures
                 cause is HttpRequestTimeoutException ||
                 cause is UnresolvedAddressException ||
                 cause is IOException
@@ -57,9 +56,5 @@ fun buildGitHubHttpClient(getAccessToken: () -> String?): HttpClient {
     }
 }
 
-/**
- * Convenience builder that pulls the latest token from the provided TokenDataSource
- * so every request includes `Authorization: Bearer <token>` when available.
- */
 fun buildAuthedGitHubHttpClient(tokenDataSource: TokenDataSource): HttpClient =
     buildGitHubHttpClient { tokenDataSource.current()?.accessToken }

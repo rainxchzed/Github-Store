@@ -33,9 +33,6 @@ class AuthenticationViewModel(
     private val _state: MutableStateFlow<AuthenticationState> =
         MutableStateFlow(AuthenticationState())
 
-    // Buffered channel to avoid losing one-shot events (e.g., navigation) emitted
-    // before the UI collector starts. Alternatively, a MutableSharedFlow with
-    // extraBufferCapacity could be used.
     private val _events = Channel<AuthenticationEvents>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 

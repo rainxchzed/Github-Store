@@ -1,7 +1,6 @@
 package zed.rainxch.githubstore.core.presentation.utils
 
 import android.content.Intent
-import android.net.Uri
 import android.content.Context
 import androidx.core.net.toUri
 
