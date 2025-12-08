@@ -33,49 +33,54 @@ It discovers repositories that ship real installable binaries and lets you insta
 
 <img src="/screenshots/preview.gif" align="right" width="320"/>
 
-
 ## ✨ What is Github Store?
 
-Github Store is a Kotlin Multiplatform app (Android + Desktop) that turns GitHub releases into a clean, app‑store style experience:
+Github Store is a Kotlin Multiplatform app (Android + Desktop) that turns GitHub releases into a
+clean, app‑store style experience:
 
 - Only shows repositories that actually provide installable assets (APK, EXE, DMG, etc.).
 - Detects your platform and surfaces the correct installer.
 - Always installs from the **latest published release** and highlights its changelog.
 - Presents a polished details screen with stats, README, and developer info.
+
 ---
 
 ## 🔃 Download
-Go to the [Releases](https://github.com/rainxchzed/Github-Store/releases) to download the latest Installer.
+
+Go to the [Releases](https://github.com/rainxchzed/Github-Store/releases) to download the latest
+Installer.
 
 > [!IMPORTANT]
-> On macOS, you may see a warning that Apple cannot verify Github Store is free of malware. This happens because the app is distributed outside the App Store and is not notarized yet. You can allow it via System Settings → Privacy & Security → Open Anyway.
+> On macOS, you may see a warning that Apple cannot verify Github Store is free of malware. This
+> happens because the app is distributed outside the App Store and is not notarized yet. You can allow
+> it via System Settings → Privacy & Security → Open Anyway.
 
 ## 🚀 Features
 
 - **Smart discovery**
-  - Home sections for “Popular”, “Recently Updated”, and “New” projects.
-  - Only repos with valid installable assets are shown.
-  - Platform‑aware topic scoring so Android/desktop users see relevant apps first.
+    - Home sections for “Popular”, “Recently Updated”, and “New” projects.
+    - Only repos with valid installable assets are shown.
+    - Platform‑aware topic scoring so Android/desktop users see relevant apps first.
 
 - **Latest‑release installs**
-  - Fetches `/releases/latest` for each repo.
-  - Shows only assets from the latest release.
-  - Single “Install latest” action, plus an expandable list of all installers for that release.
+    - Fetches `/releases/latest` for each repo.
+    - Shows only assets from the latest release.
+    - Single “Install latest” action, plus an expandable list of all installers for that release.
 
 - **Rich details screen**
-  - App name, version, “Install latest” button.
-  - Stars, forks, open issues.
-  - Rendered README content (“About this app”).
-  - Latest release notes (body) with markdown formatting.
-  - List of installers with platform labels and file sizes.
+    - App name, version, “Install latest” button.
+    - Stars, forks, open issues.
+    - Rendered README content (“About this app”).
+    - Latest release notes (body) with markdown formatting.
+    - List of installers with platform labels and file sizes.
 
 - **Cross‑platform UX**
-  - Android: opens APK downloads and hands off to the package installer.
-  - Desktop (Windows/macOS/Linux): downloads to a configurable location and opens the file.
+    - Android: opens APK downloads and hands off to the package installer.
+    - Desktop (Windows/macOS/Linux): downloads to a configurable location and opens the file.
 
 - **GitHub login & rate‑limit friendly**
-  - Sign‑in with GitHub to use the user’s own 5,000 req/hour quota.
-  
+    - Sign‑in with GitHub to use the user’s own 5,000 req/hour quota.
+
 ---
 
 ## 🔍 How does my app appear in Github Store?
@@ -84,53 +89,56 @@ Github Store does not use any private indexing or manual curation rules.
 Your project can appear automatically if it follows these conditions:
 
 1. **Public repository on GitHub**
-   - Visibility must be `public`.
+    - Visibility must be `public`.
 
 2. **At least one published release**
-   - Created via GitHub Releases (not only tags).
-   - The latest release must not be a draft or prerelease.
+    - Created via GitHub Releases (not only tags).
+    - The latest release must not be a draft or prerelease.
 
 3. **Installable assets in the latest release**
-   - The latest release must contain at least one asset file with a supported extension:
-     - Android: `.apk`
-     - Windows: `.exe`, `.msi`
-     - macOS: `.dmg`, `.pkg`
-     - Linux: `.deb`, `.rpm`
-   - Github Store ignores GitHub’s auto‑generated source artifacts (`Source code (zip)` / `Source code (tar.gz)`).
+    - The latest release must contain at least one asset file with a supported extension:
+        - Android: `.apk`
+        - Windows: `.exe`, `.msi`
+        - macOS: `.dmg`, `.pkg`
+        - Linux: `.deb`, `.rpm`
+    - Github Store ignores GitHub’s auto‑generated source artifacts (`Source code (zip)` /
+      `Source code (tar.gz)`).
 
 4. **Discoverable by search / topics**
-   - Repositories are fetched via the public GitHub Search API.
-   - Topic, language, and description help the ranking:
-     - Android apps: topics like `android`, `mobile`, `apk`.
-     - Desktop apps: topics like `desktop`, `windows`, `linux`, `macos`, `compose-desktop`, `electron`.
-   - Having at least a few stars makes it more likely to appear under Popular/Updated/New sections.
+    - Repositories are fetched via the public GitHub Search API.
+    - Topic, language, and description help the ranking:
+        - Android apps: topics like `android`, `mobile`, `apk`.
+        - Desktop apps: topics like `desktop`, `windows`, `linux`, `macos`, `compose-desktop`,
+          `electron`.
+    - Having at least a few stars makes it more likely to appear under Popular/Updated/New sections.
 
-If your repo meets these conditions, Github Store can find it through search and show it automatically—no manual submission required.
+If your repo meets these conditions, Github Store can find it through search and show it
+automatically—no manual submission required.
 
 ---
 
 ## 🧭 How Github Store works (high‑level)
 
 1. **Search**
-   - Uses GitHub’s `/search/repositories` endpoint with platform‑aware queries.
-   - Applies simple scoring based on topics, language, and description.
-   - Filters out archived repos and those with too few signals.
+    - Uses GitHub’s `/search/repositories` endpoint with platform‑aware queries.
+    - Applies simple scoring based on topics, language, and description.
+    - Filters out archived repos and those with too few signals.
 
 2. **Release + asset check**
-   - For candidate repos, calls `/repos/{owner}/{repo}/releases/latest`.
-   - Checks the `assets` array for platform‑specific file extensions.
-   - If no suitable asset is found, the repo is excluded from results.
+    - For candidate repos, calls `/repos/{owner}/{repo}/releases/latest`.
+    - Checks the `assets` array for platform‑specific file extensions.
+    - If no suitable asset is found, the repo is excluded from results.
 
 3. **Details screen**
-   - Repository info: name, owner, description, stars, forks, issues.
-   - Latest release: tag, published date, body (changelog), assets.
-   - README: loaded from the default branch and rendered as “About this app”.
+    - Repository info: name, owner, description, stars, forks, issues.
+    - Latest release: tag, published date, body (changelog), assets.
+    - README: loaded from the default branch and rendered as “About this app”.
 
 4. **Install flow**
-   - When the user taps “Install latest”:
-     - Picks the best matching asset for the current platform.
-     - Streams the download.
-     - Delegates to the OS installer (APK installer on Android, default handler on desktop).
+    - When the user taps “Install latest”:
+        - Picks the best matching asset for the current platform.
+        - Streams the download.
+        - Delegates to the OS installer (APK installer on Android, default handler on desktop).
 
 ---
 
@@ -139,37 +147,42 @@ If your repo meets these conditions, Github Store can find it through search and
 - **Minimum Android SDK: 24**
 
 - **Language & Platform**
-  - Kotlin Multiplatform (Android + JVM Desktop)
-  - Compose Multiplatform UI (Material 3, icons, resources)
+    - [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html) (Android + JVM Desktop)
+    - [Compose Multiplatform UI](https://www.jetbrains.com/compose-multiplatform/) ([Material 3](https://m3.material.io/),
+      icons, resources)
 
 - **Async & state**
-  - Kotlin Coroutines + Flow
-  - AndroidX Lifecycle (ViewModel + Runtime Compose) 
+    - [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) + [Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/)
+    - AndroidX Lifecycle (ViewModel + Runtime Compose)
 
 - **Networking & Data**
-  - Ktor 3 (HttpClient with OkHttp on Android, Java on Desktop)
-  - Kotlinx Serialization JSON.
-  - Kotlinx Coroutines + Flow for async + streaming search results.
-  - Kotlinx Datetime for time handling
+    - [Ktor 3](https://ktor.io/) (HttpClient with OkHttp on Android, Java on Desktop)
+    - [Kotlinx Serialization JSON](https://github.com/Kotlin/kotlinx.serialization).
+    - [Kotlinx Datetime](https://github.com/Kotlin/kotlinx-datetime) for time handling
 
 - **Dependency injection**
-  - Koin 4 (core, Android, Compose Multiplatform ViewModel)
+    - [Koin 4](https://insert-koin.io/)
 
 - **Navigation**
-  - JetBrains Navigation Compose for shared navigation graph
+    - [JetBrains Navigation Compose](https://kotlinlang.org/docs/multiplatform/compose-navigation.html)
+      for shared navigation graph
 
 - **Auth & Security**
-  - GitHub OAuth (Device Code flow)
-  - AndroidX Security Crypto for token storage
+    - GitHub OAuth (Device Code flow)
+    - [Androidx DataStore](https://developer.android.com/kotlin/multiplatform/datastore) for token
+      storage
 
 - **Media & markdown**
-  - Coil 3 (Ktor3 image loader)
-  - [multiplatform-markdown-renderer-m3](https://github.com/mikepenz/multiplatform-markdown-renderer) (+ Coil3 integration) for README/release notes
+    - [Coil 3](https://coil-kt.github.io/coil/getting_started/) (Ktor3 image loader)
+    - [multiplatform-markdown-renderer-m3](https://github.com/mikepenz/multiplatform-markdown-renderer) (+
+      Coil3 integration) for README/release notes
 
 - **Logging & tooling**
-  - Kermit logging
-  - Compose Hot Reload (desktop)
-  - ProGuard/R8 + resource shrinking for release builds
+    - [Kermit logging](https://kermit.touchlab.co/)
+    - [Compose Hot Reload](https://kotlinlang.org/docs/multiplatform/compose-hot-reload.html) (
+      desktop)
+    - [ProGuard/R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization) +
+      resource shrinking for release builds
 
 ---
 
@@ -179,20 +192,23 @@ If your repo meets these conditions, Github Store can find it through search and
   See only repos that actually ship binaries for your platform.
 
 - **Always the latest release**  
-  Installs are guaranteed to come from the latest published release; the changelog you see is exactly what you’re installing.
+  Installs are guaranteed to come from the latest published release; the changelog you see is
+  exactly what you’re installing.
 
 - **Uniform experience across platforms**  
   Same UI and logic for Android and desktop, with platform‑native install behavior.
 
 - **Open source & extensible**  
-  Written in KMP with a clear separation between networking, domain logic, and UI—easy to fork, extend, or adapt.
+  Written in KMP with a clear separation between networking, domain logic, and UI—easy to fork,
+  extend, or adapt.
 
 ---
 
 ## Find this repository useful? ❤️
-Support it by joining [stargazers](https://github.com/rainxchzed/Github-Store/stargazers) for this repository. ⭐
-And [follow](https://github.com/rainxchzed/) me for my next creations! 🤩
 
+Support it by joining [stargazers](https://github.com/rainxchzed/Github-Store/stargazers) for this
+repository. ⭐
+And [follow](https://github.com/rainxchzed/) me for my next creations! 🤩
 
 ## 🔑 Configuration
 
@@ -207,16 +223,20 @@ Github Store uses a GitHub OAuth app for authentication and API rate‑limit iso
 
 ## ⚠️ Disclaimer
 
-Github Store only helps you discover and download release assets that are already published on GitHub by third‑party developers.  
-The contents, safety, and behavior of those downloads are entirely the responsibility of their respective authors and distributors, not this project.  
+Github Store only helps you discover and download release assets that are already published on
+GitHub by third‑party developers.  
+The contents, safety, and behavior of those downloads are entirely the responsibility of their
+respective authors and distributors, not this project.
 
-By using GithubStore, you understand and agree that you install and run any downloaded software at your own risk.  
-This project does not review, validate, or guarantee that any installer is safe, free of malware, or fit for any particular purpose.
-
+By using GithubStore, you understand and agree that you install and run any downloaded software at
+your own risk.  
+This project does not review, validate, or guarantee that any installer is safe, free of malware, or
+fit for any particular purpose.
 
 ## 📄 License
 
 Github Store will be released under the **Apache License, Version 2.0**.
+
 ```
 Copyright 2025 rainxchzed
 
