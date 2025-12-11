@@ -11,30 +11,38 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
+val appVersionName = "1.2.1"
+val appVersionCode = 4
+
 // Load local.properties for secrets like GITHUB_CLIENT_ID
 val localProps = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { this.load(it) }
 }
-val localGithubClientId = (localProps.getProperty("GITHUB_CLIENT_ID") ?: "Ov23linTY28VFpFjFiI9").trim()
+val localGithubClientId =
+    (localProps.getProperty("GITHUB_CLIENT_ID") ?: "Ov23linTY28VFpFjFiI9").trim()
 
 // Generate BuildConfig for JVM (Configuration Cache Compatible)
 val generateJvmBuildConfig = tasks.register("generateJvmBuildConfig") {
     val outputDir = layout.buildDirectory.dir("generated/buildconfig/jvm")
     val clientId = localGithubClientId
+    val versionName = appVersionName
 
     outputs.dir(outputDir)
 
     doLast {
         val file = outputDir.get().asFile.resolve("zed/rainxch/githubstore/BuildConfig.kt")
         file.parentFile.mkdirs()
-        file.writeText("""
+        file.writeText(
+            """
             package zed.rainxch.githubstore
             
             object BuildConfig {
                 const val GITHUB_CLIENT_ID = "$clientId"
+                const val VERSION_NAME = "$versionName"
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }
 
@@ -144,10 +152,11 @@ android {
         applicationId = "zed.rainxch.githubstore"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "1.2.1"
+        versionCode = appVersionCode
+        versionName = appVersionName
         // Expose GitHub client id to Android BuildConfig (do NOT commit secrets; read from local.properties)
         buildConfigField("String", "GITHUB_CLIENT_ID", "\"${localGithubClientId}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${appVersionName}\"")
     }
     packaging {
         resources {
@@ -182,7 +191,7 @@ compose.desktop {
         mainClass = "zed.rainxch.githubstore.MainKt"
         nativeDistributions {
             packageName = "github-store"
-            packageVersion = "1.2.1"
+            packageVersion = appVersionName
             vendor = "rainxchzed"
             includeAllModules = true
             targetFormats(
@@ -205,8 +214,8 @@ compose.desktop {
             }
             linux {
                 iconFile.set(project.file("logo/app_icon.png"))
-                appRelease = "4"
-                debPackageVersion = "1.2.1"
+                appRelease = appVersionCode.toString()
+                debPackageVersion = appVersionName
                 menuGroup = "Development"
                 appCategory = "Development"
             }

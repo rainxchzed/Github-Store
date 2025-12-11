@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import zed.rainxch.githubstore.feature.settings.presentation.SettingsAction
+import zed.rainxch.githubstore.feature.settings.presentation.utils.getVersionName
 
 fun LazyListScope.about(
     onAction: (SettingsAction) -> Unit,
@@ -55,7 +56,7 @@ fun LazyListScope.about(
                 title = "Version",
                 actions = {
                     Text(
-                        text = "v1.0.1",
+                        text = getVersionName(),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.outline,
                     )
