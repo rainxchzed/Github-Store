@@ -50,8 +50,6 @@ fun SettingsRoot(
                 coroutineScope.launch {
                     snackbarState.showSnackbar("Logged out successfully, redirecting...")
 
-                    delay(1000)
-
                     onNavigateBack()
                 }
             }

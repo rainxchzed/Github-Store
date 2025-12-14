@@ -86,26 +86,17 @@ class SettingsViewModel(
 
             SettingsAction.OnLogoutConfirmClick -> {
                 viewModelScope.launch {
-                    viewModelScope.launch {
-                        runCatching {
-                            settingsRepository.logout()
-                        }.onSuccess {
-                            _state.update { it.copy(isLogoutDialogVisible = false) }
-                            _events.send(SettingsEvent.OnLogoutSuccessful)
-                        }.onFailure { error ->
-                            error.message?.let {
-                                _events.send(SettingsEvent.OnLogoutError(it))
-                            }
+                    runCatching {
+                        settingsRepository.logout()
+                    }.onSuccess {
+                        _state.update { it.copy(isLogoutDialogVisible = false) }
+                        _events.send(SettingsEvent.OnLogoutSuccessful)
+                    }.onFailure { error ->
+                        _state.update { it.copy(isLogoutDialogVisible = false) }
+                        error.message?.let {
+                            _events.send(SettingsEvent.OnLogoutError(it))
                         }
                     }
-
-                    _state.update {
-                        it.copy(
-                            isLogoutDialogVisible = false
-                        )
-                    }
-
-                    _events.send(SettingsEvent.OnLogoutSuccessful)
                 }
             }
 
