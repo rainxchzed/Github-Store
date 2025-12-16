@@ -53,11 +53,18 @@ class AuthRepositoryImpl(
             val clientId = getGithubClientId()
             val timeoutMs = start.expiresInSec * 1000L
             var remainingMs = timeoutMs
+
+            val initialJitter = (0..2000).random().toLong()
+            delay(initialJitter)
+            remainingMs -= initialJitter
+
             var intervalMs = (start.intervalSec.coerceAtLeast(5)) * 1000L
             var consecutiveErrors = 0
+            var slowDownCount = 0
             val maxConsecutiveErrors = 5
+            val maxSlowDownBeforeGiveUp = 8
 
-            Logger.d { "⏱️ Starting token polling. Expires in: ${start.expiresInSec}s, Interval: ${start.intervalSec}s" }
+            Logger.d { "⏱️ Starting token polling. Expires in: ${start.expiresInSec}s, Interval: ${start.intervalSec}s (jitter: ${initialJitter}ms)" }
 
             while (remainingMs > 0) {
                 try {
@@ -75,21 +82,42 @@ class AuthRepositoryImpl(
                     val error = res.exceptionOrNull()
                     val msg = (error?.message ?: "").lowercase()
 
-                    Logger.d { "📡 Poll response: $msg (errors: $consecutiveErrors/$maxConsecutiveErrors)" }
+                    Logger.d { "📡 Poll response: $msg (slowdowns: $slowDownCount/$maxSlowDownBeforeGiveUp)" }
 
                     when {
                         "authorization_pending" in msg -> {
                             consecutiveErrors = 0
-                            delay(intervalMs)
-                            remainingMs -= intervalMs
+                            slowDownCount = 0
+
+                            val jitter = (0..500).random().toLong()
+                            val waitTime = intervalMs + jitter
+
+                            delay(waitTime)
+                            remainingMs -= waitTime
                         }
 
                         "slow_down" in msg -> {
                             consecutiveErrors = 0
+                            slowDownCount++
+
                             intervalMs += 5000
-                            Logger.d { "⚠️ Slowing down polling to ${intervalMs}ms" }
-                            delay(intervalMs)
-                            remainingMs -= intervalMs
+
+                            Logger.d { "⚠️ Rate limited. Slowing to ${intervalMs}ms (slowdown #$slowDownCount)" }
+
+                            if (slowDownCount >= maxSlowDownBeforeGiveUp) {
+                                throw Exception(
+                                    "GitHub authentication is experiencing high traffic. " +
+                                            "Please wait 1-2 minutes and try again."
+                                )
+                            }
+
+                            val extraJitter = (0..3000).random().toLong()
+                            val waitTime = intervalMs + extraJitter
+
+                            Logger.d { "⏳ Waiting ${waitTime}ms (base: ${intervalMs}ms + jitter: ${extraJitter}ms)" }
+
+                            delay(waitTime)
+                            remainingMs -= waitTime
                         }
 
                         "access_denied" in msg -> {
@@ -110,21 +138,21 @@ class AuthRepositoryImpl(
                             consecutiveErrors++
                             Logger.d { "⚠️ Network error, retrying... ($consecutiveErrors/$maxConsecutiveErrors)" }
 
-                            val backoffDelay = intervalMs * (1 + consecutiveErrors)
-
                             if (consecutiveErrors >= maxConsecutiveErrors) {
                                 throw Exception(
                                     "Network connection unstable during authentication. " +
                                             "Please check your connection and try again."
                                 )
                             }
+
+                            val backoffDelay = intervalMs * (1 + consecutiveErrors)
                             delay(backoffDelay)
                             remainingMs -= backoffDelay
                         }
 
                         else -> {
                             consecutiveErrors++
-                            Logger.d { "⚠️ Error: $msg (attempt $consecutiveErrors/$maxConsecutiveErrors)" }
+                            Logger.d { "⚠️ Unknown error: $msg (attempt $consecutiveErrors/$maxConsecutiveErrors)" }
 
                             if (consecutiveErrors >= maxConsecutiveErrors) {
                                 throw Exception("Authentication failed: $msg")
@@ -140,7 +168,6 @@ class AuthRepositoryImpl(
                     throw e
                 } catch (e: Exception) {
                     Logger.d { "❌ Poll error: ${e.message}" }
-                    Logger.d { "❌ Error type: ${e::class.simpleName}" }
                     consecutiveErrors++
 
                     if (consecutiveErrors >= maxConsecutiveErrors) {
