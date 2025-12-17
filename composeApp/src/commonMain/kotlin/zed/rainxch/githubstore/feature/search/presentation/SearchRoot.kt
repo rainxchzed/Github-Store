@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore.feature.search.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,20 +22,28 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material.icons.outlined.Widgets
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -59,6 +68,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.core.domain.model.GithubRepoSummary
 import zed.rainxch.githubstore.core.presentation.components.RepositoryCard
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.githubstore.feature.search.domain.model.RootFilterType
 import zed.rainxch.githubstore.feature.search.domain.model.SearchPlatformType
 import zed.rainxch.githubstore.feature.search.domain.model.SortBy
 import zed.rainxch.githubstore.feature.search.presentation.components.SortByBottomSheet
@@ -78,11 +88,9 @@ fun SearchRoot(
                 is SearchAction.OnRepositoryClick -> {
                     onNavigateToDetails(action.repository)
                 }
-
                 SearchAction.OnNavigateBackClick -> {
                     onNavigateBack()
                 }
-
                 else -> {
                     viewModel.onAction(action)
                 }
@@ -106,7 +114,6 @@ fun SearchScreen(
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
 
-            // Trigger when near bottom (within 5 items)
             totalItems > 0 &&
                     lastVisibleItem != null &&
                     lastVisibleItem.index >= (totalItems - 5) &&
@@ -219,69 +226,131 @@ fun SearchScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                items(SearchPlatformType.entries.toList()) { sortBy ->
+                items(SearchPlatformType.entries.toList()) { platform ->
                     FilterChip(
-                        selected = state.selectedSearchPlatformType == sortBy,
+                        selected = state.selectedSearchPlatformType == platform,
                         label = {
                             Text(
-                                text = sortBy.name.lowercase().replaceFirstChar { it.uppercase() },
+                                text = platform.name.lowercase().replaceFirstChar { it.uppercase() },
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         },
                         onClick = {
-                            onAction(SearchAction.OnPlatformTypeSelected(sortBy))
+                            onAction(SearchAction.OnPlatformTypeSelected(platform))
                         }
                     )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = state.selectedSearchPlatformType == SearchPlatformType.Android
+            ) {
+                Column {
+                    Spacer(Modifier.height(2.dp))
+
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        items(RootFilterType.entries.toList()) { rootFilter ->
+                            FilterChip(
+                                selected = state.selectedRootFilter == rootFilter,
+                                label = {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        when (rootFilter) {
+                                            RootFilterType.RequiresRoot -> {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Shield,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+                                            RootFilterType.MagiskModule -> {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Extension,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+                                            RootFilterType.LsposedModule -> {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Widgets,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            }
+                                            else -> {}
+                                        }
+
+                                        Text(
+                                            text = rootFilter.displayText(),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    onAction(SearchAction.OnRootFilterSelected(rootFilter))
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            )
+                        }
+                    }
                 }
             }
 
             Spacer(Modifier.height(12.dp))
 
             if (state.totalCount != null) {
-                Text(
-                    text = "About ${state.totalCount} results",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                )
-            }
-
-            if (false) { // FOR NOW SORTING FEATURE IS NOT AVAILABLE
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .clickable {
-
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Sort by: ${state.selectedSortBy.displayText()}",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = "About ${state.totalCount} results",
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.outline,
-                        fontWeight = FontWeight.Bold
+                        modifier = Modifier.weight(1f)
                     )
 
-                    Icon(
-                        imageVector = Icons.Outlined.KeyboardArrowDown,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.outline,
-                    )
+                    if (state.selectedRootFilter != RootFilterType.All) {
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FilterList,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp),
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    text = state.selectedRootFilter.displayText(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
+                    }
                 }
-                SortByBottomSheet(
-                    sortByOptions = SortBy.entries.toList(),
-                    selectedSortBy = state.selectedSortBy,
-                    onSortBySelected = { chosen ->
-                        onAction(SearchAction.OnSortBySelected(chosen))
-                    },
-                    onDismissRequest = { }
-                )
+                Spacer(Modifier.height(8.dp))
             }
 
             Box(Modifier.fillMaxSize()) {
@@ -299,11 +368,23 @@ fun SearchScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(state.errorMessage)
-                            Spacer(Modifier.height(8.dp))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.SearchOff,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.outline
+                            )
+                            Text(
+                                text = state.errorMessage,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                             Button(onClick = { onAction(SearchAction.Retry) }) {
-                                Text("Retry")
+                                Text("Retry Search")
                             }
                         }
                     }

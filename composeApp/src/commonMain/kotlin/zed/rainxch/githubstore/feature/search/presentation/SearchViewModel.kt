@@ -58,6 +58,7 @@ class SearchViewModel(
                 searchRepository.searchRepositories(
                     query = _state.value.search,
                     searchPlatformType = _state.value.selectedSearchPlatformType,
+                    rootFilterType = _state.value.selectedRootFilter,
                     page = currentPage
                 ).catch { e ->
                     if (e !is CancellationException) {
@@ -107,6 +108,17 @@ class SearchViewModel(
                 if (_state.value.selectedSearchPlatformType != action.searchPlatformType) {
                     _state.update {
                         it.copy(selectedSearchPlatformType = action.searchPlatformType)
+                    }
+                    currentPage = 1
+                    searchDebounceJob?.cancel()
+                    performSearch(isInitial = true)
+                }
+            }
+
+            is SearchAction.OnRootFilterSelected -> {
+                if (_state.value.selectedRootFilter != action.rootFilterType) {
+                    _state.update {
+                        it.copy(selectedRootFilter = action.rootFilterType)
                     }
                     currentPage = 1
                     searchDebounceJob?.cancel()

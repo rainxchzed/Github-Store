@@ -10,10 +10,4 @@ enum class SortBy {
         MostForks -> "Most Forks"
         BestMatch -> "Best Match"
     }
-
-    fun toGithubParams(): Pair<String?, String> = when (this) {
-        MostStars -> "stars" to "desc"
-        MostForks -> "forks" to "desc"
-        BestMatch -> null to "desc"
-    }
 }
