@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import zed.rainxch.githubstore.core.domain.model.SystemPackageInfo
 
 class AndroidPackageMonitor(
-    private val context: Context
+    context: Context
 ) : PackageMonitor {
 
     private val packageManager: PackageManager = context.packageManager

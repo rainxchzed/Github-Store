@@ -19,7 +19,6 @@ import zed.rainxch.githubstore.core.domain.getPlatform
 import zed.rainxch.githubstore.core.domain.repository.FavoritesRepository
 import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.githubstore.core.domain.repository.ThemesRepository
-import zed.rainxch.githubstore.core.presentation.theme.surfaceVariantDark
 import zed.rainxch.githubstore.network.buildAuthedGitHubHttpClient
 import zed.rainxch.githubstore.feature.auth.data.repository.AuthRepositoryImpl
 import zed.rainxch.githubstore.feature.auth.domain.*
@@ -74,7 +73,9 @@ val coreModule: Module = module {
         MainViewModel(
             tokenDataSource = get(),
             themesRepository = get(),
-            appStateManager = get()
+            appStateManager = get(),
+            installedAppsRepository = get(),
+            packageMonitor = get()
         )
     }
 
