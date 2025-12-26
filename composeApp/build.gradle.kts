@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotest)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.metro)
 }
 
 val appVersionName = "1.4.2"

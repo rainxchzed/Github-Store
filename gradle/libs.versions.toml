@@ -32,6 +32,7 @@ kotest = "6.0.7"
 cmpNavigation3 = "1.0.0-alpha06"
 androidx-lifecycle-nav3 = "2.10.0-alpha06"
 ksp = "2.3.2"
+metro = "0.9.2"
 room = "2.8.4"
 sqlite = "2.6.2"
 
@@ -110,4 +111,5 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotest = { id = "io.kotest", version.ref = "kotest" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
