@@ -1,7 +1,6 @@
-package zed.rainxch.githubstore.feature.details.data
+package zed.rainxch.githubstore.core.data.services
 
 import android.content.Context
-import zed.rainxch.githubstore.core.data.services.FileLocationsProvider
 import java.io.File
 
 class AndroidFileLocationsProvider(

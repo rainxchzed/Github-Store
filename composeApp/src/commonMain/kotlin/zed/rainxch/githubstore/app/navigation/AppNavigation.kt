@@ -7,16 +7,20 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.toInt
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import io.github.fletchmckee.liquid.rememberLiquidState
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import zed.rainxch.githubstore.app.navigation.locals.LocalBottomNavLiquidState
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.feature.apps.presentation.AppsRoot
 import zed.rainxch.githubstore.feature.auth.presentation.AuthenticationRoot
 import zed.rainxch.githubstore.feature.details.presentation.DetailsRoot
@@ -26,132 +30,191 @@ import zed.rainxch.githubstore.feature.settings.presentation.SettingsRoot
 
 @Composable
 fun AppNavigation(
+    currentApiPlatform: ApiPlatform,
     navBackStack: SnapshotStateList<GithubStoreGraph>
 ) {
+    val liquidState = rememberLiquidState()
 
-    NavDisplay(
-        backStack = navBackStack,
-        onBack = {
-            navBackStack.removeLastOrNull()
-        },
-        entryProvider = entryProvider {
-            entry<GithubStoreGraph.HomeScreen> {
-                HomeRoot(
-                    onNavigateToSearch = {
-                        navBackStack.add(GithubStoreGraph.SearchScreen)
-                    },
-                    onNavigateToSettings = {
-                        navBackStack.add(GithubStoreGraph.SettingsScreen)
-                    },
-                    onNavigateToApps = {
-                        navBackStack.add(GithubStoreGraph.AppsScreen)
-                    },
-                    onNavigateToDetails = { repo ->
-                        navBackStack.add(
-                            GithubStoreGraph.DetailsScreen(
-                                repositoryId = repo.id.toInt()
-                            )
-                        )
-                    }
-                )
-            }
-
-            entry<GithubStoreGraph.SearchScreen> {
-                SearchRoot(
-                    onNavigateBack = {
-                        navBackStack.removeLastOrNull()
-                    },
-                    onNavigateToDetails = { repo ->
-                        navBackStack.add(
-                            GithubStoreGraph.DetailsScreen(
-                                repositoryId = repo.id.toInt()
-                            )
-                        )
-                    }
-                )
-            }
-
-            entry<GithubStoreGraph.DetailsScreen> { args ->
-                DetailsRoot(
-                    onNavigateBack = {
-                        navBackStack.removeLastOrNull()
-                    },
-                    onOpenRepositoryInApp = { repoId ->
-                        navBackStack.add(
-                            GithubStoreGraph.DetailsScreen(
-                                repositoryId = repoId
-                            )
-                        )
-                    },
-                    viewModel = koinViewModel {
-                        parametersOf(args.repositoryId)
-                    }
-                )
-            }
-
-            entry<GithubStoreGraph.AuthenticationScreen> {
-                AuthenticationRoot(
-                    onNavigateToHome = {
+    CompositionLocalProvider(
+        value = LocalBottomNavLiquidState provides liquidState
+    ) {
+        Scaffold(
+            bottomBar = {
+                BottomNavigation(
+                    currentScreen = navBackStack.last(),
+                    items = BottomNavUtils.getItems(),
+                    onNavigate = {
                         navBackStack.clear()
-                        navBackStack.add(GithubStoreGraph.HomeScreen)
+                        navBackStack.add(it)
                     }
                 )
             }
-
-            entry<GithubStoreGraph.SettingsScreen> {
-                SettingsRoot(
-                    onNavigateBack = {
-                        navBackStack.removeLastOrNull()
-                    }
-                )
-            }
-
-            entry<GithubStoreGraph.AppsScreen> {
-                AppsRoot(
-                    onNavigateBack = {
-                        navBackStack.removeLastOrNull()
-                    },
-                    onNavigateToRepo = { repoId ->
-                        navBackStack.add(
-                            GithubStoreGraph.DetailsScreen(
-                                repositoryId = repoId.toInt()
-                            )
+        ) { _ ->
+            NavDisplay(
+                backStack = navBackStack,
+                onBack = {
+                    navBackStack.removeLastOrNull()
+                },
+                entryProvider = entryProvider {
+                    entry<GithubStoreGraph.HomeGithubScreen> {
+                        HomeRoot(
+                            onNavigateToSearch = {
+                                navBackStack.add(GithubStoreGraph.SearchScreen)
+                            },
+                            onNavigateToSettings = {
+                                navBackStack.add(GithubStoreGraph.SettingsScreen)
+                            },
+                            onNavigateToApps = {
+                                navBackStack.add(GithubStoreGraph.AppsScreen)
+                            },
+                            onNavigateToDetails = { repo ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repo.id
+                                    )
+                                )
+                            },
+                            viewModel = koinViewModel(parameters = {
+                                parametersOf(ApiPlatform.Github)
+                            })
                         )
                     }
-                )
-            }
-        },
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
-        ),
-        transitionSpec = {
-            slideInHorizontally(
-                initialOffsetX = { it },
-                animationSpec = spring(Spring.DampingRatioLowBouncy)
-            ) togetherWith slideOutHorizontally(
-                targetOffsetX = { -it },
-                animationSpec = spring(Spring.DampingRatioLowBouncy)
+
+                    entry<GithubStoreGraph.HomeGitLabScreen> {
+                        HomeRoot(
+                            onNavigateToSearch = {
+                                navBackStack.add(GithubStoreGraph.SearchScreen)
+                            },
+                            onNavigateToSettings = {
+                                navBackStack.add(GithubStoreGraph.SettingsScreen)
+                            },
+                            onNavigateToApps = {
+                                navBackStack.add(GithubStoreGraph.AppsScreen)
+                            },
+                            onNavigateToDetails = { repo ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repo.id
+                                    )
+                                )
+                            },
+                            viewModel = koinViewModel(parameters = {
+                                parametersOf(ApiPlatform.GitLab)
+                            })
+                        )
+                    }
+
+                    entry<GithubStoreGraph.SearchScreen> {
+                        SearchRoot(
+                            onNavigateBack = {
+                                navBackStack.removeLastOrNull()
+                            },
+                            onNavigateToDetails = { repo ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repo.id
+                                    )
+                                )
+                            }
+                        )
+                    }
+
+                    entry<GithubStoreGraph.DetailsScreen> { args ->
+                        DetailsRoot(
+                            onNavigateBack = {
+                                navBackStack.removeLastOrNull()
+                            },
+                            onOpenRepositoryInApp = { repoId ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId
+                                    )
+                                )
+                            },
+                            viewModel = koinViewModel {
+                                parametersOf(args.repositoryId, currentApiPlatform)
+                            }
+                        )
+                    }
+
+                    entry<GithubStoreGraph.AuthenticationScreen> { args ->
+                        AuthenticationRoot(
+                            onNavigateToHome = {
+                                navBackStack.clear()
+                                navBackStack.add(
+                                    if (args.apiPlatform == ApiPlatform.Github) {
+                                        GithubStoreGraph.HomeGithubScreen
+                                    } else {
+                                        GithubStoreGraph.HomeGitLabScreen
+                                    }
+                                )
+                            },
+                            viewModel = koinViewModel(
+                                parameters = {
+                                    parametersOf(
+                                        args.apiPlatform
+                                    )
+                                }
+                            ),
+                        )
+                    }
+
+                    entry<GithubStoreGraph.AppsScreen> {
+                        AppsRoot(
+                            onNavigateBack = {
+                                navBackStack.removeLastOrNull()
+                            },
+                            onNavigateToRepo = { repoId ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DetailsScreen(
+                                        repositoryId = repoId
+                                    )
+                                )
+                            }
+                        )
+                    }
+
+                    entry<GithubStoreGraph.SettingsScreen> {
+                        SettingsRoot(
+                            onNavigateBack = {
+                                navBackStack.removeLastOrNull()
+                            }
+                        )
+                    }
+                },
+                entryDecorators = listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator()
+                ),
+                transitionSpec = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = spring(Spring.DampingRatioLowBouncy)
+                    ) togetherWith slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = spring(Spring.DampingRatioLowBouncy)
+                    )
+                },
+                popTransitionSpec = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = spring(Spring.DampingRatioLowBouncy)
+                    ) togetherWith slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = spring(Spring.DampingRatioLowBouncy)
+                    )
+                },
+                predictivePopTransitionSpec = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = spring(Spring.DampingRatioLowBouncy)
+                    ) togetherWith slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = spring(Spring.DampingRatioLowBouncy)
+                    )
+                },
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
             )
-        },
-        popTransitionSpec = {
-            slideInHorizontally(
-                initialOffsetX = { -it },
-                animationSpec = spring(Spring.DampingRatioLowBouncy)
-            ) togetherWith slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = spring(Spring.DampingRatioLowBouncy)
-            )
-        },
-        predictivePopTransitionSpec = {
-            slideInHorizontally(
-                initialOffsetX = { -it },
-                animationSpec = spring(Spring.DampingRatioLowBouncy)
-            ) togetherWith slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = spring(Spring.DampingRatioLowBouncy)
-            )
-        },
-        modifier = Modifier.background(MaterialTheme.colorScheme.background)
-    )
+        }
+    }
 }

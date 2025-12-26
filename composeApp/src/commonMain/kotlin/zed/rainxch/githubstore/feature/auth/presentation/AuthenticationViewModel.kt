@@ -12,18 +12,19 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.domain.model.DeviceStart
 import zed.rainxch.githubstore.core.presentation.utils.BrowserHelper
 import zed.rainxch.githubstore.core.presentation.utils.ClipboardHelper
 import zed.rainxch.githubstore.feature.auth.domain.repository.AuthenticationRepository
 
 class AuthenticationViewModel(
+    private val apiPlatform: ApiPlatform,
     private val authenticationRepository: AuthenticationRepository,
     private val browserHelper: BrowserHelper,
     private val clipboardHelper: ClipboardHelper,
     private val scope: CoroutineScope,
-
-    ) : ViewModel() {
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
@@ -36,6 +37,12 @@ class AuthenticationViewModel(
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
+                _state.update {
+                    it.copy(
+                        currentApiPlatform = apiPlatform
+                    )
+                }
+
                 scope.launch {
                     authenticationRepository.accessTokenFlow.collect { token ->
                         _state.update {
@@ -64,7 +71,7 @@ class AuthenticationViewModel(
         when (action) {
             is AuthenticationAction.StartLogin -> startLogin()
             is AuthenticationAction.CopyCode -> copyCode(action.start)
-            is AuthenticationAction.OpenGitHub -> openGitHub(action.start)
+            is AuthenticationAction.OpenPlatform -> openPlatform(action.start)
             AuthenticationAction.MarkLoggedIn -> _state.update { it.copy(loginState = AuthLoginState.LoggedIn) }
             AuthenticationAction.MarkLoggedOut -> _state.update { it.copy(loginState = AuthLoginState.LoggedOut) }
             is AuthenticationAction.OnInfo -> {
@@ -89,7 +96,9 @@ class AuthenticationViewModel(
                 }
 
                 clipboardHelper.copy(
-                    label = "GitHub Code",
+                    label = if (apiPlatform == ApiPlatform.Github) {
+                        "GitHub Code"
+                    } else "GitLab Code",
                     text = start.userCode
                 )
 
@@ -112,7 +121,7 @@ class AuthenticationViewModel(
         }
     }
 
-    private fun openGitHub(start: DeviceStart) {
+    private fun openPlatform(start: DeviceStart) {
         val url = start.verificationUriComplete ?: start.verificationUri
 
         browserHelper.openUrl(url)
@@ -127,7 +136,9 @@ class AuthenticationViewModel(
         }
 
         clipboardHelper.copy(
-            label = "GitHub Code",
+            label = if (apiPlatform == ApiPlatform.Github) {
+                "GitHub Code"
+            } else "GitLab Code",
             text = start.userCode
         )
     }

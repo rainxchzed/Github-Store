@@ -15,17 +15,19 @@ import zed.rainxch.githubstore.app.app_state.AppStateManager
 import zed.rainxch.githubstore.core.data.services.PackageMonitor
 import zed.rainxch.githubstore.core.data.data_source.TokenDataSource
 import zed.rainxch.githubstore.core.domain.Platform
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.domain.model.PlatformType
 import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.githubstore.core.domain.repository.ThemesRepository
 
 class MainViewModel(
-    private val tokenDataSource: TokenDataSource,
+    private val githubTokenDataSource: TokenDataSource,
+    private val gitlabTokenDataSource: TokenDataSource,
     private val themesRepository: ThemesRepository,
     private val appStateManager: AppStateManager,
     private val packageMonitor: PackageMonitor,
     private val installedAppsRepository: InstalledAppsRepository,
-    private val platform: Platform
+    private val platform: Platform,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
@@ -33,23 +35,40 @@ class MainViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val initialToken = tokenDataSource.reloadFromStore()
+            val githubToken = githubTokenDataSource.reloadFromStore(ApiPlatform.Github)
+            val gitlabToken = gitlabTokenDataSource.reloadFromStore(ApiPlatform.GitLab)
+
             _state.update {
                 it.copy(
                     isCheckingAuth = false,
-                    isLoggedIn = initialToken != null
+                    isGithubLoggedIn = githubToken != null,
+                    isGitlabLoggedIn = gitlabToken != null
                 )
             }
-            Logger.d("MainViewModel") { "Initial token loaded: ${initialToken != null}" }
+            Logger.d("MainViewModel") {
+                "Initial tokens loaded - GitHub: ${githubToken != null}, GitLab: ${gitlabToken != null}"
+            }
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            tokenDataSource
-                .tokenFlow
+            githubTokenDataSource
+                .tokenFlow(ApiPlatform.Github)
                 .drop(1)
                 .distinctUntilChanged()
                 .collect { authInfo ->
-                    _state.update { it.copy(isLoggedIn = authInfo != null) }
+                    _state.update { it.copy(isGithubLoggedIn = authInfo != null) }
+                    Logger.d("MainViewModel") { "GitHub auth changed: ${authInfo != null}" }
+                }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            gitlabTokenDataSource
+                .tokenFlow(ApiPlatform.GitLab)
+                .drop(1)
+                .distinctUntilChanged()
+                .collect { authInfo ->
+                    _state.update { it.copy(isGitlabLoggedIn = authInfo != null) }
+                    Logger.d("MainViewModel") { "GitLab auth changed: ${authInfo != null}" }
                 }
         }
 
@@ -57,18 +76,15 @@ class MainViewModel(
             themesRepository
                 .getThemeColor()
                 .collect { theme ->
-                    _state.update {
-                        it.copy(currentColorTheme = theme)
-                    }
+                    _state.update { it.copy(currentColorTheme = theme) }
                 }
         }
+
         viewModelScope.launch {
             themesRepository
                 .getAmoledTheme()
                 .collect { isAmoled ->
-                    _state.update {
-                        it.copy(isAmoledTheme = isAmoled)
-                    }
+                    _state.update { it.copy(isAmoledTheme = isAmoled) }
                 }
         }
 
@@ -76,8 +92,10 @@ class MainViewModel(
             appStateManager.appState.collect { appState ->
                 _state.update {
                     it.copy(
-                        rateLimitInfo = appState.rateLimitInfo,
-                        showRateLimitDialog = appState.showRateLimitDialog
+                        githubRateLimitInfo = appState.githubRateLimitInfo,
+                        gitlabRateLimitInfo = appState.gitlabRateLimitInfo,
+                        showRateLimitDialog = appState.showRateLimitDialog,
+                        rateLimitDialogPlatform = appState.rateLimitDialogPlatform
                     )
                 }
             }
@@ -86,48 +104,53 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val installedPackageNames = packageMonitor.getAllInstalledPackageNames()
-
                 val appsInDb = installedAppsRepository.getAllInstalledApps().first()
 
                 appsInDb.forEach { app ->
                     if (!installedPackageNames.contains(app.packageName)) {
-                        Logger.d { "App ${app.packageName} no longer installed (not in system packages), removing from DB" }
+                        Logger.d { "App ${app.packageName} no longer installed, removing from DB" }
                         installedAppsRepository.deleteInstalledApp(app.packageName)
-                    } else if (app.installedVersionName == null) {  // Migrate only if new fields unset
+                    } else if (app.installedVersionName == null) {
                         if (platform.type == PlatformType.ANDROID) {
                             val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
                             if (systemInfo != null) {
-                                installedAppsRepository.updateApp(app.copy(
-                                    installedVersionName = systemInfo.versionName,
-                                    installedVersionCode = systemInfo.versionCode,
-                                    latestVersionName = systemInfo.versionName,
-                                    latestVersionCode = systemInfo.versionCode
-                                ))
-                                Logger.d { "Migrated ${app.packageName}: set versionName/code from system" }
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        installedVersionName = systemInfo.versionName,
+                                        installedVersionCode = systemInfo.versionCode,
+                                        latestVersionName = systemInfo.versionName,
+                                        latestVersionCode = systemInfo.versionCode
+                                    )
+                                )
+                                Logger.d { "Migrated ${app.packageName}: set version from system" }
                             } else {
-                                installedAppsRepository.updateApp(app.copy(
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        installedVersionName = app.installedVersion,
+                                        installedVersionCode = 0L,
+                                        latestVersionName = app.installedVersion,
+                                        latestVersionCode = 0L
+                                    )
+                                )
+                                Logger.d { "Migrated ${app.packageName}: fallback to tag" }
+                            }
+                        } else {
+                            installedAppsRepository.updateApp(
+                                app.copy(
                                     installedVersionName = app.installedVersion,
                                     installedVersionCode = 0L,
                                     latestVersionName = app.installedVersion,
                                     latestVersionCode = 0L
-                                ))
-                                Logger.d { "Migrated ${app.packageName}: fallback to tag as versionName" }
-                            }
-                        } else {
-                            installedAppsRepository.updateApp(app.copy(
-                                installedVersionName = app.installedVersion,
-                                installedVersionCode = 0L,
-                                latestVersionName = app.installedVersion,
-                                latestVersionCode = 0L
-                            ))
-                            Logger.d { "Migrated ${app.packageName} (desktop): fallback to tag as versionName" }
+                                )
+                            )
+                            Logger.d { "Migrated ${app.packageName} (desktop): fallback to tag" }
                         }
                     }
                 }
 
-                Logger.d { "Robust system existence sync and data migration completed" }
+                Logger.d { "Sync and migration completed" }
             } catch (e: Exception) {
-                Logger.e { "Failed to sync existence or migrate data: ${e.message}" }
+                Logger.e { "Failed to sync/migrate: ${e.message}" }
             }
 
             installedAppsRepository.checkAllForUpdates()
@@ -138,6 +161,17 @@ class MainViewModel(
         when (action) {
             MainAction.DismissRateLimitDialog -> {
                 appStateManager.dismissRateLimitDialog()
+            }
+
+            is MainAction.SwitchPlatform -> {
+                _state.update { it.copy(currentApiPlatform = action.platform) }
+
+                if (action.platform == ApiPlatform.GitLab) {
+                    if (!_state.value.isGitlabLoggedIn) {
+                        appStateManager.dismissRateLimitDialog()
+                        appStateManager.triggerAuthDialog(ApiPlatform.GitLab)
+                    }
+                }
             }
         }
     }

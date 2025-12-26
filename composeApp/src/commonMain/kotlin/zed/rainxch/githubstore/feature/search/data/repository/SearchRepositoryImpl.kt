@@ -25,6 +25,7 @@ import zed.rainxch.githubstore.core.domain.model.GithubRepoSummary
 import zed.rainxch.githubstore.core.data.mappers.toSummary
 import zed.rainxch.githubstore.core.data.model.GithubRepoNetworkModel
 import zed.rainxch.githubstore.core.data.model.GithubRepoSearchResponse
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.feature.home.domain.model.PaginatedRepos
 import zed.rainxch.githubstore.feature.search.data.repository.dto.GithubReleaseNetworkModel
 import zed.rainxch.githubstore.feature.search.data.repository.utils.LruCache
@@ -35,7 +36,8 @@ import zed.rainxch.githubstore.network.safeApiCall
 
 class SearchRepositoryImpl(
     private val githubNetworkClient: HttpClient,
-    private val appStateManager: AppStateManager
+    private val appStateManager: AppStateManager,
+    private val apiPlatform: ApiPlatform
 ) : SearchRepository {
     private val releaseCheckCache = LruCache<String, GithubRepoSummary>(maxSize = 500)
     private val cacheMutex = Mutex()
@@ -51,7 +53,8 @@ class SearchRepositoryImpl(
         try {
             val responseResult = githubNetworkClient.safeApiCall<GithubRepoSearchResponse>(
                 rateLimitHandler = appStateManager.rateLimitHandler,
-                autoRetryOnRateLimit = false
+                autoRetryOnRateLimit = false,
+                apiPlatform = apiPlatform
             ) {
                 get("/search/repositories") {
                     parameter("q", searchQuery)
@@ -62,7 +65,10 @@ class SearchRepositoryImpl(
 
             val response = responseResult.getOrElse { error ->
                 if (error is RateLimitException) {
-                    appStateManager.updateRateLimit(error.rateLimitInfo)
+                    appStateManager.updateRateLimit(
+                        rateLimitInfo = error.rateLimitInfo,
+                        apiPlatform = apiPlatform
+                    )
                 }
                 throw error
             }
@@ -295,7 +301,8 @@ class SearchRepositoryImpl(
                 val nextPage = lastFetchedPage + 1
                 val respResult = githubNetworkClient.safeApiCall<GithubRepoSearchResponse>(
                     rateLimitHandler = appStateManager.rateLimitHandler,
-                    autoRetryOnRateLimit = false
+                    autoRetryOnRateLimit = false,
+                    apiPlatform = apiPlatform
                 ) {
                     get("/search/repositories") {
                         parameter("q", searchQuery)
@@ -306,7 +313,10 @@ class SearchRepositoryImpl(
 
                 val resp = respResult.getOrElse { error ->
                     if (error is RateLimitException) {
-                        appStateManager.updateRateLimit(error.rateLimitInfo)
+                        appStateManager.updateRateLimit(
+                            rateLimitInfo = error.rateLimitInfo,
+                            apiPlatform = apiPlatform
+                        )
                     }
                     throw error
                 }
@@ -352,8 +362,12 @@ class SearchRepositoryImpl(
                         name.endsWith(".msi") || name.endsWith(".exe") || name.contains(".exe") ||
                         name.endsWith(".dmg") || name.endsWith(".pkg") ||
                         name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(".rpm")
+
                 SearchPlatformType.Android -> name.endsWith(".apk")
-                SearchPlatformType.Windows -> name.endsWith(".exe") || name.endsWith(".msi") || name.contains(".exe")
+                SearchPlatformType.Windows -> name.endsWith(".exe") || name.endsWith(".msi") || name.contains(
+                    ".exe"
+                )
+
                 SearchPlatformType.Macos -> name.endsWith(".dmg") || name.endsWith(".pkg")
                 SearchPlatformType.Linux -> name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(
                     ".rpm"
@@ -364,7 +378,8 @@ class SearchRepositoryImpl(
         return try {
             val releasesResult = githubNetworkClient.safeApiCall<List<GithubReleaseNetworkModel>>(
                 rateLimitHandler = appStateManager.rateLimitHandler,
-                autoRetryOnRateLimit = false
+                autoRetryOnRateLimit = false,
+                apiPlatform = apiPlatform
             ) {
                 get("/repos/${repo.owner.login}/${repo.name}/releases") {
                     header("Accept", "application/vnd.github.v3+json")
@@ -374,7 +389,10 @@ class SearchRepositoryImpl(
 
             releasesResult.onFailure { error ->
                 if (error is RateLimitException) {
-                    appStateManager.updateRateLimit(error.rateLimitInfo)
+                    appStateManager.updateRateLimit(
+                        rateLimitInfo = error.rateLimitInfo,
+                        apiPlatform = apiPlatform
+                    )
                 }
             }
 

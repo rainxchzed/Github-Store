@@ -1,4 +1,4 @@
-package zed.rainxch.githubstore.feature.details.presentation.utils
+package zed.rainxch.githubstore.core.presentation.utils
 
 import android.os.Build
 

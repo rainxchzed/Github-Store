@@ -8,49 +8,83 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import zed.rainxch.githubstore.core.data.data_source.TokenDataSource
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.domain.model.DeviceStart
 import zed.rainxch.githubstore.core.domain.model.DeviceTokenSuccess
+import zed.rainxch.githubstore.feature.auth.data.getGitLabClientId
 import zed.rainxch.githubstore.feature.auth.data.network.GitHubAuthApi
 import zed.rainxch.githubstore.feature.auth.data.getGithubClientId
+import zed.rainxch.githubstore.feature.auth.data.network.GitLabAuthApi
 import zed.rainxch.githubstore.feature.auth.domain.repository.AuthenticationRepository
 
 class AuthenticationRepositoryImpl(
     private val tokenDataSource: TokenDataSource,
+    private val apiPlatform: ApiPlatform,
+    private val gitlabUrl: String = "https://gitlab.com"
 ) : AuthenticationRepository {
 
     override val accessTokenFlow: Flow<String?>
-        get() = tokenDataSource.tokenFlow.map { it?.accessToken }
+        get() = tokenDataSource.tokenFlow(apiPlatform).map { it?.accessToken }
 
     override val isAuthenticatedFlow: Flow<Boolean>
-        get() = tokenDataSource.tokenFlow.map { it != null }
+        get() = tokenDataSource.tokenFlow(apiPlatform).map { it != null }
 
     override suspend fun isAuthenticated(): Boolean =
         tokenDataSource.current() != null
 
     override suspend fun startDeviceFlow(): DeviceStart =
         withContext(Dispatchers.IO) {
-            val clientId = getGithubClientId()
-            require(clientId.isNotBlank()) {
-                "Missing GitHub CLIENT_ID. Add GITHUB_CLIENT_ID to local.properties."
-            }
+            when (apiPlatform) {
+                ApiPlatform.Github -> {
+                    val clientId = getGithubClientId()
+                    require(clientId.isNotBlank()) {
+                        "Missing GitHub CLIENT_ID. Add GITHUB_CLIENT_ID to local.properties."
+                    }
 
-            try {
-                val result = GitHubAuthApi.startDeviceFlow(clientId)
-                Logger.d { "✅ Device flow started. User code: ${result.userCode}" }
-                result
-            } catch (e: Exception) {
-                Logger.d { "❌ Failed to start device flow: ${e.message}" }
-                throw Exception(
-                    "Failed to start GitHub authentication. " +
-                            "Please check your internet connection and try again.",
-                    e
-                )
+                    try {
+                        val result = GitHubAuthApi.startDeviceFlow(clientId)
+                        Logger.d { "✅ GitHub device flow started. User code: ${result.userCode}" }
+                        result
+                    } catch (e: Exception) {
+                        Logger.d { "❌ Failed to start GitHub device flow: ${e.message}" }
+                        throw Exception(
+                            "Failed to start GitHub authentication. " +
+                                    "Please check your internet connection and try again.",
+                            e
+                        )
+                    }
+                }
+
+                ApiPlatform.GitLab -> {
+                    val clientId = getGitLabClientId()
+                    require(clientId.isNotBlank()) {
+                        "Missing GitLab Application ID. Add GITLAB_CLIENT_ID to local.properties."
+                    }
+
+                    try {
+                        val scopes = "api"
+                        val result = GitLabAuthApi.startDeviceFlow(clientId, gitlabUrl, scopes)
+                        Logger.d { "✅ GitLab device flow started. User code: ${result.userCode}" }
+                        result
+                    } catch (e: Exception) {
+                        Logger.d { "❌ Failed to start GitLab device flow: ${e.message}" }
+                        throw Exception(
+                            "Failed to start GitLab authentication. " +
+                                    "Please check your internet connection and try again.",
+                            e
+                        )
+                    }
+                }
             }
         }
 
     override suspend fun awaitDeviceToken(start: DeviceStart): DeviceTokenSuccess =
         withContext(Dispatchers.IO) {
-            val clientId = getGithubClientId()
+            val clientId = when (apiPlatform) {
+                ApiPlatform.Github -> getGithubClientId()
+                ApiPlatform.GitLab -> getGitLabClientId()
+            }
+
             val timeoutMs = start.expiresInSec * 1000L
             var remainingMs = timeoutMs
 
@@ -64,17 +98,20 @@ class AuthenticationRepositoryImpl(
             val maxConsecutiveErrors = 5
             val maxSlowDownBeforeGiveUp = 8
 
-            Logger.d { "⏱️ Starting token polling. Expires in: ${start.expiresInSec}s, Interval: ${start.intervalSec}s (jitter: ${initialJitter}ms)" }
+            Logger.d { "⏱️ Starting token polling for ${apiPlatform.name}. Expires in: ${start.expiresInSec}s, Interval: ${start.intervalSec}s (jitter: ${initialJitter}ms)" }
 
             while (remainingMs > 0) {
                 try {
-                    val res = GitHubAuthApi.pollDeviceToken(clientId, start.deviceCode)
+                    val res = when (apiPlatform) {
+                        ApiPlatform.Github -> GitHubAuthApi.pollDeviceToken(clientId, start.deviceCode)
+                        ApiPlatform.GitLab -> GitLabAuthApi.pollDeviceToken(clientId, start.deviceCode, gitlabUrl)
+                    }
                     val success = res.getOrNull()
 
                     if (success != null) {
-                        Logger.d { "✅ Token received successfully!" }
+                        Logger.d { "✅ Token received successfully from ${apiPlatform.name}!" }
                         withRetry(maxAttempts = 3) {
-                            tokenDataSource.save(success)
+                            tokenDataSource.save(apiPlatform, success)
                         }
                         return@withContext success
                     }
@@ -106,7 +143,7 @@ class AuthenticationRepositoryImpl(
 
                             if (slowDownCount >= maxSlowDownBeforeGiveUp) {
                                 throw Exception(
-                                    "GitHub authentication is experiencing high traffic. " +
+                                    "${apiPlatform.name} authentication is experiencing high traffic. " +
                                             "Please wait 1-2 minutes and try again."
                                 )
                             }

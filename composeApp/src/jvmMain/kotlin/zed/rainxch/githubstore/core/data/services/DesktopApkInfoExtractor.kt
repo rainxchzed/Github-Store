@@ -1,6 +1,5 @@
-package zed.rainxch.githubstore.core.data
+package zed.rainxch.githubstore.core.data.services
 
-import zed.rainxch.githubstore.core.data.services.ApkInfoExtractor
 import zed.rainxch.githubstore.core.domain.model.ApkPackageInfo
 
 class DesktopApkInfoExtractor : ApkInfoExtractor {

@@ -1,4 +1,4 @@
-package zed.rainxch.githubstore.feature.details.data
+package zed.rainxch.githubstore.core.data.services
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -10,8 +10,6 @@ import androidx.core.content.FileProvider
 import java.io.File
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
-import zed.rainxch.githubstore.core.data.services.ApkInfoExtractor
-import zed.rainxch.githubstore.core.data.services.Installer
 import zed.rainxch.githubstore.core.domain.model.Architecture
 import zed.rainxch.githubstore.core.domain.model.GithubAsset
 

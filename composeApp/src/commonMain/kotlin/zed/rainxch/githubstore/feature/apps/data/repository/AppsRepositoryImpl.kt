@@ -9,10 +9,10 @@ import zed.rainxch.githubstore.feature.apps.domain.repository.AppsRepository
 
 class AppsRepositoryImpl(
     private val appLauncher: AppLauncher,
-    private val appsRepository: InstalledAppsRepository
+    private val installedAppsRepository: InstalledAppsRepository
 ) : AppsRepository {
     override suspend fun getApps(): Flow<List<InstalledApp>> {
-        return appsRepository.getAllInstalledApps()
+        return installedAppsRepository.getAllInstalledApps()
     }
 
     override suspend fun openApp(

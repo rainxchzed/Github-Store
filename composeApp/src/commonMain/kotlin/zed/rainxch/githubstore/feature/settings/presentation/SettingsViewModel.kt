@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.domain.repository.ThemesRepository
 import zed.rainxch.githubstore.core.presentation.utils.BrowserHelper
 import zed.rainxch.githubstore.feature.settings.domain.repository.SettingsRepository
@@ -43,7 +44,7 @@ class SettingsViewModel(
 
     private fun collectIsUserLoggedIn() {
         viewModelScope.launch {
-            settingsRepository.isUserLoggedIn
+            settingsRepository.isGithubUserLoggedIn
                 .collect { isLoggedIn ->
                     _state.update { it.copy(isUserLoggedIn = isLoggedIn) }
                 }
@@ -99,7 +100,7 @@ class SettingsViewModel(
             SettingsAction.OnLogoutConfirmClick -> {
                 viewModelScope.launch {
                     runCatching {
-                        settingsRepository.logout()
+                        settingsRepository.logout(ApiPlatform.Github)
                     }.onSuccess {
                         _state.update { it.copy(isLogoutDialogVisible = false) }
                         _events.send(SettingsEvent.OnLogoutSuccessful)

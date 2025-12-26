@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.githubstore.network.RateLimitInfo
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun RateLimitDialog(
     rateLimitInfo: RateLimitInfo?,
@@ -43,7 +46,19 @@ fun RateLimitDialog(
         },
         title = {
             Text(
-                text = "Rate Limit Exceeded",
+                text = when {
+                    rateLimitInfo?.reset == Instant.DISTANT_FUTURE -> {
+                        if (isAuthenticated) {
+                            "Authentication failed. Please sign in again."
+                        } else {
+                            "Sign in to access GitLab features."
+                        }
+                    }
+
+                    !isAuthenticated -> "Sign in to access GitLab features."
+                    rateLimitInfo?.isExhausted == true -> "Rate limit exceeded. Wait until ${rateLimitInfo.reset} or sign in for higher limits."
+                    else -> "Rate limit exceeded."
+                },
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface
@@ -54,23 +69,32 @@ fun RateLimitDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = if (isAuthenticated) {
-                        "You've used all ${rateLimitInfo?.limit} API requests."
-                    } else {
-                        "You've used all ${rateLimitInfo?.limit} free API requests."
+                    text = when {
+                        rateLimitInfo?.reset == Instant.DISTANT_FUTURE -> {
+                            if (isAuthenticated) {
+                                "Your session may have expired or the token is invalid."
+                            } else {
+                                "You've used all ${rateLimitInfo?.limit} free API requests."
+                            }
+                        }
+
+                        isAuthenticated -> "You've used all ${rateLimitInfo?.limit} API requests."
+                        else -> "You've used all ${rateLimitInfo?.limit} free API requests."
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline
                 )
 
-                Text(
-                    text = "Resets in $timeUntilReset minutes",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                if (rateLimitInfo?.reset != Instant.DISTANT_FUTURE) {
+                    Text(
+                        text = "Resets in $timeUntilReset minutes",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
 
-                if (!isAuthenticated) {
+                if (!isAuthenticated || rateLimitInfo?.reset == Instant.DISTANT_FUTURE) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "💡 Sign in to get 5,000 requests per hour instead of 60!",
@@ -81,22 +105,12 @@ fun RateLimitDialog(
             }
         },
         confirmButton = {
-            if (!isAuthenticated) {
-                Button(onClick = onSignIn) {
-                    Text(
-                        text = "Sign In",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            } else {
-                Button(onClick = onDismiss) {
-                    Text(
-                        text = "OK",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+            Button(onClick = onSignIn) {
+                Text(
+                    text = if (isAuthenticated && rateLimitInfo?.reset == Instant.DISTANT_FUTURE) "Sign In Again" else "Sign In",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         },
         dismissButton = {

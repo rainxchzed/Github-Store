@@ -7,32 +7,39 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import zed.rainxch.githubstore.BuildConfig
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.domain.model.DeviceTokenSuccess
 
 class AndroidTokenStore(
     private val dataStore: DataStore<Preferences>,
 ) : TokenStore {
-    private val TOKEN_KEY = stringPreferencesKey("token")
     private val json = Json { ignoreUnknownKeys = true }
 
-    override suspend fun save(token: DeviceTokenSuccess) {
+    private fun tokenKey(apiPlatform: ApiPlatform) =
+        stringPreferencesKey("token_${apiPlatform.name.lowercase()}")
+
+    override suspend fun save(apiPlatform: ApiPlatform, token: DeviceTokenSuccess) {
         val jsonString = json.encodeToString(DeviceTokenSuccess.serializer(), token)
         dataStore.edit { preferences ->
-            preferences[TOKEN_KEY] = jsonString
+            preferences[tokenKey(apiPlatform)] = jsonString
         }
     }
 
-    override suspend fun load(): DeviceTokenSuccess? {
+    override suspend fun load(apiPlatform: ApiPlatform): DeviceTokenSuccess? {
         return runCatching {
             val preferences = dataStore.data.first()
-            val raw = preferences[TOKEN_KEY] ?: return null
+            val raw = preferences[tokenKey(apiPlatform)]
+                ?: return null  // ✅ FIXED: use tokenKey(apiPlatform)
             json.decodeFromString(DeviceTokenSuccess.serializer(), raw)
         }.getOrNull()
     }
 
-    override suspend fun clear() {
-        dataStore.edit { it.remove(TOKEN_KEY) }
+    override suspend fun clear(apiPlatform: ApiPlatform) {
+        dataStore.edit { it.remove(tokenKey(apiPlatform)) }  // ✅ FIXED: use tokenKey(apiPlatform)
     }
 }
 
 actual fun getGithubClientId(): String = BuildConfig.GITHUB_CLIENT_ID
+actual fun getGitLabClientId(): String = BuildConfig.GITLAB_CLIENT_ID
+
+actual fun getGitLabClientSecret(): String = BuildConfig.GITLAB_CLIENT_SECRET

@@ -36,7 +36,7 @@ import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
 
 class DetailsViewModel(
-    private val repositoryId: Int,
+    private val repositoryId: Long,
     private val detailsRepository: DetailsRepository,
     private val downloader: Downloader,
     private val installer: Installer,

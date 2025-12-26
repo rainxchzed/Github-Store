@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -39,9 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.app_icon
 import githubstore.composeapp.generated.resources.ic_github
+import githubstore.composeapp.generated.resources.ic_gitlab
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.domain.model.DeviceStart
 import zed.rainxch.githubstore.core.presentation.components.GithubStoreButton
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
@@ -50,7 +50,7 @@ import zed.rainxch.githubstore.core.presentation.utils.ObserveAsEvents
 @Composable
 fun AuthenticationRoot(
     onNavigateToHome: () -> Unit,
-    viewModel: AuthenticationViewModel = koinViewModel()
+    viewModel: AuthenticationViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -99,6 +99,7 @@ fun AuthenticationScreen(
             when (val authState = state.loginState) {
                 is AuthLoginState.LoggedOut -> {
                     StateLoggedOut(
+                        state = state,
                         onAction = onAction
                     )
                 }
@@ -163,7 +164,9 @@ fun StateDevicePrompt(
         Spacer(Modifier.weight(1f))
 
         Text(
-            text = "Enter this code on GitHub:",
+            text = if (state.currentApiPlatform == ApiPlatform.Github) {
+                "Enter this code on GitHub:"
+            } else "Enter this code on GitLab:",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
         )
@@ -213,13 +216,19 @@ fun StateDevicePrompt(
         Spacer(Modifier.height(16.dp))
 
         GithubStoreButton(
-            text = "Open GitHub",
+            text = if (state.currentApiPlatform == ApiPlatform.Github) {
+                "Open GitHub"
+            } else "Open GitLab",
             onClick = {
-                onAction(AuthenticationAction.OpenGitHub(authState.start))
+                onAction(AuthenticationAction.OpenPlatform(authState.start))
             },
             icon = {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_github),
+                    painter = painterResource(
+                        resource = if (state.currentApiPlatform == ApiPlatform.Github) {
+                            Res.drawable.ic_github
+                        } else Res.drawable.ic_gitlab
+                    ),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
@@ -233,6 +242,7 @@ fun StateDevicePrompt(
 
 @Composable
 fun StateLoggedOut(
+    state: AuthenticationState,
     onAction: (AuthenticationAction) -> Unit
 ) {
     Column(
@@ -284,13 +294,19 @@ fun StateLoggedOut(
         Spacer(Modifier.weight(1f))
 
         GithubStoreButton(
-            text = "Sign in with Github",
+            text = if (state.currentApiPlatform == ApiPlatform.Github) {
+                "Sign in with Github"
+            } else "Sign in with GitLab",
             onClick = {
                 onAction(AuthenticationAction.StartLogin)
             },
             icon = {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_github),
+                    painter = painterResource(
+                        if (state.currentApiPlatform == ApiPlatform.Github) {
+                            Res.drawable.ic_github
+                        } else Res.drawable.ic_gitlab
+                    ),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )

@@ -91,7 +91,8 @@ class InstalledAppsRepositoryImpl(
 
                     val tempPath = downloader.getDownloadedFilePath(tempAssetName)
                     if (tempPath != null) {
-                        val latestInfo = installer.getApkInfoExtractor().extractPackageInfo(tempPath)
+                        val latestInfo =
+                            installer.getApkInfoExtractor().extractPackageInfo(tempPath)
                         File(tempPath).delete()
 
                         if (latestInfo != null) {

@@ -1,10 +1,8 @@
-package zed.rainxch.githubstore.feature.details.data
+package zed.rainxch.githubstore.core.data.services
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.githubstore.core.data.services.ApkInfoExtractor
-import zed.rainxch.githubstore.core.data.services.Installer
 import zed.rainxch.githubstore.core.domain.model.Architecture
 import zed.rainxch.githubstore.core.domain.model.GithubAsset
 import zed.rainxch.githubstore.core.domain.model.PlatformType
@@ -15,6 +13,7 @@ import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.io.File
 import java.io.IOException
+import kotlin.collections.iterator
 
 class DesktopInstaller(
     private val platform: PlatformType,

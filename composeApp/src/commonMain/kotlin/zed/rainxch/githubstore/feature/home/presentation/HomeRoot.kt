@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Search
@@ -50,12 +51,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.app_icon
+import io.github.fletchmckee.liquid.liquefiable
+import io.github.fletchmckee.liquid.liquid
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.githubstore.app.navigation.locals.LocalBottomNavLiquidState
 import zed.rainxch.githubstore.core.presentation.components.GithubStoreButton
 import zed.rainxch.githubstore.core.presentation.components.RepositoryCard
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.githubstore.core.presentation.utils.isLiquidTopbarEnabled
 import zed.rainxch.githubstore.feature.home.presentation.components.HomeFilterChips
 import zed.rainxch.githubstore.feature.home.presentation.model.HomeCategory
 
@@ -102,6 +107,7 @@ fun HomeScreen(
     onAction: (HomeAction) -> Unit,
 ) {
     val listState = rememberLazyStaggeredGridState()
+    val liquidState = LocalBottomNavLiquidState.current
 
     val shouldLoadMore by remember {
         derivedStateOf {
@@ -157,6 +163,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(12.dp)
             )
         },
+        modifier = Modifier.liquefiable(liquidState),
         containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
@@ -253,7 +260,9 @@ fun HomeScreen(
                                 onClick = {
                                     onAction(HomeAction.OnRepositoryClick(homeRepo.repo))
                                 },
-                                modifier = Modifier.animateItem()
+                                modifier = Modifier
+                                    .animateItem()
+                                    .liquefiable(liquidState)
                             )
                         }
 

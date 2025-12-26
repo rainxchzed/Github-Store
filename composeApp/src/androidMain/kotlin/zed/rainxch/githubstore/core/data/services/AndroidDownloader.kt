@@ -1,4 +1,4 @@
-package zed.rainxch.githubstore.feature.details.data
+package zed.rainxch.githubstore.core.data.services
 
 import android.app.DownloadManager
 import android.content.Context
@@ -14,8 +14,6 @@ import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOn
-import zed.rainxch.githubstore.core.data.services.Downloader
-import zed.rainxch.githubstore.core.data.services.FileLocationsProvider
 import zed.rainxch.githubstore.feature.details.domain.model.DownloadProgress
 import java.util.concurrent.ConcurrentHashMap
 import androidx.core.net.toUri

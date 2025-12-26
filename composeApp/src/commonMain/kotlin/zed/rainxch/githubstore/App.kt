@@ -17,7 +17,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.app.app_state.components.RateLimitDialog
 import zed.rainxch.githubstore.app.navigation.AppNavigation
+import zed.rainxch.githubstore.app.navigation.BottomNavItem
+import zed.rainxch.githubstore.app.navigation.BottomNavUtils
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
+import zed.rainxch.githubstore.core.domain.model.ApiPlatform
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -32,7 +35,25 @@ fun App(
     val navBackStack = rememberSerializable(
         serializer = SnapshotStateListSerializer<GithubStoreGraph>()
     ) {
-        mutableStateListOf(GithubStoreGraph.HomeScreen)
+        mutableStateListOf(GithubStoreGraph.HomeGithubScreen)
+    }
+
+    LaunchedEffect(navBackStack.last()) {
+        if (navBackStack.last() in BottomNavUtils.allowedScreens()) {
+            when (navBackStack.last()) {
+                GithubStoreGraph.HomeGitLabScreen -> {
+                    viewModel.onAction(MainAction.SwitchPlatform(ApiPlatform.GitLab))
+                }
+
+                GithubStoreGraph.HomeGithubScreen -> {
+                    viewModel.onAction(MainAction.SwitchPlatform(ApiPlatform.Github))
+                }
+
+                else -> {
+
+                }
+            }
+        }
     }
 
     GithubStoreTheme(
@@ -56,24 +77,40 @@ fun App(
             return@GithubStoreTheme
         }
 
+        if (state.showRateLimitDialog && state.rateLimitDialogPlatform != null) {
+            val rateLimitInfo = when (state.rateLimitDialogPlatform) {
+                ApiPlatform.Github -> state.githubRateLimitInfo
+                ApiPlatform.GitLab -> state.gitlabRateLimitInfo
+                else -> null
+            }
 
-        if (state.showRateLimitDialog && state.rateLimitInfo != null) {
-            RateLimitDialog(
-                rateLimitInfo = state.rateLimitInfo,
-                isAuthenticated = state.isLoggedIn,
-                onDismiss = {
-                    viewModel.onAction(MainAction.DismissRateLimitDialog)
-                },
-                onSignIn = {
-                    viewModel.onAction(MainAction.DismissRateLimitDialog)
+            if (rateLimitInfo != null) {
+                RateLimitDialog(
+                    rateLimitInfo = rateLimitInfo,
+                    isAuthenticated = when (state.rateLimitDialogPlatform) {
+                        ApiPlatform.Github -> state.isGithubLoggedIn
+                        ApiPlatform.GitLab -> state.isGitlabLoggedIn
+                        null -> false
+                    },
+                    onDismiss = {
+                        viewModel.onAction(MainAction.DismissRateLimitDialog)
+                    },
+                    onSignIn = {
+                        viewModel.onAction(MainAction.DismissRateLimitDialog)
 
-                    navBackStack.clear()
-                    navBackStack.add(GithubStoreGraph.AuthenticationScreen)
-                }
-            )
+                        navBackStack.clear()
+                        navBackStack.add(
+                            GithubStoreGraph.AuthenticationScreen(
+                                apiPlatform = state.rateLimitDialogPlatform!!
+                            )
+                        )
+                    }
+                )
+            }
         }
 
         AppNavigation(
+            currentApiPlatform = state.currentApiPlatform,
             navBackStack = navBackStack
         )
     }

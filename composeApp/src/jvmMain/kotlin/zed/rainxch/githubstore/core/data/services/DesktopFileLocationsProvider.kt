@@ -1,7 +1,6 @@
-package zed.rainxch.githubstore.feature.details.data
+package zed.rainxch.githubstore.core.data.services
 
 import co.touchlab.kermit.Logger
-import zed.rainxch.githubstore.core.data.services.FileLocationsProvider
 import zed.rainxch.githubstore.core.domain.model.PlatformType
 import java.io.File
 import java.nio.file.Files

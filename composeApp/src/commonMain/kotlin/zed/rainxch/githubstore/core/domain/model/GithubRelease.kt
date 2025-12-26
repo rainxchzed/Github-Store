@@ -21,5 +21,3 @@ data class GithubAsset(
     val downloadUrl: String,
     val uploader: GithubUser
 )
-
-
