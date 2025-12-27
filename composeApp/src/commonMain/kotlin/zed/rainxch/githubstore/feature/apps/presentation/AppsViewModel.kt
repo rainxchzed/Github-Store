@@ -3,6 +3,13 @@ package zed.rainxch.githubstore.feature.apps.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.all_apps_updated_successfully
+import githubstore.composeapp.generated.resources.cannot_launch
+import githubstore.composeapp.generated.resources.failed_to_open
+import githubstore.composeapp.generated.resources.failed_to_update
+import githubstore.composeapp.generated.resources.no_updates_available
+import githubstore.composeapp.generated.resources.update_all_failed
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -15,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import zed.rainxch.githubstore.core.data.services.PackageMonitor
 import zed.rainxch.githubstore.core.data.local.db.entities.InstalledApp
 import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
@@ -59,7 +67,7 @@ class AppsViewModel(
 
     private fun loadApps() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessage = null) }
+            _state.update { it.copy(isLoading = true) }
 
             try {
                 appsRepository.getApps().collect { apps ->
@@ -90,7 +98,6 @@ class AppsViewModel(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.message ?: "Failed to load apps"
                     )
                 }
             }
@@ -146,14 +153,14 @@ class AppsViewModel(
                     onCantLaunchApp = {
                         viewModelScope.launch {
                             _events.send(
-                                AppsEvent.ShowError("Cannot launch ${app.appName}")
+                                AppsEvent.ShowError(getString(Res.string.cannot_launch, arrayOf(app.appName)))
                             )
                         }
                     }
                 )
             } catch (e: Exception) {
                 Logger.e { "Failed to open app: ${e.message}" }
-                _events.send(AppsEvent.ShowError("Failed to open ${app.appName}"))
+                _events.send(AppsEvent.ShowError(getString(Res.string.failed_to_open, arrayOf(app.appName))))
             }
         }
     }
@@ -211,8 +218,10 @@ class AppsViewModel(
                 if (existingPath != null) {
                     val file = File(existingPath)
                     try {
-                        val apkInfo = installer.getApkInfoExtractor().extractPackageInfo(existingPath)
-                        val normalizedExisting = apkInfo?.versionName?.removePrefix("v")?.removePrefix("V") ?: ""
+                        val apkInfo =
+                            installer.getApkInfoExtractor().extractPackageInfo(existingPath)
+                        val normalizedExisting =
+                            apkInfo?.versionName?.removePrefix("v")?.removePrefix("V") ?: ""
                         val normalizedLatest = latestVersion.removePrefix("v").removePrefix("V")
                         if (normalizedExisting != normalizedLatest) {
                             val deleted = file.delete()
@@ -268,7 +277,7 @@ class AppsViewModel(
                     app.packageName,
                     UpdateState.Error(e.message ?: "Update failed")
                 )
-                _events.send(AppsEvent.ShowError("Failed to update ${app.appName}: ${e.message}"))
+                _events.send(AppsEvent.ShowError(getString(Res.string.failed_to_update, arrayOf(app.appName, e.message?:""))))
             } finally {
                 activeUpdates.remove(app.packageName)
             }
@@ -293,7 +302,7 @@ class AppsViewModel(
                 }
 
                 if (appsToUpdate.isEmpty()) {
-                    _events.send(AppsEvent.ShowError("No updates available"))
+                    _events.send(AppsEvent.ShowError(getString(Res.string.no_updates_available)))
                     return@launch
                 }
 
@@ -324,13 +333,13 @@ class AppsViewModel(
                 }
 
                 Logger.d { "Update all completed successfully" }
-                _events.send(AppsEvent.ShowSuccess("All apps updated successfully"))
+                _events.send(AppsEvent.ShowSuccess(getString(Res.string.all_apps_updated_successfully)))
 
             } catch (e: CancellationException) {
                 Logger.d { "Update all cancelled" }
             } catch (e: Exception) {
                 Logger.e { "Update all failed: ${e.message}" }
-                _events.send(AppsEvent.ShowError("Update all failed: ${e.message}"))
+                _events.send(AppsEvent.ShowError(getString(Res.string.update_all_failed, arrayOf(e.message))))
             } finally {
                 _state.update {
                     it.copy(
@@ -367,7 +376,8 @@ class AppsViewModel(
         viewModelScope.launch {
             _state.value.apps.forEach { appItem ->
                 if (appItem.updateState != UpdateState.Idle &&
-                    appItem.updateState != UpdateState.Success) {
+                    appItem.updateState != UpdateState.Success
+                ) {
 
                     appItem.installedApp.latestAssetName?.let { assetName ->
                         cleanupUpdate(appItem.installedApp.packageName, assetName)
@@ -480,7 +490,8 @@ class AppsViewModel(
         viewModelScope.launch {
             _state.value.apps.forEach { appItem ->
                 if (appItem.updateState != UpdateState.Idle &&
-                    appItem.updateState != UpdateState.Success) {
+                    appItem.updateState != UpdateState.Success
+                ) {
                     appItem.installedApp.latestAssetName?.let { assetName ->
                         downloader.cancelDownload(assetName)
                     }

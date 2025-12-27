@@ -62,7 +62,26 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.cancel
+import githubstore.composeapp.generated.resources.check_for_updates
+import githubstore.composeapp.generated.resources.checking
+import githubstore.composeapp.generated.resources.currently_updating
+import githubstore.composeapp.generated.resources.downloading
+import githubstore.composeapp.generated.resources.error_with_message
+import githubstore.composeapp.generated.resources.installed_apps
+import githubstore.composeapp.generated.resources.installing
+import githubstore.composeapp.generated.resources.navigate_back
+import githubstore.composeapp.generated.resources.no_apps_found
+import githubstore.composeapp.generated.resources.open
+import githubstore.composeapp.generated.resources.percent
+import githubstore.composeapp.generated.resources.search_your_apps
+import githubstore.composeapp.generated.resources.update
+import githubstore.composeapp.generated.resources.update_all
+import githubstore.composeapp.generated.resources.updated_successfully
+import githubstore.composeapp.generated.resources.updating_x_of_y
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
@@ -89,11 +108,13 @@ fun AppsRoot(
             is AppsEvent.NavigateToRepo -> {
                 onNavigateToRepo(event.repoId)
             }
+
             is AppsEvent.ShowError -> {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(event.message)
                 }
             }
+
             is AppsEvent.ShowSuccess -> {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(event.message)
@@ -109,6 +130,7 @@ fun AppsRoot(
                 AppsAction.OnNavigateBackClick -> {
                     onNavigateBack()
                 }
+
                 else -> {
                     viewModel.onAction(action)
                 }
@@ -133,12 +155,14 @@ fun AppsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate Back"
+                            contentDescription = stringResource(Res.string.navigate_back)
                         )
                     }
                 },
                 title = {
-                    Text("Installed Apps")
+                    Text(
+                        text = stringResource(Res.string.installed_apps)
+                    )
                 },
                 actions = {
                     IconButton(
@@ -146,7 +170,7 @@ fun AppsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Check for updates"
+                            contentDescription = stringResource(Res.string.check_for_updates)
                         )
                     }
                 }
@@ -167,7 +191,7 @@ fun AppsScreen(
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = null)
                 },
-                placeholder = { Text("Search your apps") },
+                placeholder = { Text(stringResource(Res.string.search_your_apps)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -187,9 +211,16 @@ fun AppsScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     enabled = state.updateAllButtonEnabled
                 ) {
-                    Icon(Icons.Default.Update, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.Default.Update,
+                        contentDescription = null
+                    )
+
                     Spacer(Modifier.width(8.dp))
-                    Text("Update All")
+
+                    Text(
+                        text = stringResource(Res.string.update_all)
+                    )
                 }
             }
 
@@ -205,8 +236,14 @@ fun AppsScreen(
                     state.apps
                 } else {
                     state.apps.filter { appItem ->
-                        appItem.installedApp.appName.contains(state.searchQuery, ignoreCase = true) ||
-                                appItem.installedApp.repoOwner.contains(state.searchQuery, ignoreCase = true)
+                        appItem.installedApp.appName.contains(
+                            state.searchQuery,
+                            ignoreCase = true
+                        ) ||
+                                appItem.installedApp.repoOwner.contains(
+                                    state.searchQuery,
+                                    ignoreCase = true
+                                )
                     }
                 }
             }
@@ -226,7 +263,7 @@ fun AppsScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No apps found")
+                        Text(stringResource(Res.string.no_apps_found))
                     }
                 }
 
@@ -274,18 +311,28 @@ fun UpdateAllProgressCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Updating ${progress.current} of ${progress.total}",
+                    text = stringResource(
+                        Res.string.updating_x_of_y,
+                        progress.current,
+                        progress.total
+                    ),
                     style = MaterialTheme.typography.titleMedium
                 )
                 IconButton(onClick = onCancel) {
-                    Icon(Icons.Default.Close, contentDescription = "Cancel")
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(Res.string.cancel)
+                    )
                 }
             }
 
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Currently: ${progress.currentAppName}",
+                text = stringResource(
+                    Res.string.currently_updating,
+                    progress.currentAppName
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -349,7 +396,7 @@ fun AppItemCard(
                         )
                     } else {
                         Text(
-                            text = "v${app.installedVersion}",
+                            text = app.installedVersion,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -377,12 +424,15 @@ fun AppItemCard(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Downloading...",
+                                text = stringResource(Res.string.downloading),
                                 style = MaterialTheme.typography.bodySmall
                             )
                             if (appItem.downloadProgress != null) {
                                 Text(
-                                    text = "${appItem.downloadProgress}%",
+                                    text = stringResource(
+                                        Res.string.percent,
+                                        appItem.downloadProgress
+                                    ),
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
@@ -405,7 +455,7 @@ fun AppItemCard(
                             strokeWidth = 2.dp
                         )
                         Text(
-                            text = "Installing...",
+                            text = stringResource(Res.string.installing),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -421,7 +471,7 @@ fun AppItemCard(
                             strokeWidth = 2.dp
                         )
                         Text(
-                            text = "Checking...",
+                            text = stringResource(Res.string.checking),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -439,7 +489,7 @@ fun AppItemCard(
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
-                            text = "Updated successfully",
+                            text = stringResource(Res.string.updated_successfully),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -448,7 +498,7 @@ fun AppItemCard(
 
                 is UpdateState.Error -> {
                     Text(
-                        text = "Error: ${state.message}",
+                        text = stringResource(Res.string.error_with_message, state.message),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -476,10 +526,12 @@ fun AppItemCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(Modifier.width(4.dp))
-                    Text("Open")
+                    Text(
+                        text = stringResource(Res.string.open)
+                    )
                 }
 
-                when (val state = appItem.updateState) {
+                when (appItem.updateState) {
                     is UpdateState.Downloading, is UpdateState.Installing, is UpdateState.CheckingUpdate -> {
                         Button(
                             onClick = onCancelClick,
@@ -491,11 +543,15 @@ fun AppItemCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Cancel,
-                                contentDescription = null,
+                                contentDescription = stringResource(Res.string.cancel),
                                 modifier = Modifier.size(18.dp)
                             )
+
                             Spacer(Modifier.width(4.dp))
-                            Text("Cancel")
+
+                            Text(
+                                text = stringResource(Res.string.cancel)
+                            )
                         }
                     }
 
@@ -511,7 +567,9 @@ fun AppItemCard(
                                     modifier = Modifier.size(18.dp)
                                 )
                                 Spacer(Modifier.width(4.dp))
-                                Text("Update")
+                                Text(
+                                    text = stringResource(Res.string.update)
+                                )
                             }
                         }
                     }

@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">GitHub Store</string>
+
+    <string name="installed_apps">Установленные приложения</string>
+    <string name="navigate_back">Назад</string>
+    <string name="check_for_updates">Проверить обновления</string>
+
+    <string name="cannot_launch">Не удалось запустить %1$s</string>
+    <string name="failed_to_open">Не удалось открыть %1$s</string>
+    <string name="failed_to_update">Не удалось обновить %1$s: %2$s</string>
+    <string name="update_all_failed">Ошибка обновления всех: %1$s</string>
+    <string name="all_apps_updated_successfully">Все приложения успешно обновлены</string>
+    <string name="no_updates_available">Обновлений нет</string>
+
+    <string name="search_your_apps">Поиск приложений</string>
+    <string name="no_apps_found">Приложения не найдены</string>
+
+    <string name="update_all">Обновить все</string>
+    <string name="update">Обновить</string>
+    <string name="open">Открыть</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="downloading">Загрузка…</string>
+    <string name="installing">Установка…</string>
+    <string name="checking">Проверка…</string>
+    <string name="updated_successfully">Успешно обновлено</string>
+    <string name="error_with_message">Ошибка: %1$s</string>
+
+    <string name="updating_x_of_y">Обновление %1$d из %2$d</string>
+    <string name="currently_updating">Сейчас: %1$s</string>
+
+    <string name="percent">%1$d%%</string>
+
+    <string name="waiting_for_authorization">Ожидание авторизации…</string>
+    <string name="signed_in">Вход выполнен!</string>
+    <string name="redirecting_message">Теперь вы можете использовать приложение. Перенаправление…</string>
+    <string name="try_again">Попробовать снова</string>
+
+    <string name="auth_error_with_message">Ошибка: %1$s</string>
+
+    <string name="enter_code_on_github">Введите этот код на GitHub:</string>
+    <string name="copy_code">Скопировать код</string>
+    <string name="open_github">Открыть GitHub</string>
+
+    <string name="unlock_full_experience">Откройте полный\nдоступ</string>
+
+    <string name="more_requests">Больше запросов</string>
+    <string name="more_requests_description">
+        Войдите, чтобы получить более высокий лимит API и избежать прерываний.
+    </string>
+
+    <string name="sign_in_with_github">Войти через GitHub</string>
+
+    <string name="error_cancelled">Отменено</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+
+    <string name="language_label">Язык:</string>
+
+    <string name="discover_repositories">Поиск репозиториев</string>
+    <string name="search_repositories_hint">Поиск по репозиторию, описанию…</string>
+
+    <string name="filter_by_language">Фильтр по языку</string>
+
+    <string name="results_found">Найдено результатов: %1$d</string>
+
+    <string name="retry">Повторить</string>
+
+    <string name="sort_by">Сортировать по</string>
+    <string name="close">Закрыть</string>
+
+    <string name="sort_most_stars">Больше звёзд</string>
+    <string name="sort_most_forks">Больше форков</string>
+    <string name="sort_best_match">Лучшее совпадение</string>
+
+    <string name="language_all">Все языки</string>
+    <string name="language_kotlin">Kotlin</string>
+    <string name="language_java">Java</string>
+    <string name="language_javascript">JavaScript</string>
+    <string name="language_typescript">TypeScript</string>
+    <string name="language_python">Python</string>
+    <string name="language_swift">Swift</string>
+    <string name="language_rust">Rust</string>
+    <string name="language_go">Go</string>
+    <string name="language_csharp">C#</string>
+    <string name="language_cpp">C++</string>
+    <string name="language_c">C</string>
+    <string name="language_dart">Dart</string>
+    <string name="language_ruby">Ruby</string>
+    <string name="language_php">PHP</string>
+
+    <string name="search_failed">Поиск не удался</string>
+    <string name="no_repositories_found">Репозитории не найдены</string>
+
+</resources>

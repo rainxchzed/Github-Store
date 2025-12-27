@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">GitHub Store</string>
+
+    <string name="installed_apps">Aplicaciones instaladas</string>
+    <string name="navigate_back">Volver</string>
+    <string name="check_for_updates">Buscar actualizaciones</string>
+
+    <string name="cannot_launch">No se puede iniciar %1$s</string>
+    <string name="failed_to_open">No se pudo abrir %1$s</string>
+    <string name="failed_to_update">Error al actualizar %1$s: %2$s</string>
+    <string name="update_all_failed">Error al actualizar todo: %1$s</string>
+    <string name="all_apps_updated_successfully">Todas las aplicaciones se actualizaron correctamente</string>
+    <string name="no_updates_available">No hay actualizaciones disponibles</string>
+
+    <string name="search_your_apps">Buscar aplicaciones</string>
+    <string name="no_apps_found">No se encontraron aplicaciones</string>
+
+    <string name="update_all">Actualizar todo</string>
+    <string name="update">Actualizar</string>
+    <string name="open">Abrir</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="downloading">Descargando…</string>
+    <string name="installing">Instalando…</string>
+    <string name="checking">Comprobando…</string>
+    <string name="updated_successfully">Actualizado correctamente</string>
+    <string name="error_with_message">Error: %1$s</string>
+
+    <string name="updating_x_of_y">Actualizando %1$d de %2$d</string>
+    <string name="currently_updating">Actual: %1$s</string>
+
+    <string name="percent">%1$d%%</string>
+
+    <string name="waiting_for_authorization">Esperando autorización…</string>
+    <string name="signed_in">¡Sesión iniciada!</string>
+    <string name="redirecting_message">Ya puedes usar la aplicación. Redirigiendo…</string>
+    <string name="try_again">Intentar de nuevo</string>
+
+    <string name="auth_error_with_message">Error: %1$s</string>
+
+    <string name="enter_code_on_github">Introduce este código en GitHub:</string>
+    <string name="copy_code">Copiar código</string>
+    <string name="open_github">Abrir GitHub</string>
+
+    <string name="unlock_full_experience">Desbloquea la experiencia\ncompleta</string>
+
+    <string name="more_requests">Más solicitudes</string>
+    <string name="more_requests_description">
+        Inicia sesión para obtener límites de API más altos y evitar interrupciones.
+    </string>
+
+    <string name="sign_in_with_github">Iniciar sesión con GitHub</string>
+
+    <string name="error_cancelled">Cancelado</string>
+    <string name="error_unknown">Error desconocido</string>
+
+    <string name="language_label">Idioma:</string>
+
+    <string name="discover_repositories">Descubrir repositorios</string>
+    <string name="search_repositories_hint">Buscar repositorio, descripción…</string>
+
+    <string name="filter_by_language">Filtrar por lenguaje</string>
+
+    <string name="results_found">%1$d resultados encontrados</string>
+
+    <string name="retry">Reintentar</string>
+
+    <string name="sort_by">Ordenar por</string>
+    <string name="close">Cerrar</string>
+
+    <string name="sort_most_stars">Más estrellas</string>
+    <string name="sort_most_forks">Más forks</string>
+    <string name="sort_best_match">Mejor coincidencia</string>
+
+    <string name="language_all">Todos los lenguajes</string>
+    <string name="language_kotlin">Kotlin</string>
+    <string name="language_java">Java</string>
+    <string name="language_javascript">JavaScript</string>
+    <string name="language_typescript">TypeScript</string>
+    <string name="language_python">Python</string>
+    <string name="language_swift">Swift</string>
+    <string name="language_rust">Rust</string>
+    <string name="language_go">Go</string>
+    <string name="language_csharp">C#</string>
+    <string name="language_cpp">C++</string>
+    <string name="language_c">C</string>
+    <string name="language_dart">Dart</string>
+    <string name="language_ruby">Ruby</string>
+    <string name="language_php">PHP</string>
+
+    <string name="search_failed">La búsqueda falló</string>
+    <string name="no_repositories_found">No se encontraron repositorios</string>
+
+</resources>

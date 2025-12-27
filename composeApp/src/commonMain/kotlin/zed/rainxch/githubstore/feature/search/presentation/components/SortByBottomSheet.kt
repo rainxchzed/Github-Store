@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.feature.search.domain.model.SortBy
 
 @Composable
@@ -49,7 +50,7 @@ fun SortByBottomSheet(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = option.displayText() + if (isSelected) "  ✓" else "",
+                            text = stringResource(option.label()) + if (isSelected) "  ✓" else "",
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )

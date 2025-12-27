@@ -38,8 +38,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.app_icon
+import githubstore.composeapp.generated.resources.auth_error_with_message
+import githubstore.composeapp.generated.resources.copy_code
+import githubstore.composeapp.generated.resources.enter_code_on_github
 import githubstore.composeapp.generated.resources.ic_github
+import githubstore.composeapp.generated.resources.more_requests
+import githubstore.composeapp.generated.resources.more_requests_description
+import githubstore.composeapp.generated.resources.open_github
+import githubstore.composeapp.generated.resources.redirecting_message
+import githubstore.composeapp.generated.resources.sign_in_with_github
+import githubstore.composeapp.generated.resources.signed_in
+import githubstore.composeapp.generated.resources.try_again
+import githubstore.composeapp.generated.resources.unlock_full_experience
+import githubstore.composeapp.generated.resources.waiting_for_authorization
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.core.domain.model.DeviceStart
@@ -113,22 +126,34 @@ fun AuthenticationScreen(
 
                 is AuthLoginState.Pending -> {
                     CircularWavyProgressIndicator()
+
                     Spacer(Modifier.height(12.dp))
-                    Text("Waiting for authorization...")
+
+                    Text(
+                        text = stringResource(Res.string.waiting_for_authorization)
+                    )
                 }
 
                 is AuthLoginState.LoggedIn -> {
-                    Text("Signed in!", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = stringResource(Res.string.signed_in),
+                        style = MaterialTheme.typography.titleLarge
+                    )
 
                     Spacer(Modifier.height(8.dp))
 
-                    Text("You can now use the app. Redirecting...")
+                    Text(
+                        text = stringResource(Res.string.redirecting_message)
+                    )
                 }
 
                 is AuthLoginState.Error -> {
                     Spacer(Modifier.weight(1f))
                     Text(
-                        text = "Error: ${authState.message}",
+                        text = stringResource(
+                            Res.string.auth_error_with_message,
+                            authState.message
+                        ),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -136,7 +161,7 @@ fun AuthenticationScreen(
                     Spacer(Modifier.height(12.dp))
 
                     GithubStoreButton(
-                        text = "Try again",
+                        text = stringResource(Res.string.try_again),
                         onClick = {
                             onAction(AuthenticationAction.StartLogin)
                         },
@@ -163,7 +188,7 @@ fun StateDevicePrompt(
         Spacer(Modifier.weight(1f))
 
         Text(
-            text = "Enter this code on GitHub:",
+            text = stringResource(Res.string.enter_code_on_github),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
         )
@@ -194,7 +219,7 @@ fun StateDevicePrompt(
                     imageVector = if (state.copied) {
                         Icons.Default.DoneAll
                     } else Icons.Default.ContentCopy,
-                    contentDescription = "Copy the code"
+                    contentDescription = stringResource(Res.string.copy_code)
                 )
             }
         }
@@ -213,7 +238,7 @@ fun StateDevicePrompt(
         Spacer(Modifier.height(16.dp))
 
         GithubStoreButton(
-            text = "Open GitHub",
+            text = stringResource(Res.string.open_github),
             onClick = {
                 onAction(AuthenticationAction.OpenGitHub(authState.start))
             },
@@ -240,7 +265,7 @@ fun StateLoggedOut(
     ) {
 
         Text(
-            text = "Unlock the Full\nExperience",
+            text = stringResource(Res.string.unlock_full_experience),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
@@ -267,14 +292,14 @@ fun StateLoggedOut(
                 Spacer(Modifier.height(4.dp))
 
                 Text(
-                    text = "More Requests",
+                    text = stringResource(Res.string.more_requests),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = "Sign in to get higher API rate limits and avoid interruptions.",
+                    text = stringResource(Res.string.more_requests_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -284,7 +309,7 @@ fun StateLoggedOut(
         Spacer(Modifier.weight(1f))
 
         GithubStoreButton(
-            text = "Sign in with Github",
+            text = stringResource(Res.string.sign_in_with_github),
             onClick = {
                 onAction(AuthenticationAction.StartLogin)
             },

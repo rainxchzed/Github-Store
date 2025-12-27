@@ -2,6 +2,11 @@ package zed.rainxch.githubstore.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.cancel
+import githubstore.composeapp.generated.resources.enter_code_on_github
+import githubstore.composeapp.generated.resources.error_cancelled
+import githubstore.composeapp.generated.resources.error_unknown
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -12,6 +17,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import zed.rainxch.githubstore.core.domain.model.DeviceStart
 import zed.rainxch.githubstore.core.presentation.utils.BrowserHelper
 import zed.rainxch.githubstore.core.presentation.utils.ClipboardHelper
@@ -89,7 +95,7 @@ class AuthenticationViewModel(
                 }
 
                 clipboardHelper.copy(
-                    label = "GitHub Code",
+                    label = getString(Res.string.enter_code_on_github),
                     text = start.userCode
                 )
 
@@ -99,12 +105,12 @@ class AuthenticationViewModel(
 
                 _events.trySend(AuthenticationEvents.OnNavigateToMain)
             } catch (_: CancellationException) {
-                _state.update { it.copy(loginState = AuthLoginState.Error("Cancelled")) }
+                _state.update { it.copy(loginState = AuthLoginState.Error(getString(Res.string.error_cancelled))) }
             } catch (t: Throwable) {
                 _state.update {
                     it.copy(
                         loginState = AuthLoginState.Error(
-                            t.message ?: "Unknown error"
+                            t.message ?: getString(Res.string.error_unknown)
                         )
                     )
                 }

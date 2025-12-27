@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">GitHub Store</string>
+
+    <string name="installed_apps">已安装的应用</string>
+    <string name="navigate_back">返回</string>
+    <string name="check_for_updates">检查更新</string>
+
+    <string name="cannot_launch">无法启动 %1$s</string>
+    <string name="failed_to_open">无法打开 %1$s</string>
+    <string name="failed_to_update">更新 %1$s 失败：%2$s</string>
+    <string name="update_all_failed">全部更新失败：%1$s</string>
+    <string name="all_apps_updated_successfully">所有应用已成功更新</string>
+    <string name="no_updates_available">暂无可用更新</string>
+
+    <string name="search_your_apps">搜索应用</string>
+    <string name="no_apps_found">未找到应用</string>
+
+    <string name="update_all">全部更新</string>
+    <string name="update">更新</string>
+    <string name="open">打开</string>
+    <string name="cancel">取消</string>
+
+    <string name="downloading">正在下载…</string>
+    <string name="installing">正在安装…</string>
+    <string name="checking">正在检查…</string>
+    <string name="updated_successfully">更新成功</string>
+    <string name="error_with_message">错误：%1$s</string>
+
+    <string name="updating_x_of_y">正在更新 %1$d / %2$d</string>
+    <string name="currently_updating">当前：%1$s</string>
+
+    <string name="percent">%1$d%%</string>
+
+    <string name="waiting_for_authorization">正在等待授权…</string>
+    <string name="signed_in">登录成功！</string>
+    <string name="redirecting_message">现在可以使用应用。正在跳转…</string>
+    <string name="try_again">重试</string>
+
+    <string name="auth_error_with_message">错误：%1$s</string>
+
+    <string name="enter_code_on_github">请在 GitHub 上输入此代码：</string>
+    <string name="copy_code">复制代码</string>
+    <string name="open_github">打开 GitHub</string>
+
+    <string name="unlock_full_experience">解锁完整\n体验</string>
+
+    <string name="more_requests">更多请求</string>
+    <string name="more_requests_description">
+        登录以获得更高的 API 限额，避免中断。
+    </string>
+
+    <string name="sign_in_with_github">使用 GitHub 登录</string>
+
+    <string name="error_cancelled">已取消</string>
+    <string name="error_unknown">未知错误</string>
+
+    <string name="language_label">语言：</string>
+
+    <string name="discover_repositories">发现仓库</string>
+    <string name="search_repositories_hint">搜索仓库、描述…</string>
+
+    <string name="filter_by_language">按语言筛选</string>
+
+    <string name="results_found">找到 %1$d 个结果</string>
+
+    <string name="retry">重试</string>
+
+    <string name="sort_by">排序方式</string>
+    <string name="close">关闭</string>
+
+    <string name="sort_most_stars">最多星标</string>
+    <string name="sort_most_forks">最多分叉</string>
+    <string name="sort_best_match">最佳匹配</string>
+
+    <string name="language_all">所有语言</string>
+    <string name="language_kotlin">Kotlin</string>
+    <string name="language_java">Java</string>
+    <string name="language_javascript">JavaScript</string>
+    <string name="language_typescript">TypeScript</string>
+    <string name="language_python">Python</string>
+    <string name="language_swift">Swift</string>
+    <string name="language_rust">Rust</string>
+    <string name="language_go">Go</string>
+    <string name="language_csharp">C#</string>
+    <string name="language_cpp">C++</string>
+    <string name="language_c">C</string>
+    <string name="language_dart">Dart</string>
+    <string name="language_ruby">Ruby</string>
+    <string name="language_php">PHP</string>
+
+    <string name="search_failed">搜索失败</string>
+    <string name="no_repositories_found">未找到仓库</string>
+
+</resources>

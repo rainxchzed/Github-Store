@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">GitHub Store</string>
+
+    <string name="installed_apps">Applications installées</string>
+    <string name="navigate_back">Retour</string>
+    <string name="check_for_updates">Vérifier les mises à jour</string>
+
+    <string name="cannot_launch">Impossible de lancer %1$s</string>
+    <string name="failed_to_open">Impossible d’ouvrir %1$s</string>
+    <string name="failed_to_update">Échec de la mise à jour de %1$s : %2$s</string>
+    <string name="update_all_failed">Échec de la mise à jour globale : %1$s</string>
+    <string name="all_apps_updated_successfully">Toutes les applications ont été mises à jour</string>
+    <string name="no_updates_available">Aucune mise à jour disponible</string>
+
+    <string name="search_your_apps">Rechercher des applications</string>
+    <string name="no_apps_found">Aucune application trouvée</string>
+
+    <string name="update_all">Tout mettre à jour</string>
+    <string name="update">Mettre à jour</string>
+    <string name="open">Ouvrir</string>
+    <string name="cancel">Annuler</string>
+
+    <string name="downloading">Téléchargement…</string>
+    <string name="installing">Installation…</string>
+    <string name="checking">Vérification…</string>
+    <string name="updated_successfully">Mise à jour réussie</string>
+    <string name="error_with_message">Erreur : %1$s</string>
+
+    <string name="updating_x_of_y">Mise à jour %1$d sur %2$d</string>
+    <string name="currently_updating">Actuellement : %1$s</string>
+
+    <string name="percent">%1$d%%</string>
+
+    <string name="waiting_for_authorization">En attente d’autorisation…</string>
+    <string name="signed_in">Connecté !</string>
+    <string name="redirecting_message">Vous pouvez maintenant utiliser l’application. Redirection…</string>
+    <string name="try_again">Réessayer</string>
+
+    <string name="auth_error_with_message">Erreur : %1$s</string>
+
+    <string name="enter_code_on_github">Entrez ce code sur GitHub :</string>
+    <string name="copy_code">Copier le code</string>
+    <string name="open_github">Ouvrir GitHub</string>
+
+    <string name="unlock_full_experience">Débloquez l’expérience\ncomplète</string>
+
+    <string name="more_requests">Plus de requêtes</string>
+    <string name="more_requests_description">
+        Connectez-vous pour obtenir des limites API plus élevées et éviter les interruptions.
+    </string>
+
+    <string name="sign_in_with_github">Se connecter avec GitHub</string>
+
+    <string name="error_cancelled">Annulé</string>
+    <string name="error_unknown">Erreur inconnue</string>
+
+    <string name="language_label">Langue :</string>
+
+    <string name="discover_repositories">Découvrir des dépôts</string>
+    <string name="search_repositories_hint">Rechercher dépôt, description…</string>
+
+    <string name="filter_by_language">Filtrer par langage</string>
+
+    <string name="results_found">%1$d résultats trouvés</string>
+
+    <string name="retry">Réessayer</string>
+
+    <string name="sort_by">Trier par</string>
+    <string name="close">Fermer</string>
+
+    <string name="sort_most_stars">Le plus d’étoiles</string>
+    <string name="sort_most_forks">Le plus de forks</string>
+    <string name="sort_best_match">Meilleure correspondance</string>
+
+    <string name="language_all">Tous les langages</string>
+    <string name="language_kotlin">Kotlin</string>
+    <string name="language_java">Java</string>
+    <string name="language_javascript">JavaScript</string>
+    <string name="language_typescript">TypeScript</string>
+    <string name="language_python">Python</string>
+    <string name="language_swift">Swift</string>
+    <string name="language_rust">Rust</string>
+    <string name="language_go">Go</string>
+    <string name="language_csharp">C#</string>
+    <string name="language_cpp">C++</string>
+    <string name="language_c">C</string>
+    <string name="language_dart">Dart</string>
+    <string name="language_ruby">Ruby</string>
+    <string name="language_php">PHP</string>
+
+    <string name="search_failed">La recherche a échoué</string>
+    <string name="no_repositories_found">Aucun dépôt trouvé</string>
+
+</resources>

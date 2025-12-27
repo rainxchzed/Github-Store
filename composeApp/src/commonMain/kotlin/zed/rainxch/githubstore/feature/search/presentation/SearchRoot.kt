@@ -57,7 +57,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.discover_repositories
+import githubstore.composeapp.generated.resources.language_label
+import githubstore.composeapp.generated.resources.navigate_back
+import githubstore.composeapp.generated.resources.results_found
+import githubstore.composeapp.generated.resources.retry
+import githubstore.composeapp.generated.resources.search_repositories_hint
+import githubstore.composeapp.generated.resources.sort_by
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.core.domain.model.GithubRepoSummary
@@ -140,7 +148,6 @@ fun SearchScreen(
 
     LaunchedEffect(shouldLoadMore) {
         if (shouldLoadMore) {
-            Logger.d { "UI triggering LoadMore" }
             currentOnAction(SearchAction.LoadMore)
         }
     }
@@ -198,7 +205,7 @@ fun SearchScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Language:",
+                    text = stringResource(Res.string.language_label),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -215,7 +222,7 @@ fun SearchScreen(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = state.selectedLanguage.displayName,
+                                text = stringResource(state.selectedLanguage.label()),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium
                             )
@@ -237,7 +244,7 @@ fun SearchScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Clear language filter",
+                            contentDescription = null,
                             modifier = Modifier.size(18.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -249,7 +256,10 @@ fun SearchScreen(
 
             if (state.totalCount != null) {
                 Text(
-                    text = "${state.totalCount} results were found",
+                    text = stringResource(
+                        Res.string.results_found,
+                        state.totalCount
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier
@@ -269,7 +279,7 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
                 ) {
                     Text(
-                        text = "Sort by: ${state.selectedSortBy.displayText()}",
+                        text = stringResource(Res.string.sort_by) + ": ${state.selectedSortBy.displayText()}",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Bold
@@ -308,10 +318,16 @@ fun SearchScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(state.errorMessage)
+                            Text(
+                                text = state.errorMessage
+                            )
+
                             Spacer(Modifier.height(8.dp))
+
                             Button(onClick = { onAction(SearchAction.Retry) }) {
-                                Text("Retry")
+                                Text(
+                                    text = stringResource(Res.string.retry)
+                                )
                             }
                         }
                     }
@@ -329,7 +345,6 @@ fun SearchScreen(
                         items(
                             items = state.repositories,
                             key = { it.repo.id },
-                            contentType = { "repo" }
                         ) { searchRepo ->
                             RepositoryCard(
                                 repository = searchRepo.repo,
@@ -388,13 +403,13 @@ private fun SearchTopbar(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Navigate back",
+                    contentDescription = stringResource(Res.string.navigate_back),
                     modifier = Modifier.size(24.dp)
                 )
             }
 
             Text(
-                text = "Discover Repositories",
+                text = stringResource(Res.string.discover_repositories),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
@@ -423,7 +438,7 @@ private fun SearchTopbar(
             ),
             placeholder = {
                 Text(
-                    text = "Search repo, description...",
+                    text = stringResource(Res.string.search_repositories_hint),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

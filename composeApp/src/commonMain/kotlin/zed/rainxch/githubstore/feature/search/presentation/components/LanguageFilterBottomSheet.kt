@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.filter_by_language
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.feature.search.domain.model.ProgrammingLanguage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +45,7 @@ fun LanguageFilterBottomSheet(
                 .padding(bottom = 32.dp)
         ) {
             Text(
-                text = "Filter by Language",
+                text = stringResource(Res.string.filter_by_language),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -64,7 +67,7 @@ fun LanguageFilterBottomSheet(
                         },
                         label = {
                             Text(
-                                text = language.displayName,
+                                text = stringResource(language.label()),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (selectedLanguage == language) {
                                     FontWeight.SemiBold

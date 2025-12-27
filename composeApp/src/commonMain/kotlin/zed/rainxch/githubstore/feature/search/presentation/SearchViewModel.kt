@@ -3,6 +3,9 @@ package zed.rainxch.githubstore.feature.search.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.no_repositories_found
+import githubstore.composeapp.generated.resources.search_failed
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.githubstore.feature.search.domain.repository.SearchRepository
 
@@ -139,7 +143,7 @@ class SearchViewModel(
                                 hasMorePages = paginatedRepos.hasMore,
                                 totalCount = allRepos.size,
                                 errorMessage = if (allRepos.isEmpty() && !paginatedRepos.hasMore) {
-                                    "No repositories found"
+                                    getString(Res.string.no_repositories_found)
                                 } else null
                             )
                         }
@@ -156,7 +160,7 @@ class SearchViewModel(
                     it.copy(
                         isLoading = false,
                         isLoadingMore = false,
-                        errorMessage = e.message ?: "Search failed"
+                        errorMessage = e.message ?: getString(Res.string.search_failed)
                     )
                 }
             }
