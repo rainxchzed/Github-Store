@@ -86,31 +86,30 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            // Koin core
+            // Koin DI
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            // Shared HTTP and serialization
+
+            // HTTP and serialization
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
 
-            // Navigation
-            implementation(libs.navigation.compose)
-
             // Logging
             implementation(libs.kermit)
 
-            // Coil
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor3)
+            // Image Loading
+            implementation(libs.landscapist.core)
+            implementation(libs.landscapist.image)
 
             // Date-time
             implementation(libs.kotlinx.datetime)
 
             // Navigation 3
+            implementation(libs.navigation.compose)
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.jetbrains.lifecycle.viewmodel.compose)
             implementation(libs.jetbrains.lifecycle.viewmodel)
@@ -130,9 +129,6 @@ kotlin {
             // Room
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
-
-            implementation(libs.landscapist.core)
-            implementation(libs.landscapist.image)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
