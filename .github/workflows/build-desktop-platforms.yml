@@ -5,6 +5,10 @@ on:
     branches:
       - generate-installers
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -19,6 +23,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -48,8 +57,7 @@ jobs:
             done
           }
 
-          retry ./gradlew :composeApp:packageExe --no-daemon
-          retry ./gradlew :composeApp:packageMsi --no-daemon
+          retry ./gradlew :composeApp:packageExe :composeApp:packageMsi --no-daemon --parallel
         shell: bash
 
       - name: Upload Windows installers
@@ -60,9 +68,18 @@ jobs:
             composeApp/build/compose/binaries/main/exe/*.exe
             composeApp/build/compose/binaries/main/msi/*.msi
           retention-days: 30
+          compression-level: 6
 
   build-macos:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - os: macos-13
+            arch: x64
+          - os: macos-14
+            arch: arm64
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -74,6 +91,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -102,18 +124,18 @@ jobs:
             done
           }
 
-          retry ./gradlew :composeApp:packageDmg --no-daemon
-          retry ./gradlew :composeApp:packagePkg --no-daemon
+          retry ./gradlew :composeApp:packageDmg :composeApp:packagePkg --no-daemon --parallel
         shell: bash
 
       - name: Upload macOS installers
         uses: actions/upload-artifact@v4
         with:
-          name: macos-installers
+          name: macos-installers-${{ matrix.arch }}
           path: |
             composeApp/build/compose/binaries/main/dmg/*.dmg
             composeApp/build/compose/binaries/main/pkg/*.pkg
           retention-days: 30
+          compression-level: 6
 
   build-linux:
     runs-on: ubuntu-latest
@@ -128,6 +150,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -156,8 +183,7 @@ jobs:
             done
           }
 
-          retry ./gradlew :composeApp:packageDeb --no-daemon
-          retry ./gradlew :composeApp:packageRpm --no-daemon
+          retry ./gradlew :composeApp:packageDeb :composeApp:packageRpm --no-daemon --parallel
         shell: bash
 
       - name: Upload Linux installers
@@ -168,3 +194,4 @@ jobs:
             composeApp/build/compose/binaries/main/deb/*.deb
             composeApp/build/compose/binaries/main/rpm/*.rpm
           retention-days: 30
+          compression-level: 6
