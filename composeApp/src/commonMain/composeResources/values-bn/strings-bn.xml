@@ -247,4 +247,7 @@
     <string name="theme_dark">অন্ধকার</string>
     <string name="theme_system">সিস্টেম</string>
 
+    <string name="added_to_favourites">রিপোজিটরি প্রিয় তালিকায় যোগ করা হয়েছে</string>
+    <string name="removed_from_favourites">রিপোজিটরি প্রিয় তালিকা থেকে সরানো হয়েছে</string>
+
 </resources>

@@ -194,4 +194,7 @@
     <string name="theme_dark">ダーク</string>
     <string name="theme_system">システム</string>
 
+    <string name="added_to_favourites">リポジトリをお気に入りに追加しました</string>
+    <string name="removed_from_favourites">リポジトリをお気に入りから削除しました</string>
+
 </resources>

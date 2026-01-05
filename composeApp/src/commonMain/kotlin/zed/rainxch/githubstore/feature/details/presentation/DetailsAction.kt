@@ -22,7 +22,7 @@ sealed interface DetailsAction {
     data object OnNavigateBackClick : DetailsAction
 
     // NEW ACTIONS
-    data object ToggleFavorite : DetailsAction
+    data object OnToggleFavorite : DetailsAction
     data object CheckForUpdates : DetailsAction
     data object UpdateApp : DetailsAction
 }

@@ -212,4 +212,7 @@
     <string name="theme_dark">Тёмная</string>
     <string name="theme_system">Системная</string>
 
+    <string name="added_to_favourites">Репозиторий добавлен в избранное</string>
+    <string name="removed_from_favourites">Репозиторий удалён из избранного</string>
+
 </resources>

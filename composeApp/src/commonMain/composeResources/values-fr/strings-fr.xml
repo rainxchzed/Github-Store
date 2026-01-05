@@ -194,4 +194,7 @@
     <string name="theme_dark">Sombre</string>
     <string name="theme_system">Système</string>
 
+    <string name="added_to_favourites">Dépôt ajouté aux favoris</string>
+    <string name="removed_from_favourites">Dépôt supprimé des favoris</string>
+
 </resources>

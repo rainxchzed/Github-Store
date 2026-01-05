@@ -242,4 +242,8 @@
 
     <string name="system_font">Font del sistema</string>
     <string name="system_font_description">Usa il font di sistema per una migliore leggibilità</string>
+
+    <string name="added_to_favourites">Repository aggiunto ai preferiti</string>
+    <string name="removed_from_favourites">Repository rimosso dai preferiti</string>
+
 </resources>

@@ -3,6 +3,7 @@ package zed.rainxch.githubstore.feature.details.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -10,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,11 +34,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.navigate_back
 import githubstore.composeapp.generated.resources.open_repository
+import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.liquid
 import io.github.fletchmckee.liquid.rememberLiquidState
@@ -118,53 +123,7 @@ fun DetailsScreen(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { },
-                    navigationIcon = {
-                        IconButton(
-                            shapes = IconButtonDefaults.shapes(),
-                            onClick = {
-                                onAction(DetailsAction.OnNavigateBackClick)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(Res.string.navigate_back),
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    actions = {
-                        state.repository?.htmlUrl?.let {
-                            IconButton(
-                                shapes = IconButtonDefaults.shapes(),
-                                onClick = {
-                                    onAction(DetailsAction.OpenRepoInBrowser)
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.OpenInBrowser,
-                                    contentDescription = stringResource(Res.string.open_repository),
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
-                    ),
-                    modifier = Modifier.then(
-                        if (isLiquidTopbarEnabled()) {
-                            Modifier.liquid(liquidTopbarState) {
-                                this.shape = CutCornerShape(0.dp)
-                                this.frost = 8.dp
-                                this.curve = .4f
-                                this.refraction = .1f
-                                this.dispersion = .2f
-                            }
-                        } else Modifier
-                    )
-                )
+                DetailsTopbar(onAction, state, liquidTopbarState)
             },
             containerColor = MaterialTheme.colorScheme.background,
             modifier = Modifier.liquefiable(liquidTopbarState),
@@ -231,6 +190,89 @@ fun DetailsScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun DetailsTopbar(
+    onAction: (DetailsAction) -> Unit,
+    state: DetailsState,
+    liquidTopbarState: LiquidState
+) {
+    TopAppBar(
+        title = { },
+        navigationIcon = {
+            IconButton(
+                shapes = IconButtonDefaults.shapes(),
+                onClick = {
+                    onAction(DetailsAction.OnNavigateBackClick)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(Res.string.navigate_back),
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        },
+        actions = {
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (state.repository != null) {
+                    IconButton(
+                        onClick = {
+                            onAction(DetailsAction.OnToggleFavorite)
+                        },
+                        shapes = IconButtonDefaults.shapes(),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Icon(
+                            imageVector = if(state.isFavorite) {
+                                Icons.Default.Favorite
+                            } else Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                        )
+                    }
+                }
+
+                state.repository?.htmlUrl?.let {
+                    IconButton(
+                        shapes = IconButtonDefaults.shapes(),
+                        onClick = {
+                            onAction(DetailsAction.OpenRepoInBrowser)
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.OpenInBrowser,
+                            contentDescription = stringResource(Res.string.open_repository),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent
+        ),
+        modifier = Modifier.then(
+            if (isLiquidTopbarEnabled()) {
+                Modifier.liquid(liquidTopbarState) {
+                    this.shape = CutCornerShape(0.dp)
+                    this.frost = 8.dp
+                    this.curve = .4f
+                    this.refraction = .1f
+                    this.dispersion = .2f
+                }
+            } else Modifier
+        )
+    )
 }
 
 @Preview

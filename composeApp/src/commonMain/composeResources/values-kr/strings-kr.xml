@@ -245,4 +245,7 @@
     <string name="theme_dark">다크</string>
     <string name="theme_system">시스템</string>
 
+    <string name="added_to_favourites">리포지토리를 즐겨찾기에 추가했습니다</string>
+    <string name="removed_from_favourites">리포지토리를 즐겨찾기에서 제거했습니다</string>
+
 </resources>

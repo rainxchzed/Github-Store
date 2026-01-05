@@ -194,4 +194,7 @@
     <string name="theme_dark">Oscuro</string>
     <string name="theme_system">Sistema</string>
 
+    <string name="added_to_favourites">Repositorio añadido a favoritos</string>
+    <string name="removed_from_favourites">Repositorio eliminado de favoritos</string>
+
 </resources>

@@ -195,4 +195,7 @@
     <string name="theme_dark">深色</string>
     <string name="theme_system">跟随系统</string>
 
+    <string name="added_to_favourites">已添加到收藏</string>
+    <string name="removed_from_favourites">已从收藏中移除</string>
+
 </resources>

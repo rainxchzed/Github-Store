@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.added_to_favourites
 import githubstore.composeapp.generated.resources.installer_saved_downloads
+import githubstore.composeapp.generated.resources.removed_from_favourites
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -39,7 +41,6 @@ import zed.rainxch.githubstore.core.data.services.Installer
 import zed.rainxch.githubstore.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.githubstore.feature.details.domain.repository.DetailsRepository
 import zed.rainxch.githubstore.feature.details.presentation.model.LogResult
-import java.io.File
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
 
@@ -89,10 +90,19 @@ class DetailsViewModel(
                 }
 
                 val repo = detailsRepository.getRepositoryById(repositoryId.toLong())
+                val isFavoriteDeferred = async {
+                    try {
+                        favoritesRepository.isFavoriteSync(repo.id)
+                    } catch (t: Throwable) {
+                        false
+                    }
+                }
+                val isFavorite = isFavoriteDeferred.await()
+
                 val owner = repo.owner.login
                 val name = repo.name
 
-                _state.value = _state.value.copy(repository = repo)
+                _state.value = _state.value.copy(repository = repo, isFavorite = isFavorite)
 
                 val latestReleaseDeferred = async {
                     try {
@@ -142,7 +152,8 @@ class DetailsViewModel(
 
                         if (dbApp != null) {
                             if (dbApp.isPendingInstall &&
-                                packageMonitor.isPackageInstalled(dbApp.packageName)) {
+                                packageMonitor.isPackageInstalled(dbApp.packageName)
+                            ) {
                                 installedAppsRepository.updatePendingStatus(
                                     dbApp.packageName,
                                     false
@@ -160,14 +171,6 @@ class DetailsViewModel(
                     }
                 }
 
-                val isFavoriteDeferred = async {
-                    try {
-                        favoritesRepository.isFavoriteSync(repo.id)
-                    } catch (t: Throwable) {
-                        false
-                    }
-                }
-
                 val isObtainiumEnabled = platform.type == PlatformType.ANDROID
                 val isAppManagerEnabled = platform.type == PlatformType.ANDROID
 
@@ -176,7 +179,6 @@ class DetailsViewModel(
                 val readme = readmeDeferred.await()
                 val userProfile = userProfileDeferred.await()
                 val installedApp = installedAppDeferred.await()
-                val isFavorite = isFavoriteDeferred.await()
 
                 val installable = latestRelease?.assets?.filter { asset ->
                     installer.isAssetInstallable(asset.name)
@@ -206,7 +208,6 @@ class DetailsViewModel(
                     isAppManagerAvailable = isAppManagerAvailable,
                     isAppManagerEnabled = isAppManagerEnabled,
                     installedApp = installedApp,
-                    isFavorite = isFavorite
                 )
             } catch (t: Throwable) {
                 Logger.e { "Details load failed: ${t.message}" }
@@ -232,29 +233,35 @@ class DetailsViewModel(
                         if (platform.type == PlatformType.ANDROID) {
                             val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
                             if (systemInfo != null) {
-                                installedAppsRepository.updateApp(app.copy(
-                                    installedVersionName = systemInfo.versionName,
-                                    installedVersionCode = systemInfo.versionCode,
-                                    latestVersionName = systemInfo.versionName,
-                                    latestVersionCode = systemInfo.versionCode
-                                ))
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        installedVersionName = systemInfo.versionName,
+                                        installedVersionCode = systemInfo.versionCode,
+                                        latestVersionName = systemInfo.versionName,
+                                        latestVersionCode = systemInfo.versionCode
+                                    )
+                                )
                                 Logger.d { "Migrated ${app.packageName}: set versionName/code from system" }
                             } else {
-                                installedAppsRepository.updateApp(app.copy(
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        installedVersionName = app.installedVersion,
+                                        installedVersionCode = 0L,
+                                        latestVersionName = app.installedVersion,
+                                        latestVersionCode = 0L
+                                    )
+                                )
+                                Logger.d { "Migrated ${app.packageName}: fallback to tag" }
+                            }
+                        } else {
+                            installedAppsRepository.updateApp(
+                                app.copy(
                                     installedVersionName = app.installedVersion,
                                     installedVersionCode = 0L,
                                     latestVersionName = app.installedVersion,
                                     latestVersionCode = 0L
-                                ))
-                                Logger.d { "Migrated ${app.packageName}: fallback to tag" }
-                            }
-                        } else {
-                            installedAppsRepository.updateApp(app.copy(
-                                installedVersionName = app.installedVersion,
-                                installedVersionCode = 0L,
-                                latestVersionName = app.installedVersion,
-                                latestVersionCode = 0L
-                            ))
+                                )
+                            )
                             Logger.d { "Migrated ${app.packageName} (desktop): fallback to tag" }
                         }
                     }
@@ -329,7 +336,7 @@ class DetailsViewModel(
                 )
             }
 
-            DetailsAction.ToggleFavorite -> {
+            DetailsAction.OnToggleFavorite -> {
                 viewModelScope.launch {
                     try {
                         val repo = _state.value.repository ?: return@launch
@@ -353,6 +360,18 @@ class DetailsViewModel(
 
                         val newFavoriteState = favoritesRepository.isFavoriteSync(repo.id)
                         _state.value = _state.value.copy(isFavorite = newFavoriteState)
+
+                        _events.send(
+                            element = DetailsEvent.OnMessage(
+                                message = getString(
+                                    resource = if (newFavoriteState) {
+                                        Res.string.added_to_favourites
+                                    } else {
+                                        Res.string.removed_from_favourites
+                                    }
+                                )
+                            )
+                        )
 
                     } catch (t: Throwable) {
                         Logger.e { "Failed to toggle favorite: ${t.message}" }

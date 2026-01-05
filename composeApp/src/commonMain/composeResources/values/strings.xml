@@ -247,4 +247,7 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System</string>
 
+    <string name="added_to_favourites">Repository added to favourites</string>
+    <string name="removed_from_favourites">Repository removed from favourites</string>
+
 </resources>
