@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,7 +72,7 @@ fun FavouritesScreen(
 ) {
     Scaffold(
         topBar = {
-            FavouritesTopbar(onAction, state)
+            FavouritesTopbar(onAction)
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
@@ -107,7 +108,9 @@ fun FavouritesScreen(
             }
 
             if (state.isLoading) {
-                CircularWavyProgressIndicator()
+                CircularWavyProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
@@ -117,7 +120,6 @@ fun FavouritesScreen(
 @Composable
 private fun FavouritesTopbar(
     onAction: (FavouritesAction) -> Unit,
-    state: FavouritesState,
 ) {
     TopAppBar(
         title = {
@@ -153,28 +155,5 @@ private fun Preview() {
             state = FavouritesState(),
             onAction = {}
         )
-    }
-}
-
-class Container {
-    private val y = 0
-    private fun hi() {
-        val innerClass = InnerClass()
-
-    }
-
-    inner class InnerClass {
-        private val innerValue = 0
-        fun main() {
-            println(y)
-            hi()
-        }
-    }
-}
-
-class OtherClass {
-    fun main() {
-        val container = Container()
-        val another = container.InnerClass()
     }
 }

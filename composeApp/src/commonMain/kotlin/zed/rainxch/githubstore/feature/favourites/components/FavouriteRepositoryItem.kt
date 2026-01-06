@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.crossfade.CrossfadePlugin
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.remove_from_favourites
+import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.githubstore.feature.favourites.model.FavouriteRepository
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -135,7 +138,7 @@ fun FavouriteRepositoryItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = null
+                        contentDescription = stringResource(Res.string.remove_from_favourites)
                     )
                 }
             }

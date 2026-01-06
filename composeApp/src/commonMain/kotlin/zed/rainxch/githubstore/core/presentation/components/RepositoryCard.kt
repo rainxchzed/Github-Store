@@ -321,7 +321,7 @@ fun RepositoryCardPreview() {
                     language = "Kotlin",
                     topics = null,
                     releasesUrl = "",
-                    updatedAt = "",
+                    updatedAt = "2025-12-01T12:00:00Z",
                     defaultBranch = ""
                 ),
                 isUpdateAvailable = true,
