@@ -28,7 +28,7 @@ GitHub Store to wieloplatformowy „play store” dla realasów repozytoriów Gi
 </p>
 
 <p align="center">
-  <img src="screenshots/banner.png" />
+  <img src="../screenshots/banner.png" />
 </p>
 
 ---
