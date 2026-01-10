@@ -5,10 +5,12 @@ sdk: org.freedesktop.Sdk//25.08
 command: GitHub-Store
 finish-args:
   - --share=network
+  - --share=ipc
   - --socket=x11
   - --socket=wayland
   - --socket=fallback-x11
   - --device=dri
+  - --env=DISPLAY=:0
 modules:
   - name: githubstore
     buildsystem: simple
