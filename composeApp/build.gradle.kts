@@ -285,11 +285,12 @@ val copyFlatpakBinary = tasks.register<Copy>("copyFlatpakBinary") {
 }
 
 val copyFlatpakResources = tasks.register<Copy>("copyFlatpakResources") {
+    dependsOn(copyFlatpakBinary)
 
     val resourcesDir = layout.projectDirectory.dir("src/jvmMain/resources/flatpak")
 
     from(resourcesDir) {
-        include("manifest.yml", "*.desktop", "*.xml")
+        include("manifest.yml", "*.desktop", "*.xml", "app_icon.png")
     }
     into(flatpakDir.map { it.asFile.resolve("build") })
 
