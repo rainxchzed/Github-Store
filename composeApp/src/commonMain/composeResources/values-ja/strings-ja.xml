@@ -218,9 +218,9 @@
     <string name="star_repos_hint">インストール可能なリリースのあるリポジトリにスターを付けてください</string>
     <string name="last_synced">最終同期</string>
     <string name="just_now">たった今</string>
-    <string name="minutes_ago">%d分前</string>
-    <string name="hours_ago">%d時間前</string>
-    <string name="days_ago">%d日前</string>
+    <string name="minutes_ago">%1$d分前</string>
+    <string name="hours_ago">%1$d時間前</string>
+    <string name="days_ago">%1$d日前</string>
     <string name="dismiss">閉じる</string>
     <string name="sync_starred_failed">スター付きリポジトリの同期に失敗しました</string>
 

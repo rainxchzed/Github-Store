@@ -267,9 +267,9 @@
     <string name="star_repos_hint">Aggiungi repository con release installabili su GitHub per vederli qui</string>
     <string name="last_synced">Ultima sincronizzazione</string>
     <string name="just_now">Poco fa</string>
-    <string name="minutes_ago">%d min fa</string>
-    <string name="hours_ago">%d h fa</string>
-    <string name="days_ago">%d g fa</string>
+    <string name="minutes_ago">%1$d min fa</string>
+    <string name="hours_ago">%1$d h fa</string>
+    <string name="days_ago">%1$d g fa</string>
     <string name="dismiss">Chiudi</string>
     <string name="sync_starred_failed">Impossibile sincronizzare i repository preferiti</string>
 
