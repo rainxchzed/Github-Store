@@ -133,6 +133,10 @@ class StarredReposViewModel (
                 // Handled in composable
             }
 
+            is StarredReposAction.OnDeveloperProfileClick -> {
+                // Handled in composable
+            }
+
             StarredReposAction.OnRefresh -> {
                 syncStarredRepos(forceRefresh = true)
             }

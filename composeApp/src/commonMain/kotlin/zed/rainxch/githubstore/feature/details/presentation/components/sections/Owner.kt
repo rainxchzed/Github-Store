@@ -69,7 +69,7 @@ fun LazyListScope.author(
             onClick = {
                 author?.login?.let { author ->
                     onAction(
-                        DetailsAction.OpenAuthorInApp(
+                        DetailsAction.OpenDeveloperProfile(
                             author
                         )
                     )
@@ -154,7 +154,7 @@ fun LazyListScope.author(
                 author?.login?.let { author ->
                     IconButton(
                         onClick = {
-                            onAction(DetailsAction.OpenAuthorInApp(author))
+                            onAction(DetailsAction.OpenDeveloperProfile(author))
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,

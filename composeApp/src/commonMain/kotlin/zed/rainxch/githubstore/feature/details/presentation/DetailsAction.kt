@@ -15,7 +15,7 @@ sealed interface DetailsAction {
 
     data object OpenRepoInBrowser : DetailsAction
     data object OpenAuthorInBrowser : DetailsAction
-    data class OpenAuthorInApp(val authorLogin: String) : DetailsAction
+    data class OpenDeveloperProfile(val username: String) : DetailsAction
 
     data object OpenInObtainium : DetailsAction
     data object OpenInAppManager : DetailsAction

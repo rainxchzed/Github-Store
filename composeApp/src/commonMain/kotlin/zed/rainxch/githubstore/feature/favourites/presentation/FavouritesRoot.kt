@@ -41,6 +41,7 @@ import zed.rainxch.githubstore.feature.favourites.presentation.components.Favour
 fun FavouritesRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
+    onNavigateToDeveloperProfile: (username: String) -> Unit,
     viewModel: FavouritesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -55,6 +56,10 @@ fun FavouritesRoot(
 
                 is FavouritesAction.OnRepositoryClick -> {
                     onNavigateToDetails(action.favouriteRepository.repoId)
+                }
+
+                is FavouritesAction.OnDeveloperProfileClick -> {
+                    onNavigateToDeveloperProfile(action.username)
                 }
 
                 else -> {
@@ -102,6 +107,9 @@ fun FavouritesScreen(
                         },
                         onItemClick = {
                             onAction(FavouritesAction.OnRepositoryClick(repo))
+                        },
+                        onDevProfileClick = {
+                            onAction(FavouritesAction.OnDeveloperProfileClick(repo.repoOwner))
                         },
                         modifier = Modifier.Companion.animateItem()
                     )

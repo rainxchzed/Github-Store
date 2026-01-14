@@ -162,6 +162,13 @@ fun AppNavigation(
                             onNavigateToDetails = {
                                 navBackStack.add(GithubStoreGraph.DetailsScreen(it))
                             },
+                            onNavigateToDeveloperProfile = { username ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username
+                                    )
+                                )
+                            },
                         )
                     }
 
@@ -176,7 +183,14 @@ fun AppNavigation(
                                         repositoryId = repoId
                                     )
                                 )
-                            }
+                            },
+                            onNavigateToDeveloperProfile = { username ->
+                                navBackStack.add(
+                                    GithubStoreGraph.DeveloperProfileScreen(
+                                        username = username
+                                    )
+                                )
+                            },
                         )
                     }
 

@@ -43,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.days_ago
 import githubstore.composeapp.generated.resources.dismiss
@@ -55,7 +54,6 @@ import githubstore.composeapp.generated.resources.navigate_back
 import githubstore.composeapp.generated.resources.no_starred_repos
 import githubstore.composeapp.generated.resources.retry
 import githubstore.composeapp.generated.resources.sign_in_required
-import githubstore.composeapp.generated.resources.sign_in_with_github
 import githubstore.composeapp.generated.resources.sign_in_with_github_for_stars
 import githubstore.composeapp.generated.resources.star_repos_hint
 import githubstore.composeapp.generated.resources.starred_repositories
@@ -64,7 +62,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.githubstore.feature.favourites.presentation.FavouritesAction
 import zed.rainxch.githubstore.feature.starred_repos.presentation.components.StarredRepositoryItem
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -73,6 +70,7 @@ import kotlin.time.ExperimentalTime
 fun StarredReposRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (repoId: Long) -> Unit,
+    onNavigateToDeveloperProfile: (username: String) -> Unit,
     viewModel: StarredReposViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -83,6 +81,7 @@ fun StarredReposRoot(
             when (action) {
                 StarredReposAction.OnNavigateBackClick -> onNavigateBack()
                 is StarredReposAction.OnRepositoryClick -> onNavigateToDetails(action.repository.repoId)
+                is StarredReposAction.OnDeveloperProfileClick -> onNavigateToDeveloperProfile(action.username)
                 else -> viewModel.onAction(action)
             }
         }
@@ -169,6 +168,9 @@ fun StarredScreen(
                                     onItemClick = {
                                         onAction(StarredReposAction.OnRepositoryClick(repo))
                                     },
+                                    onDevProfileClick = {
+                                        onAction(StarredReposAction.OnDeveloperProfileClick(repo.repoOwner))
+                                    },
                                     modifier = Modifier.animateItem()
                                 )
                             }
@@ -194,12 +196,21 @@ fun StarredScreen(
                         }
                     },
                     dismissAction = {
-                        IconButton(onClick = { onAction(StarredReposAction.OnDismissError) }) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.dismiss))
+                        IconButton(
+                            onClick = {
+                                onAction(StarredReposAction.OnDismissError)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = stringResource(Res.string.dismiss)
+                            )
                         }
                     }
                 ) {
-                    Text(message)
+                    Text(
+                        text = message
+                    )
                 }
             }
         }

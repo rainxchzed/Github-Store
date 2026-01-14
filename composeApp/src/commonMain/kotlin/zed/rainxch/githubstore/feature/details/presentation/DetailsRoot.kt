@@ -106,8 +106,8 @@ fun DetailsRoot(
                     onNavigateBack()
                 }
 
-                is DetailsAction.OpenAuthorInApp -> {
-                    onNavigateToDeveloperProfile(action.authorLogin)
+                is DetailsAction.OpenDeveloperProfile -> {
+                    onNavigateToDeveloperProfile(action.username)
                 }
 
                 is DetailsAction.OnMessage -> {

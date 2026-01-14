@@ -508,7 +508,7 @@ class DetailsViewModel(
                 // Handled in composable
             }
 
-            is DetailsAction.OpenAuthorInApp -> {
+            is DetailsAction.OpenDeveloperProfile -> {
                 // Handled in composable
             }
 

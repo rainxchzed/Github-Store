@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore.feature.starred_repos.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
+import githubstore.composeapp.generated.resources.Res
+import githubstore.composeapp.generated.resources.add_to_favourites
+import githubstore.composeapp.generated.resources.count_thousands
+import githubstore.composeapp.generated.resources.forks
+import githubstore.composeapp.generated.resources.installed
+import githubstore.composeapp.generated.resources.issues
+import githubstore.composeapp.generated.resources.remove_from_favourites
+import githubstore.composeapp.generated.resources.stars
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.githubstore.feature.starred_repos.presentation.model.StarredRepositoryUi
@@ -48,6 +58,7 @@ fun StarredRepositoryItem(
     repository: StarredRepositoryUi,
     onToggleFavoriteClick: () -> Unit,
     onItemClick: () -> Unit,
+    onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -67,7 +78,10 @@ fun StarredRepositoryItem(
                     imageModel = { repository.repoOwnerAvatarUrl },
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .clickable(onClick = {
+                            onDevProfileClick()
+                        }),
                     imageOptions = ImageOptions(
                         contentScale = ContentScale.Crop
                     ),
@@ -75,7 +89,13 @@ fun StarredRepositoryItem(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable(onClick = {
+                            onDevProfileClick()
+                        })
+                ) {
                     Text(
                         text = repository.repoName,
                         style = MaterialTheme.typography.titleMedium,
@@ -105,9 +125,9 @@ fun StarredRepositoryItem(
                             Icons.Outlined.FavoriteBorder
                         },
                         contentDescription = if (repository.isFavorite) {
-                            "Remove from favorites"
+                            stringResource(Res.string.remove_from_favourites)
                         } else {
-                            "Add to favorites"
+                            stringResource(Res.string.add_to_favourites)
                         },
                         modifier = Modifier.size(20.dp)
                     )
@@ -138,20 +158,20 @@ fun StarredRepositoryItem(
                 StatChip(
                     icon = Icons.Default.Star,
                     label = formatCount(repository.stargazersCount),
-                    contentDescription = "${repository.stargazersCount} stars"
+                    contentDescription = "${repository.stargazersCount} ${stringResource(Res.string.stars)}"
                 )
 
                 StatChip(
                     icon = Icons.AutoMirrored.Filled.CallSplit,
                     label = formatCount(repository.forksCount),
-                    contentDescription = "${repository.forksCount} forks"
+                    contentDescription = "${repository.forksCount} ${stringResource(Res.string.forks)}"
                 )
 
                 if (repository.openIssuesCount > 0) {
                     StatChip(
                         icon = Icons.Outlined.Warning,
                         label = formatCount(repository.openIssuesCount),
-                        contentDescription = "${repository.openIssuesCount} open issues"
+                        contentDescription = "${repository.openIssuesCount} ${stringResource(Res.string.issues)}"
                     )
                 }
 
@@ -182,7 +202,7 @@ fun StarredRepositoryItem(
                             containerColor = MaterialTheme.colorScheme.primaryContainer
                         ) {
                             Text(
-                                text = "Installed",
+                                text = stringResource(Res.string.installed),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
@@ -234,9 +254,10 @@ private fun StatChip(
     }
 }
 
+@Composable
 private fun formatCount(count: Int): String {
     return when {
-        count >= 1000 -> "${count / 1000}k"
+        count >= 1000 -> stringResource(Res.string.count_thousands, count / 1000)
         else -> count.toString()
     }
 }
@@ -264,7 +285,8 @@ private fun PreviewStarredRepoItem() {
                 starredAt = null
             ),
             onToggleFavoriteClick = {},
-            onItemClick = {}
+            onItemClick = {},
+            onDevProfileClick = {}
         )
     }
 }

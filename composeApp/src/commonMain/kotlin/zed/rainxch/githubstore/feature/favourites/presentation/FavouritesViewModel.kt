@@ -64,6 +64,10 @@ class FavouritesViewModel(
                 // Handled in composable
             }
 
+            is FavouritesAction.OnDeveloperProfileClick -> {
+                // Handled in composable
+            }
+
             is FavouritesAction.OnToggleFavorite -> {
                 viewModelScope.launch {
                     val repo = action.favouriteRepository

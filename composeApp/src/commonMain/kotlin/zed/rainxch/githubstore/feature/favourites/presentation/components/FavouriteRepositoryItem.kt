@@ -1,6 +1,7 @@
 package zed.rainxch.githubstore.feature.favourites.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ fun FavouriteRepositoryItem(
     favouriteRepository: FavouriteRepository,
     onToggleFavouriteClick: () -> Unit,
     onItemClick: () -> Unit,
+    onDevProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -61,6 +63,10 @@ fun FavouriteRepositoryItem(
                 .padding(16.dp)
         ) {
             Row(
+                modifier = Modifier
+                    .clickable(onClick = {
+                        onDevProfileClick()
+                    }),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
