@@ -1,0 +1,32 @@
+app-id: zed.rainxch.githubstore
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk//25.08
+command: GitHub-Store
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=xdg-download
+  - --env=GDK_BACKEND=x11,wayland
+modules:
+  - name: githubstore
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/bin /app/lib
+      - install -Dm755 bin/GitHub-Store /app/bin/GitHub-Store
+      - cp -r lib/* /app/lib/
+      - mkdir -p /app/share/applications
+      - install -D zed.rainxch.githubstore.desktop /app/share/applications/
+      - mkdir -p /app/share/icons/hicolor/512x512/apps/
+      - install -D app_icon.png /app/share/icons/hicolor/512x512/apps/zed.rainxch.githubstore.png
+      - mkdir -p /app/share/metainfo/
+      - install -D zed.rainxch.githubstore.appdata.xml /app/share/metainfo/zed.rainxch.githubstore.appdata.xml
+    sources:
+      - type: dir
+        path: .
+        skip:
+          - zed.rainxch.githubstore.yml
+          - manifest.yml
