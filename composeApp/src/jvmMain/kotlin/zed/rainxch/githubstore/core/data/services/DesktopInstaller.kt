@@ -958,4 +958,8 @@ class DesktopInstaller(
     }
 
     override suspend fun uninstallWithShizuku(packageName: String): Boolean = false
+
+    override fun openShizukuApp() {
+        // No-op
+    }
 }

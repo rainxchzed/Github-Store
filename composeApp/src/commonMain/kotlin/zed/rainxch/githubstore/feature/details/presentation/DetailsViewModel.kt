@@ -42,7 +42,9 @@ import zed.rainxch.githubstore.core.data.services.Installer
 import zed.rainxch.githubstore.core.domain.repository.StarredRepository
 import zed.rainxch.githubstore.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.githubstore.feature.details.domain.repository.DetailsRepository
+import zed.rainxch.githubstore.feature.details.presentation.DetailsEvent.*
 import zed.rainxch.githubstore.feature.details.presentation.model.LogResult
+import zed.rainxch.githubstore.feature.details.presentation.model.LogResult.*
 import java.io.File
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
@@ -192,8 +194,10 @@ class DetailsViewModel(
                 val isObtainiumEnabled = platform.type == PlatformType.ANDROID
                 val isAppManagerEnabled = platform.type == PlatformType.ANDROID
 
-                val isShizukuAvailable = installer.isShizukuAvailable()
                 val isShizukuEnabled = platform.type == PlatformType.ANDROID
+                val isShizukuInstalled = installer.isShizukuInstalled()
+                val isShizukuRunning = installer.isShizukuAvailable()
+                val hasShizukuPermission = installer.isShizukuAvailable()
 
                 val latestRelease = latestReleaseDeferred.await()
                 val stats = statsDeferred.await()
@@ -229,8 +233,10 @@ class DetailsViewModel(
                     isAppManagerAvailable = isAppManagerAvailable,
                     isAppManagerEnabled = isAppManagerEnabled,
                     installedApp = installedApp,
-                    isShizukuAvailable = isShizukuAvailable,
                     isShizukuEnabled = isShizukuEnabled,
+                    isShizukuInstalled = isShizukuInstalled,
+                    isShizukuRunning = isShizukuRunning,
+                    hasShizukuPermission = hasShizukuPermission,
                 )
             } catch (t: Throwable) {
                 Logger.e { "Details load failed: ${t.message}" }
@@ -330,7 +336,7 @@ class DetailsViewModel(
                         _state.value = _state.value.copy(isFavourite = newFavoriteState)
 
                         _events.send(
-                            element = DetailsEvent.OnMessage(
+                            element = OnMessage(
                                 message = getString(
                                     resource = if (newFavoriteState) {
                                         Res.string.added_to_favourites
@@ -409,7 +415,7 @@ class DetailsViewModel(
                         onOpenInstaller = {
                             viewModelScope.launch {
                                 _events.send(
-                                    DetailsEvent.OnOpenRepositoryInApp(OBTAINIUM_REPO_ID)
+                                    OnOpenRepositoryInApp(OBTAINIUM_REPO_ID)
                                 )
                             }
                         }
@@ -470,7 +476,7 @@ class DetailsViewModel(
                                 onOpenInstaller = {
                                     viewModelScope.launch {
                                         _events.send(
-                                            DetailsEvent.OnOpenRepositoryInApp(APP_MANAGER_REPO_ID)
+                                            OnOpenRepositoryInApp(APP_MANAGER_REPO_ID)
                                         )
                                     }
                                 }
@@ -497,7 +503,7 @@ class DetailsViewModel(
                                     assetName = asset.name,
                                     size = asset.size,
                                     tag = release.tagName,
-                                    result = LogResult.Error(t.message)
+                                    result = Error(t.message)
                                 )
                             }
                         }
@@ -519,7 +525,7 @@ class DetailsViewModel(
                 if (!granted) {
                     viewModelScope.launch {
                         _events.send(
-                            DetailsEvent.OnMessage(
+                            OnMessage(
                                 getString(Res.string.shizuku_permission_requested)
                             )
                         )
@@ -545,19 +551,13 @@ class DetailsViewModel(
                     _state.value = _state.value.copy(installedApp = updatedApp)
 
                     _events.send(
-                        DetailsEvent.OnMessage(
+                        OnMessage(
                             getString(
                                 if (newValue) Res.string.auto_update_enabled
                                 else Res.string.auto_update_disabled
                             )
                         )
                     )
-                }
-            }
-
-            DetailsAction.OpenShizukuSetup -> {
-                viewModelScope.launch {
-                    _events.send(DetailsEvent.OnNavigateToShizukuSetup)
                 }
             }
 
@@ -571,6 +571,46 @@ class DetailsViewModel(
 
             is DetailsAction.OnMessage -> {
                 // Handled in composable
+            }
+
+            DetailsAction.OpenShizukuSetupDialog -> {
+                _state.update { it.copy(showShizukuSetupDialog = true) }
+            }
+
+            DetailsAction.CloseShizukuSetupDialog -> {
+                _state.update { it.copy(showShizukuSetupDialog = false) }
+            }
+
+            DetailsAction.OnShizukuRequestPermission -> {
+                val granted = installer.requestShizukuPermission()
+                if (granted) {
+                    _state.update {
+                        it.copy(
+                            hasShizukuPermission = true,
+                            isShizukuRunning = true
+                        )
+                    }
+                }
+            }
+
+            DetailsAction.RefreshShizukuStatus -> {
+                val isShizukuInstalled = installer.isShizukuInstalled()
+                val isShizukuRunning = installer.isShizukuAvailable()
+                val hasShizukuPermission = installer.isShizukuAvailable()
+
+                _state.update {
+                    it.copy(
+                        isShizukuInstalled = isShizukuInstalled,
+                        isShizukuRunning = isShizukuRunning,
+                        hasShizukuPermission = hasShizukuPermission
+                    )
+                }
+
+                Logger.d { "Shizuku status: installed=$isShizukuInstalled, running=$isShizukuRunning, permission=$hasShizukuPermission" }
+            }
+
+            DetailsAction.OpenShizukuApp -> {
+                installer.openShizukuApp()
             }
         }
     }

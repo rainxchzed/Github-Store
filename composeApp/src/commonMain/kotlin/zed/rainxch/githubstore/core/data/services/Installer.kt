@@ -23,6 +23,7 @@ interface Installer {
         repoName: String,
         onOpenInstaller: () -> Unit
     )
+    fun openShizukuApp()
 
     fun isAppManagerInstalled(): Boolean
     fun openInAppManager(

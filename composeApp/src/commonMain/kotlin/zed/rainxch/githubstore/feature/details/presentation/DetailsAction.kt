@@ -12,6 +12,7 @@ sealed interface DetailsAction {
     ) : DetailsAction
 
     data object CancelCurrentDownload : DetailsAction
+
     data object OnToggleFavorite : DetailsAction
     data object CheckForUpdates : DetailsAction
     data object UpdateApp : DetailsAction
@@ -23,8 +24,13 @@ sealed interface DetailsAction {
 
     // Shizuku actions
     data object RequestShizukuPermission : DetailsAction
+
     data object ToggleAutoUpdate : DetailsAction
-    data object OpenShizukuSetup : DetailsAction
+    data object OpenShizukuSetupDialog : DetailsAction
+    data object CloseShizukuSetupDialog : DetailsAction
+    data object OpenShizukuApp : DetailsAction
+    data object RefreshShizukuStatus : DetailsAction
+    data object OnShizukuRequestPermission : DetailsAction
 
     // Navigation actions (handled in composable)
     data object OnNavigateBackClick : DetailsAction

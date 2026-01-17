@@ -335,4 +335,14 @@
     <string name="silent_install">Silent install</string>
     <string name="shizuku_enabled">Shizuku enabled</string>
     <string name="auto_update">Auto update</string>
+    <string name="setup_shizuku">setup_shizuku</string>
+    <string name="shizuku_setup_description">shizuku_setup_description</string>
+    <string name="install_shizuku_app">install_shizuku_app</string>
+    <string name="download_shizuku">download_shizuku</string>
+    <string name="start_shizuku_service">start_shizuku_service</string>
+    <string name="open_shizuku">open_shizuku</string>
+    <string name="grant_permission_to_github_store">grant_permission_to_github_store</string>
+    <string name="grant_permission">grant_permission</string>
+    <string name="tap_start_in_shizuku">tap_start_in_shizuku</string>
+    <string name="shizuku_setup_complete">shizuku_setup_complete</string>
 </resources>

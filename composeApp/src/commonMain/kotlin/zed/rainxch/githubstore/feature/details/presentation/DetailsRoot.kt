@@ -58,6 +58,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.githubstore.core.presentation.utils.ObserveAsEvents
+import zed.rainxch.githubstore.feature.details.presentation.components.ShizukuSetupDialog
 import zed.rainxch.githubstore.feature.details.presentation.components.sections.about
 import zed.rainxch.githubstore.feature.details.presentation.components.sections.header
 import zed.rainxch.githubstore.feature.details.presentation.components.sections.logs
@@ -94,10 +95,6 @@ fun DetailsRoot(
                     snackbarHostState.showSnackbar(event.message)
                 }
             }
-
-            DetailsEvent.OnNavigateToShizukuSetup -> {
-
-            }
         }
     }
 
@@ -126,6 +123,26 @@ fun DetailsRoot(
             }
         }
     )
+
+    if (state.showShizukuSetupDialog) {
+        ShizukuSetupDialog(
+            isShizukuInstalled = state.isShizukuEnabled,
+            isShizukuRunning = state.isShizukuAvailable,
+            hasPermission = state.hasShizukuPermission,
+            onRequestPermission = {
+                viewModel.onAction(DetailsAction.OnShizukuRequestPermission)
+            },
+            onDismiss = {
+                viewModel.onAction(DetailsAction.CloseShizukuSetupDialog)
+            },
+            onOpenShizukuApp = {
+                viewModel.onAction(DetailsAction.OpenShizukuApp)
+            },
+            onRefreshStatus = {
+                viewModel.onAction(DetailsAction.RefreshShizukuStatus)
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

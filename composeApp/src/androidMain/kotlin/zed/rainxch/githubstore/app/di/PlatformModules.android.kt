@@ -51,18 +51,13 @@ actual val platformModule: Module = module {
         )
     }
 
+
     single<Installer> {
         AndroidInstaller(
             context = androidContext(),
-            apkInfoExtractor = get(),
+            apkInfoExtractor = AndroidApkInfoExtractor(androidContext()),
             shizukuManager = get(),
             shizukuInstaller = get()
-        )
-    }
-
-    single<AndroidApkInfoExtractor> {
-        AndroidApkInfoExtractor(
-            context = androidContext()
         )
     }
 

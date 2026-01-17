@@ -118,7 +118,7 @@ fun LazyListScope.header(
                             }
                         },
                         onClick = {
-                            onAction(DetailsAction.OpenShizukuSetup)
+                            onAction(DetailsAction.OpenShizukuSetupDialog)
                         },
                         modifier = Modifier.liquefiable(liquidState)
                     )

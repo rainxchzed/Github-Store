@@ -299,4 +299,26 @@ class AndroidInstaller(
             false
         }
     }
+
+    override fun openShizukuApp() {
+        try {
+            val intent = context.packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            } else {
+                val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
+                    data = "https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api".toUri()
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(playStoreIntent)
+            }
+        } catch (_: Exception) {
+            val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                data = "https://github.com/RikkaApps/Shizuku/releases".toUri()
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(browserIntent)
+        }
+    }
 }
