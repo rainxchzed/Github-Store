@@ -84,7 +84,7 @@
     <string name="sort_best_match">সেরা মিল</string>
 
     <!-- Programming languages -->
-    <string name="language_all">সব ভাষা</string>
+    <string name="language_all">সব প্রোগ্রামিং ভাষা</string>
     <string name="language_kotlin">Kotlin</string>
     <string name="language_java">Java</string>
     <string name="language_javascript">JavaScript</string>
@@ -188,7 +188,7 @@
     <string name="by_author">%1$s দ্বারা</string>
     <string name="installed_version">• ইনস্টল করা: %1$s</string>
     <string name="architecture_compatible">আর্কিটেকচার উপযোগী</string>
-    <string name="update_to_version">%1$s এ আপডেট করুন</string>
+    <string name="update_to_version">%1$s -এ আপডেট করুন</string>
 
     <!-- General -->
     <string name="error_load_details">বিস্তারিত লোড করতে ব্যর্থ</string>
@@ -206,8 +206,8 @@
     <string name="log_error_with_message">ত্রুটি: %1$s</string>
 
     <!-- External tools -->
-    <string name="log_prepare_appmanager">AppManager এর জন্য প্রস্তুত করা হচ্ছে</string>
-    <string name="log_opened_appmanager">AppManager এ খোলা হয়েছে</string>
+    <string name="log_prepare_appmanager">AppManager-এর জন্য প্রস্তুত করা হচ্ছে</string>
+    <string name="log_opened_appmanager">AppManager-এ খোলা হয়েছে</string>
 
     <!-- Errors -->
     <string name="error_generic">ত্রুটি: %1$s</string>
@@ -287,7 +287,7 @@
     <!-- Developer Profile - Stats -->
     <string name="repositories">রিপোজিটরি</string>
     <string name="followers">অনুসরণকারী</string>
-    <string name="following">অনুসরণ করছে</string>
+    <string name="following">অনুসরণ</string>
 
     <!-- Developer Profile - Filter & Sort -->
     <string name="search_repositories">রিপোজিটরি খুঁজুন…</string>
@@ -295,7 +295,7 @@
     <string name="filter_all">সব</string>
     <string name="filter_with_releases">রিলিজ সহ</string>
     <string name="filter_installed">ইনস্টল করা</string>
-    <string name="filter_favorites">পছন্দের</string>
+    <string name="filter_favorites">পছন্দ</string>
     <string name="sort">সাজান</string>
     <string name="sort_recently_updated">সাম্প্রতিক আপডেট</string>
     <string name="sort_name">নাম</string>
@@ -307,7 +307,7 @@
 
     <!-- Developer Profile - Empty States -->
     <string name="no_repos_with_releases">ইনস্টল করার যোগ্য রিলিজ সহ কোনো রিপোজিটরি নেই</string>
-    <string name="no_installed_repos">কোনো ইনস্টল করা রিপোজিটরি নেই</string>
+    <string name="no_installed_repos">কোনো রিপোজিটরি ইনস্টল করা হয়নি</string>
     <string name="no_favorite_repos">কোনো পছন্দের রিপোজিটরি নেই</string>
 
     <!-- Developer Profile - Repository Item -->
