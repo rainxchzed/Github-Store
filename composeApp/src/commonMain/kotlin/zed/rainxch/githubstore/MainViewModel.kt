@@ -91,6 +91,7 @@ class MainViewModel(
                 }
             }
         }
+
         viewModelScope.launch {
             themesRepository
                 .getFontTheme()
@@ -100,6 +101,7 @@ class MainViewModel(
                     }
                 }
         }
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val installedPackageNames = packageMonitor.getAllInstalledPackageNames()
@@ -114,29 +116,35 @@ class MainViewModel(
                         if (platform.type == PlatformType.ANDROID) {
                             val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
                             if (systemInfo != null) {
-                                installedAppsRepository.updateApp(app.copy(
-                                    installedVersionName = systemInfo.versionName,
-                                    installedVersionCode = systemInfo.versionCode,
-                                    latestVersionName = systemInfo.versionName,
-                                    latestVersionCode = systemInfo.versionCode
-                                ))
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        installedVersionName = systemInfo.versionName,
+                                        installedVersionCode = systemInfo.versionCode,
+                                        latestVersionName = systemInfo.versionName,
+                                        latestVersionCode = systemInfo.versionCode
+                                    )
+                                )
                                 Logger.d { "Migrated ${app.packageName}: set versionName/code from system" }
                             } else {
-                                installedAppsRepository.updateApp(app.copy(
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        installedVersionName = app.installedVersion,
+                                        installedVersionCode = 0L,
+                                        latestVersionName = app.installedVersion,
+                                        latestVersionCode = 0L
+                                    )
+                                )
+                                Logger.d { "Migrated ${app.packageName}: fallback to tag as versionName" }
+                            }
+                        } else {
+                            installedAppsRepository.updateApp(
+                                app.copy(
                                     installedVersionName = app.installedVersion,
                                     installedVersionCode = 0L,
                                     latestVersionName = app.installedVersion,
                                     latestVersionCode = 0L
-                                ))
-                                Logger.d { "Migrated ${app.packageName}: fallback to tag as versionName" }
-                            }
-                        } else {
-                            installedAppsRepository.updateApp(app.copy(
-                                installedVersionName = app.installedVersion,
-                                installedVersionCode = 0L,
-                                latestVersionName = app.installedVersion,
-                                latestVersionCode = 0L
-                            ))
+                                )
+                            )
                             Logger.d { "Migrated ${app.packageName} (desktop): fallback to tag as versionName" }
                         }
                     }

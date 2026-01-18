@@ -53,6 +53,14 @@ data class DetailsState(
     val installedApp: InstalledApp? = null,
     val isFavourite: Boolean = false,
     val isStarred: Boolean = false,
+
+    val installProgressPercent: Int? = null,
+    val isShizukuAvailable: Boolean = false,
+    val isShizukuEnabled: Boolean = false,
+    val isShizukuInstalled: Boolean = false,
+    val isShizukuRunning: Boolean = false,
+    val hasShizukuPermission: Boolean = false,
+    val showShizukuSetupDialog: Boolean = false,
 )
 
 enum class DownloadStage {

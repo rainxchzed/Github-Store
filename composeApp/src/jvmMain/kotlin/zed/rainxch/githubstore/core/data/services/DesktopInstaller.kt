@@ -2,7 +2,9 @@ package zed.rainxch.githubstore.core.data.services
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import zed.rainxch.githubstore.core.data.model.InstallationProgress
 import zed.rainxch.githubstore.core.domain.model.Architecture
 import zed.rainxch.githubstore.core.domain.model.GithubAsset
 import zed.rainxch.githubstore.core.domain.model.PlatformType
@@ -947,4 +949,17 @@ class DesktopInstaller(
         return candidateFile
     }
 
+    override fun isShizukuAvailable(): Boolean = false
+    override fun isShizukuInstalled(): Boolean = false
+    override fun requestShizukuPermission(): Boolean = false
+
+    override fun installWithShizukuProgress(file: File): Flow<InstallationProgress> {
+        throw UnsupportedOperationException("Shizuku is only available on Android")
+    }
+
+    override suspend fun uninstallWithShizuku(packageName: String): Boolean = false
+
+    override fun openShizukuApp() {
+        // No-op
+    }
 }
