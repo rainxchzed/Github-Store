@@ -238,24 +238,37 @@ automatically—no manual submission required.
 
 ---
 
-## 💖 Support This Project
+## ☕ Keep GitHub Store Free & Maintained
 
-GitHub Store is free and always will be. If it's helped you, consider:
+**GitHub Store** has reached **42,000+ active users** and **4,500+ GitHub stars** — and it's **100% free** with no ads, no tracking, and no premium features.
 
-<a href="https://github.com/sponsors/rainxchzed">
-  <img src="https://img.shields.io/badge/Sponsor-GitHub-pink?logo=github" alt="Sponsor on GitHub">
-</a>
+I'm **Usmon, a 16-year-old student from Uzbekistan**, and I built and maintain this entirely on my own while finishing high school. Your support (even $3) helps me:
+
+✅ **Keep the app bug-free** — respond to issues and ship fixes quickly  
+✅ **Add community-requested features** — implement what users actually need  
+✅ **Maintain infrastructure** — servers, APIs, and deployment costs  
+✅ **Build more free tools** — KMP plugins and educational content  
+✅ **Support my family** — helping them while pursuing my passion for coding  
+
+### 💖 Ways to Support
 
 <a href="https://www.buymeacoffee.com/rainxchzed">
-  <img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee">
+  <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕%20$3-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee">
 </a>
 
-Your support helps me:
-- Maintain the app for 20K+ users
-- Build new features
-- Create more free tools for developers
+<a href="https://github.com/sponsors/rainxchzed">
+  <img src="https://img.shields.io/badge/GitHub%20Sponsors-💖%20Monthly-pink?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Sponsors">
+</a>
 
-Or star the repo and share with others! ⭐
+**Can't sponsor right now?** That's okay! You can still help by:
+- ⭐ **Starring this repo** — helps others discover GitHub Store
+- 🐛 **Reporting bugs** — makes the app better for everyone
+- 📢 **Sharing with friends** — spread the word to other developers
+- 💬 **Joining discussions** — your feedback shapes the roadmap
+
+Every bit of support—financial or not—means the world and keeps this project alive. Thank you! 🙏
+
+---
 
 ## Star History
 
