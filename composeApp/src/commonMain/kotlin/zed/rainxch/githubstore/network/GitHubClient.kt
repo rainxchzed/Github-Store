@@ -5,6 +5,8 @@ import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.rate_limit_exceeded
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.ProxyBuilder
+import io.ktor.client.engine.http
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.HttpRequestRetry
@@ -35,6 +37,10 @@ fun buildGitHubHttpClient(
             requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
             connectTimeoutMillis = 30_000
             socketTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
+        }
+
+        engine {
+            // proxy = ProxyBuilder.http("")
         }
 
         install(HttpRequestRetry) {
