@@ -1,4 +1,4 @@
-package zed.rainxch.githubstore.core.data.services
+package zed.rainxch.githubstore.core.data.services.installer
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -7,20 +7,32 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.core.content.FileProvider
-import java.io.File
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import zed.rainxch.githubstore.core.data.model.InstallationProgress
+import zed.rainxch.githubstore.core.data.services.ApkInfoExtractor
+import zed.rainxch.githubstore.core.data.services.Installer
+import zed.rainxch.githubstore.core.data.services.installer.shizuku.ShizukuInstaller
+import zed.rainxch.githubstore.core.data.services.installer.shizuku.ShizukuManager
 import zed.rainxch.githubstore.core.domain.model.Architecture
 import zed.rainxch.githubstore.core.domain.model.GithubAsset
+import java.io.File
 
+/**
+ * Enhanced Android installer with Shizuku support.
+ * Falls back to standard installation if Shizuku is not available.
+ */
 class AndroidInstaller(
     private val context: Context,
-    private val apkInfoExtractor: ApkInfoExtractor
+    private val apkInfoExtractor: ApkInfoExtractor,
+    private val shizukuManager: ShizukuManager,
+    private val shizukuInstaller: ShizukuInstaller
 ) : Installer {
 
-    override fun getApkInfoExtractor(): ApkInfoExtractor {
-        return apkInfoExtractor
-    }
+    override fun getApkInfoExtractor(): ApkInfoExtractor = apkInfoExtractor
+
     override fun detectSystemArchitecture(): Architecture {
         val arch = Build.SUPPORTED_ABIS.firstOrNull() ?: return Architecture.UNKNOWN
         return when {
@@ -54,15 +66,19 @@ class AndroidInstaller(
             Architecture.X86_64 -> {
                 name.contains("x86_64") || name.contains("amd64") || name.contains("x64")
             }
+
             Architecture.AARCH64 -> {
                 name.contains("aarch64") || name.contains("arm64")
             }
+
             Architecture.X86 -> {
                 name.contains("i386") || name.contains("i686") || name.contains("x86")
             }
+
             Architecture.ARM -> {
                 name.contains("armv7") || name.contains("armeabi") || name.contains("arm")
             }
+
             Architecture.UNKNOWN -> true
         }
     }
@@ -80,15 +96,19 @@ class AndroidInstaller(
                 Architecture.X86_64 -> {
                     if (name.contains("x86_64") || name.contains("amd64")) 10000 else 0
                 }
+
                 Architecture.AARCH64 -> {
                     if (name.contains("aarch64") || name.contains("arm64")) 10000 else 0
                 }
+
                 Architecture.X86 -> {
                     if (name.contains("i386") || name.contains("i686")) 10000 else 0
                 }
+
                 Architecture.ARM -> {
                     if (name.contains("armv7") || name.contains("armeabi")) 10000 else 0
                 }
+
                 Architecture.UNKNOWN -> 0
             }
             archBoost + asset.size
@@ -101,6 +121,12 @@ class AndroidInstaller(
     }
 
     override suspend fun ensurePermissionsOrThrow(extOrMime: String) {
+        // If using Shizuku, no permission dialog needed
+        if (isShizukuAvailable()) {
+            return
+        }
+
+        // Otherwise check standard install permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val pm = context.packageManager
             if (!pm.canRequestPackageInstalls()) {
@@ -122,6 +148,25 @@ class AndroidInstaller(
 
         Logger.d { "Installing APK: $filePath" }
 
+        // Try Shizuku installation first if available
+        if (isShizukuAvailable()) {
+            Logger.d { "Using Shizuku for installation" }
+            installViaShizuku(file)
+        } else {
+            Logger.d { "Using standard installation" }
+            installViaStandard(file)
+        }
+    }
+
+    /**
+     * Installs APK using Shizuku for silent installation.
+     * Returns a Flow that emits installation progress.
+     */
+    private fun installViaShizuku(file: File): Flow<InstallationProgress> {
+        return installWithShizukuProgress(file)
+    }
+
+    private fun installViaStandard(file: File) {
         val authority = "${context.packageName}.fileprovider"
         val fileUri: Uri = FileProvider.getUriForFile(context, authority, file)
 
@@ -205,6 +250,75 @@ class AndroidInstaller(
             Logger.d { "APK opened in AppManager" }
         } catch (_: ActivityNotFoundException) {
             onOpenInstaller()
+        }
+    }
+
+    // ===== Shizuku Support (Interface Implementation) =====
+
+    override fun isShizukuAvailable(): Boolean {
+        return shizukuManager.isAvailable.value && shizukuManager.hasPermission.value
+    }
+
+    override fun isShizukuInstalled(): Boolean {
+        return shizukuManager.isShizukuInstalled()
+    }
+
+    override fun requestShizukuPermission(): Boolean {
+        return shizukuManager.requestPermission()
+    }
+
+    override fun installWithShizukuProgress(file: File): Flow<InstallationProgress> {
+        return shizukuInstaller.installApk(file).map { progress ->
+            when (progress) {
+                is ShizukuInstaller.InstallProgress.Preparing ->
+                    InstallationProgress.Preparing
+
+                is ShizukuInstaller.InstallProgress.CreatingSession ->
+                    InstallationProgress.CreatingSession
+
+                is ShizukuInstaller.InstallProgress.WritingApk ->
+                    InstallationProgress.Installing(progress.progress)
+
+                is ShizukuInstaller.InstallProgress.Committing ->
+                    InstallationProgress.Finalizing
+
+                is ShizukuInstaller.InstallProgress.Success ->
+                    InstallationProgress.Success(progress.packageName)
+
+                is ShizukuInstaller.InstallProgress.Error ->
+                    InstallationProgress.Error(progress.message)
+            }
+        }
+    }
+
+    override suspend fun uninstallWithShizuku(packageName: String): Boolean {
+        return if (isShizukuAvailable()) {
+            val result = shizukuInstaller.uninstallPackage(packageName)
+            result.success
+        } else {
+            false
+        }
+    }
+
+    override fun openShizukuApp() {
+        try {
+            val intent = context.packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            } else {
+                val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
+                    data = "https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api".toUri()
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(playStoreIntent)
+            }
+        } catch (_: Exception) {
+            val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                data = "https://github.com/RikkaApps/Shizuku/releases".toUri()
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(browserIntent)
         }
     }
 }

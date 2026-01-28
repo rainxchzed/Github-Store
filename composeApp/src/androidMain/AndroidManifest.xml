@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
+    <uses-permission android:name="moe.shizuku.manager.permission.API_V23" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <queries>
         <package android:name="zed.rainxch.githubstore" />
         <intent>
@@ -24,7 +29,6 @@
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="false">
 
-        <!-- Expose cache files via FileProvider for APK install -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -55,6 +59,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
+
+        <receiver
+            android:name=".core.data.services.installer.shizuku.InstallResultReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.github.store.INSTALL_RESULT" />
+                <action android:name="com.github.store.UNINSTALL_RESULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

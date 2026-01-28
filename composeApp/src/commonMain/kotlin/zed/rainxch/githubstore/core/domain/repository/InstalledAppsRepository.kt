@@ -10,13 +10,13 @@ interface InstalledAppsRepository {
     suspend fun getAppByPackage(packageName: String): InstalledApp?
     suspend fun getAppByRepoId(repoId: Long): InstalledApp?
     suspend fun isAppInstalled(repoId: Long): Boolean
-    
+
     suspend fun saveInstalledApp(app: InstalledApp)
     suspend fun deleteInstalledApp(packageName: String)
-    
+
     suspend fun checkForUpdates(packageName: String): Boolean
     suspend fun checkAllForUpdates()
-    
+
     suspend fun updateAppVersion(
         packageName: String,
         newTag: String,
@@ -25,6 +25,7 @@ interface InstalledAppsRepository {
         newVersionName: String,
         newVersionCode: Long
     )
+
     suspend fun updateApp(app: InstalledApp)
     suspend fun updatePendingStatus(packageName: String, isPending: Boolean)
 
