@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>zed.rainxch.githubstore</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>Apache-2.0</project_license>
+    <name>GitHub Store</name>
+    <summary>A cross-platform app store for GitHub releases</summary>
+    <description>
+        <p>GitHub Store is a cross-platform "play store" for GitHub releases. It discovers repositories that ship real installable binaries and lets you install, track, and update them across platforms from one place.</p>
+        <p>Key Features:</p>
+        <ul>
+            <li>Smart discovery with Trending, Recently Updated, and New sections</li>
+            <li>Only shows repositories with installable assets (APK, EXE, DMG, AppImage, DEB, RPM, etc.)</li>
+            <li>Platform-aware filtering - automatically detects and shows installers for your OS</li>
+            <li>Always installs from the latest published release with changelog preview</li>
+            <li>Rich app details with README rendering, statistics, and developer info</li>
+            <li>GitHub OAuth login for higher API rate limits</li>
+            <li>Material 3 design with dynamic color support and dark mode</li>
+            <li>Cross-platform support for Android and Desktop (Windows, macOS, Linux)</li>
+        </ul>
+        <p>Built with Kotlin Multiplatform and Compose Multiplatform for a consistent experience across all platforms.</p>
+    </description>
+    <developer id="zed.rainxch">
+        <name>rainxchzed</name>
+    </developer>
+    <url type="homepage">https://github.com/rainxchzed/Github-Store</url>
+    <url type="bugtracker">https://github.com/rainxchzed/Github-Store/issues</url>
+    <url type="vcs-browser">https://github.com/rainxchzed/Github-Store</url>
+    <url type="contribute">https://github.com/rainxchzed/Github-Store/blob/main/CONTRIBUTING.md</url>
+    <url type="donation">https://github.com/sponsors/rainxchzed</url>
+    <launchable type="desktop-id">zed.rainxch.githubstore.desktop</launchable>
+    <provides>
+        <binary>GitHub-Store</binary>
+    </provides>
+    <categories>
+        <category>Development</category>
+        <category>Utility</category>
+    </categories>
+    <keywords>
+        <keyword>github</keyword>
+        <keyword>releases</keyword>
+        <keyword>app store</keyword>
+        <keyword>package manager</keyword>
+        <keyword>installer</keyword>
+    </keywords>
+    <content_rating type="oars-1.1">
+        <content_attribute id="social-info">moderate</content_attribute>
+    </content_rating>
+    <releases>
+        <release version="1.5.1" date="2026-01-10">
+            <description>
+                <p>A quality-of-life update focused on smoother navigation, smarter syncing, and richer localization.</p>
+                <p>Highlights:</p>
+                <ul>
+                    <li>New liquid bottom navigation bar for a more fluid and modern experience</li>
+                    <li>Favorites and feedback features on the details screen</li>
+                    <li>Smarter data migration and improved system sync for better state alignment</li>
+                    <li>New language support: Korean, Bengali, and Italian</li>
+                    <li>Improved translations and localized theme options</li>
+                    <li>Home screen refactored for better maintainability</li>
+                    <li>Enhanced search experience with polished input behavior</li>
+                    <li>Authentication improvements for more reliable sign-in</li>
+                    <li>Fixed Android update issues</li>
+                </ul>
+            </description>
+            <url>https://github.com/rainxchzed/Github-Store/releases/tag/1.5.1</url>
+        </release>
+    </releases>
+</component>

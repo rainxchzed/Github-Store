@@ -1,0 +1,56 @@
+app-id: zed.rainxch.githubstore
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk21
+command: GitHub-Store
+finish-args:
+  # Network access for GitHub API
+  - --share=network
+  # Required for X11/Wayland GUI applications
+  - --share=ipc
+  # Display server access - supports both X11 and Wayland
+  - --socket=x11
+  - --socket=wayland
+  # GPU acceleration
+  - --device=dri
+  # File system access for downloads
+  - --filesystem=xdg-download
+  # Ensures compatibility across different display configurations
+  - --env=GDK_BACKEND=x11,wayland
+modules:
+  - name: githubstore
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/openjdk21/bin
+      env:
+        JAVA_HOME: /usr/lib/sdk/openjdk21
+    sources:
+      - type: git
+        url: https://github.com/rainxchzed/Github-Store.git
+        tag: 1.5.1
+      # TODO: Paste the contents of generated-sources.json here as a YAML list
+      # Generate it using: flatpak-builder-tools/gradle/flatpak-gradle-generator.py
+      # Example format:
+      # - type: file
+      #   url: https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.1.0/kotlin-stdlib-2.1.0.jar
+      #   sha256: abc123...
+      #   dest: gradle-cache/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.1.0/
+      #   dest-filename: kotlin-stdlib-2.1.0.jar
+      - type: file
+        path: zed.rainxch.githubstore.desktop
+      - type: file
+        path: app_icon.png
+      - type: file
+        path: zed.rainxch.githubstore.appdata.xml
+    build-commands:
+      - chmod +x gradlew
+      - export GRADLE_USER_HOME=$PWD/.gradle
+      - ./gradlew --offline --no-daemon packageAppImage
+      - mkdir -p /app/bin /app/lib
+      - cp -r composeApp/build/compose/binaries/main/app/GitHub-Store/bin/* /app/bin/
+      - cp -r composeApp/build/compose/binaries/main/app/GitHub-Store/lib/* /app/lib/
+      - install -D zed.rainxch.githubstore.desktop /app/share/applications/zed.rainxch.githubstore.desktop
+      - install -D app_icon.png /app/share/icons/hicolor/512x512/apps/zed.rainxch.githubstore.png
+      - install -Dm644 zed.rainxch.githubstore.appdata.xml /app/share/metainfo/zed.rainxch.githubstore.metainfo.xml
