@@ -74,6 +74,10 @@ kotlin {
             // Secure storage (direct coordinate to avoid catalog accessor mismatch)
             implementation(libs.androidx.security.crypto)
             implementation(libs.core.splashscreen)
+
+            implementation(libs.shizuku.api)
+            implementation(libs.shizuku.provider)
+            implementation(libs.androidx.work.runtime.ktx)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -158,9 +162,10 @@ kotlin {
 }
 
 afterEvaluate {
-    tasks.matching { it.name.contains("kspKotlinJvm") || it.name == "compileKotlinJvm" }.configureEach {
-        dependsOn(generateJvmBuildConfig)
-    }
+    tasks.matching { it.name.contains("kspKotlinJvm") || it.name == "compileKotlinJvm" }
+        .configureEach {
+            dependsOn(generateJvmBuildConfig)
+        }
 }
 
 tasks.named("compileKotlinJvm") {
