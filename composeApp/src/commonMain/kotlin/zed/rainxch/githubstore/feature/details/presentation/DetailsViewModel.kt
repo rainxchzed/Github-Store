@@ -7,6 +7,7 @@ import githubstore.composeapp.generated.resources.Res
 import githubstore.composeapp.generated.resources.added_to_favourites
 import githubstore.composeapp.generated.resources.installer_saved_downloads
 import githubstore.composeapp.generated.resources.removed_from_favourites
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -198,6 +199,39 @@ class DetailsViewModel(
                 }.orEmpty()
 
                 val primary = installer.choosePrimaryAsset(installable)
+
+                launch(Dispatchers.IO) {
+                    try {
+                        val allFiles = downloader.listDownloadedFiles()
+                        val currentRepoAssetNames = installable.map { it.name }.toSet()
+                        val filesToDelete = allFiles.filter { file ->
+                            file.fileName !in currentRepoAssetNames
+                        }
+
+                        if (filesToDelete.isNotEmpty()) {
+                            Logger.d { "Cleaning up ${filesToDelete.size} files from other repositories" }
+
+                            filesToDelete.forEach { file ->
+                                try {
+                                    val deleted = downloader.cancelDownload(file.fileName)
+                                    if (deleted) {
+                                        Logger.d { "✓ Cleaned up file from other repo: ${file.fileName}" }
+                                    } else {
+                                        Logger.w { "✗ Failed to delete file: ${file.fileName}" }
+                                    }
+                                } catch (e: Exception) {
+                                    Logger.e { "✗ Error deleting ${file.fileName}: ${e.message}" }
+                                }
+                            }
+
+                            Logger.d { "Cleanup complete - ${filesToDelete.size} files removed" }
+                        } else {
+                            Logger.d { "No files from other repos to clean up" }
+                        }
+                    } catch (t: Throwable) {
+                        Logger.e { "Failed to cleanup files from other repos: ${t.message}" }
+                    }
+                }
 
                 val isObtainiumAvailable = installer.isObtainiumInstalled()
                 val isAppManagerAvailable = installer.isAppManagerInstalled()
@@ -534,10 +568,9 @@ class DetailsViewModel(
                     assetName = assetName,
                     size = sizeBytes,
                     tag = releaseTag,
-                    result = if (isUpdate) {
-                        LogResult.UpdateStarted
-                    } else LogResult.DownloadStarted
+                    result = if (isUpdate) LogResult.UpdateStarted else LogResult.DownloadStarted
                 )
+
                 _state.value = _state.value.copy(
                     downloadError = null,
                     installError = null,
@@ -548,23 +581,61 @@ class DetailsViewModel(
                     extOrMime = assetName.substringAfterLast('.', "").lowercase()
                 )
 
-                _state.value = _state.value.copy(downloadStage = DownloadStage.DOWNLOADING)
-                downloader.download(downloadUrl, assetName).collect { p ->
-                    _state.value = _state.value.copy(downloadProgressPercent = p.percent)
-                    if (p.percent == 100) {
-                        _state.value = _state.value.copy(downloadStage = DownloadStage.VERIFYING)
+                // Check if file already exists and validate
+                val existingFilePath = downloader.getDownloadedFilePath(assetName)
+                val validatedFilePath = if (existingFilePath != null) {
+                    // Verify file size matches expected
+                    val fileSize = downloader.getFileSize(existingFilePath)
+                    if (fileSize == sizeBytes) {
+                        Logger.d { "File already exists with correct size ($fileSize bytes), skipping download: $existingFilePath" }
+                        appendLog(
+                            assetName = assetName,
+                            size = sizeBytes,
+                            tag = releaseTag,
+                            result = LogResult.Downloaded
+                        )
+                        existingFilePath
+                    } else {
+                        Logger.w { "Existing file size mismatch (expected: $sizeBytes, found: $fileSize), re-downloading" }
+                        downloader.cancelDownload(assetName)
+                        null
                     }
+                } else {
+                    null
                 }
 
-                val filePath = downloader.getDownloadedFilePath(assetName)
-                    ?: throw IllegalStateException("Downloaded file not found")
+                // Download if no valid file exists
+                val filePath = validatedFilePath ?: run {
+                    _state.value = _state.value.copy(downloadStage = DownloadStage.DOWNLOADING)
+                    downloader.download(downloadUrl, assetName).collect { p ->
+                        _state.value = _state.value.copy(downloadProgressPercent = p.percent)
+                        if (p.percent == 100) {
+                            _state.value = _state.value.copy(downloadStage = DownloadStage.VERIFYING)
+                        }
+                    }
 
-                appendLog(
-                    assetName = assetName,
-                    size = sizeBytes,
-                    tag = releaseTag,
-                    result = LogResult.Downloaded
-                )
+                    val downloadedPath = downloader.getDownloadedFilePath(assetName)
+                        ?: throw IllegalStateException("Downloaded file not found")
+
+                    // Verify downloaded file size
+                    val downloadedSize = downloader.getFileSize(downloadedPath)
+                    if (downloadedSize != sizeBytes) {
+                        Logger.e { "Downloaded file size mismatch (expected: $sizeBytes, got: $downloadedSize)" }
+                        downloader.cancelDownload(assetName)
+                        throw IllegalStateException("Downloaded file size mismatch - expected $sizeBytes bytes, got $downloadedSize bytes")
+                    }
+
+                    Logger.d { "Download verified - file size matches: $downloadedSize bytes" }
+
+                    appendLog(
+                        assetName = assetName,
+                        size = sizeBytes,
+                        tag = releaseTag,
+                        result = LogResult.Downloaded
+                    )
+
+                    downloadedPath
+                }
 
                 _state.value = _state.value.copy(downloadStage = DownloadStage.INSTALLING)
                 val ext = assetName.substringAfterLast('.', "").lowercase()
@@ -596,9 +667,7 @@ class DetailsViewModel(
                     assetName = assetName,
                     size = sizeBytes,
                     tag = releaseTag,
-                    result = if (isUpdate) {
-                        LogResult.Updated
-                    } else LogResult.Installed
+                    result = if (isUpdate) LogResult.Updated else LogResult.Installed
                 )
 
             } catch (t: Throwable) {
@@ -806,13 +875,9 @@ class DetailsViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        currentDownloadJob?.cancel()
 
-        currentAssetName?.let { assetName ->
-            viewModelScope.launch {
-                downloader.cancelDownload(assetName)
-            }
-        }
+        currentDownloadJob?.cancel()
+        currentDownloadJob = null
     }
 
     private companion object {
