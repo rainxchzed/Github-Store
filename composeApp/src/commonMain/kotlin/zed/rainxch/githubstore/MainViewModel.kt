@@ -6,32 +6,48 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.githubstore.app.app_state.AppStateManager
-import zed.rainxch.githubstore.core.data.services.PackageMonitor
 import zed.rainxch.githubstore.core.data.data_source.TokenDataSource
-import zed.rainxch.githubstore.core.domain.Platform
-import zed.rainxch.githubstore.core.domain.model.PlatformType
 import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.githubstore.core.domain.repository.ThemesRepository
+import zed.rainxch.githubstore.core.domain.use_cases.MigrateInstalledAppsDataUseCase
+import zed.rainxch.githubstore.core.presentation.model.AppTheme
+import zed.rainxch.githubstore.core.presentation.model.FontTheme
 
+/**
+ * Main ViewModel for the application.
+ * 
+ * Manages authentication state, theme preferences, rate limit information,
+ * and initial data migration.
+ */
 class MainViewModel(
     private val tokenDataSource: TokenDataSource,
     private val themesRepository: ThemesRepository,
     private val appStateManager: AppStateManager,
-    private val packageMonitor: PackageMonitor,
-    private val installedAppsRepository: InstalledAppsRepository,
-    private val platform: Platform
+    private val migrateInstalledAppsDataUseCase: MigrateInstalledAppsDataUseCase,
+    private val installedAppsRepository: InstalledAppsRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
 
     init {
+        initializeAuthState()
+        observeAuthChanges()
+        observeThemePreferences()
+        observeAppState()
+        performInitialMigration()
+    }
+
+    /**
+     * Loads initial authentication state from storage.
+     */
+    private fun initializeAuthState() {
         viewModelScope.launch(Dispatchers.IO) {
             val initialToken = tokenDataSource.reloadFromStore()
             _state.update {
@@ -40,47 +56,53 @@ class MainViewModel(
                     isLoggedIn = initialToken != null
                 )
             }
-            Logger.d("MainViewModel") { "Initial token loaded: ${initialToken != null}" }
         }
+    }
 
+    /**
+     * Observes authentication changes (login/logout).
+     */
+    private fun observeAuthChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             tokenDataSource
                 .tokenFlow
-                .drop(1)
+                .drop(1) // Skip initial value
                 .distinctUntilChanged()
                 .collect { authInfo ->
                     _state.update { it.copy(isLoggedIn = authInfo != null) }
                 }
         }
+    }
 
+    /**
+     * Observes all theme preferences with a single combined flow.
+     */
+    private fun observeThemePreferences() {
         viewModelScope.launch {
-            themesRepository
-                .getThemeColor()
-                .collect { theme ->
-                    _state.update {
-                        it.copy(currentColorTheme = theme)
-                    }
+            combine(
+                themesRepository.getThemeColor(),
+                themesRepository.getAmoledTheme(),
+                themesRepository.getIsDarkTheme(),
+                themesRepository.getFontTheme()
+            ) { color, amoled, dark, font ->
+                ThemePreferences(color, amoled, dark, font)
+            }.collect { prefs ->
+                _state.update {
+                    it.copy(
+                        currentColorTheme = prefs.color,
+                        isAmoledTheme = prefs.amoled,
+                        isDarkTheme = prefs.dark,
+                        currentFontTheme = prefs.font
+                    )
                 }
+            }
         }
-        viewModelScope.launch {
-            themesRepository
-                .getAmoledTheme()
-                .collect { isAmoled ->
-                    _state.update {
-                        it.copy(isAmoledTheme = isAmoled)
-                    }
-                }
-        }
-        viewModelScope.launch {
-            themesRepository
-                .getIsDarkTheme()
-                .collect { isDarkTheme ->
-                    _state.update {
-                        it.copy(isDarkTheme = isDarkTheme)
-                    }
-                }
-        }
+    }
 
+    /**
+     * Observes app state for rate limit information.
+     */
+    private fun observeAppState() {
         viewModelScope.launch(Dispatchers.IO) {
             appStateManager.appState.collect { appState ->
                 _state.update {
@@ -91,63 +113,24 @@ class MainViewModel(
                 }
             }
         }
-        viewModelScope.launch {
-            themesRepository
-                .getFontTheme()
-                .collect { fontTheme ->
-                    _state.update {
-                        it.copy(currentFontTheme = fontTheme)
-                    }
-                }
-        }
+    }
+
+    /**
+     * Performs initial data migration and update checks.
+     * Runs in background without blocking UI.
+     */
+    private fun performInitialMigration() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val installedPackageNames = packageMonitor.getAllInstalledPackageNames()
-
-                val appsInDb = installedAppsRepository.getAllInstalledApps().first()
-
-                appsInDb.forEach { app ->
-                    if (!installedPackageNames.contains(app.packageName)) {
-                        Logger.d { "App ${app.packageName} no longer installed (not in system packages), removing from DB" }
-                        installedAppsRepository.deleteInstalledApp(app.packageName)
-                    } else if (app.installedVersionName == null) {  // Migrate only if new fields unset
-                        if (platform.type == PlatformType.ANDROID) {
-                            val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
-                            if (systemInfo != null) {
-                                installedAppsRepository.updateApp(app.copy(
-                                    installedVersionName = systemInfo.versionName,
-                                    installedVersionCode = systemInfo.versionCode,
-                                    latestVersionName = systemInfo.versionName,
-                                    latestVersionCode = systemInfo.versionCode
-                                ))
-                                Logger.d { "Migrated ${app.packageName}: set versionName/code from system" }
-                            } else {
-                                installedAppsRepository.updateApp(app.copy(
-                                    installedVersionName = app.installedVersion,
-                                    installedVersionCode = 0L,
-                                    latestVersionName = app.installedVersion,
-                                    latestVersionCode = 0L
-                                ))
-                                Logger.d { "Migrated ${app.packageName}: fallback to tag as versionName" }
-                            }
-                        } else {
-                            installedAppsRepository.updateApp(app.copy(
-                                installedVersionName = app.installedVersion,
-                                installedVersionCode = 0L,
-                                latestVersionName = app.installedVersion,
-                                latestVersionCode = 0L
-                            ))
-                            Logger.d { "Migrated ${app.packageName} (desktop): fallback to tag as versionName" }
-                        }
-                    }
-                }
-
-                Logger.d { "Robust system existence sync and data migration completed" }
+                // Migrate legacy data format
+                migrateInstalledAppsDataUseCase()
+                
+                // Check for updates after migration
+                installedAppsRepository.checkAllForUpdates()
             } catch (e: Exception) {
-                Logger.e { "Failed to sync existence or migrate data: ${e.message}" }
+                // Silent fail - non-critical operation
+                Logger.e(e) { "Initial migration failed" }
             }
-
-            installedAppsRepository.checkAllForUpdates()
         }
     }
 
@@ -159,3 +142,13 @@ class MainViewModel(
         }
     }
 }
+
+/**
+ * Data class to hold theme preferences for combined flow.
+ */
+private data class ThemePreferences(
+    val color: AppTheme,
+    val amoled: Boolean,
+    val dark: Boolean,
+    val font: FontTheme
+)
