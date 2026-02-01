@@ -24,6 +24,12 @@ import zed.rainxch.githubstore.feature.developer_profile.domain.repository.Devel
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+/**
+ * ViewModel for the Developer Profile screen.
+ * 
+ * Manages loading developer profile and repositories, filtering, sorting,
+ * search functionality, and favorite toggling.
+ */
 class DeveloperProfileViewModel(
     private val username: String,
     private val repository: DeveloperProfileRepository,
@@ -46,6 +52,10 @@ class DeveloperProfileViewModel(
             initialValue = DeveloperProfileState(username = username)
         )
 
+    /**
+     * Loads developer profile and repositories sequentially.
+     * Profile is loaded first, then repositories.
+     */
     private fun loadDeveloperData() {
         viewModelScope.launch {
             _state.update {
@@ -56,6 +66,7 @@ class DeveloperProfileViewModel(
                 )
             }
 
+            // Load profile first
             val profileResult = repository.getDeveloperProfile(username)
             profileResult
                 .onSuccess { profile ->
@@ -78,8 +89,8 @@ class DeveloperProfileViewModel(
                     return@launch
                 }
 
+            // Load repositories
             val reposResult = repository.getDeveloperRepositories(username)
-
             reposResult
                 .onSuccess { repos ->
                     _state.update {
@@ -104,11 +115,16 @@ class DeveloperProfileViewModel(
         }
     }
 
+    /**
+     * Applies current filters and sorting to the repository list.
+     * Runs on Default dispatcher to avoid blocking UI.
+     */
     private fun applyFiltersAndSort() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentState = _state.value
             var filtered = currentState.repositories
 
+            // Apply search filter
             if (currentState.searchQuery.isNotBlank()) {
                 val query = currentState.searchQuery.lowercase()
                 filtered = filtered.filter { repo ->
@@ -117,23 +133,25 @@ class DeveloperProfileViewModel(
                 }.toImmutableList()
             }
 
+            // Apply category filter
             filtered = when (currentState.currentFilter) {
                 RepoFilterType.ALL -> filtered
                 RepoFilterType.WITH_RELEASES -> filtered.filter { it.hasInstallableAssets }
                     .toImmutableList()
-
-                RepoFilterType.INSTALLED -> filtered.filter { it.isInstalled }.toImmutableList()
-                RepoFilterType.FAVORITES -> filtered.filter { it.isFavorite }.toImmutableList()
+                RepoFilterType.INSTALLED -> filtered.filter { it.isInstalled }
+                    .toImmutableList()
+                RepoFilterType.FAVORITES -> filtered.filter { it.isFavorite }
+                    .toImmutableList()
             }
 
+            // Apply sorting
             filtered = when (currentState.currentSort) {
                 RepoSortType.UPDATED -> filtered.sortedByDescending { it.updatedAt }
                     .toImmutableList()
-
                 RepoSortType.STARS -> filtered.sortedByDescending { it.stargazersCount }
                     .toImmutableList()
-
-                RepoSortType.NAME -> filtered.sortedBy { it.name.lowercase() }.toImmutableList()
+                RepoSortType.NAME -> filtered.sortedBy { it.name.lowercase() }
+                    .toImmutableList()
             }
 
             _state.update { it.copy(filteredRepositories = filtered) }
@@ -142,10 +160,10 @@ class DeveloperProfileViewModel(
 
     fun onAction(action: DeveloperProfileAction) {
         when (action) {
+            // Navigation actions handled by composable
             DeveloperProfileAction.OnNavigateBackClick,
             is DeveloperProfileAction.OnRepositoryClick,
-            is DeveloperProfileAction.OnOpenLink -> {
-            }
+            is DeveloperProfileAction.OnOpenLink -> Unit
 
             is DeveloperProfileAction.OnFilterChange -> {
                 _state.update { it.copy(currentFilter = action.filter) }
@@ -163,38 +181,7 @@ class DeveloperProfileViewModel(
             }
 
             is DeveloperProfileAction.OnToggleFavorite -> {
-                viewModelScope.launch {
-                    val repo = action.repository
-
-                    val favoriteRepo = FavoriteRepo(
-                        repoId = repo.id,
-                        repoName = repo.name,
-                        repoOwner = repo.fullName.split("/")[0],
-                        repoOwnerAvatarUrl = _state.value.profile?.avatarUrl ?: "",
-                        repoDescription = repo.description,
-                        primaryLanguage = repo.language,
-                        repoUrl = repo.htmlUrl,
-                        latestVersion = repo.latestVersion,
-                        latestReleaseUrl = null,
-                        addedAt = Clock.System.now().toEpochMilliseconds(),
-                        lastSyncedAt = Clock.System.now().toEpochMilliseconds()
-                    )
-
-                    favouritesRepository.toggleFavorite(favoriteRepo)
-
-                    _state.update { state ->
-                        val updatedRepos = state.repositories.map {
-                            if (it.id == repo.id) {
-                                it.copy(isFavorite = !it.isFavorite)
-                            } else {
-                                it
-                            }
-                        }.toImmutableList()
-
-                        state.copy(repositories = updatedRepos)
-                    }
-                    applyFiltersAndSort()
-                }
+                toggleFavorite(action.repository)
             }
 
             DeveloperProfileAction.OnDismissError -> {
@@ -204,6 +191,48 @@ class DeveloperProfileViewModel(
             DeveloperProfileAction.OnRetry -> {
                 loadDeveloperData()
             }
+        }
+    }
+    
+    /**
+     * Toggles favorite status for a repository.
+     * Updates both local state and database.
+     */
+    private fun toggleFavorite(repo: zed.rainxch.githubstore.feature.developer_profile.domain.model.DeveloperRepository) {
+        viewModelScope.launch {
+            val currentTime = Clock.System.now().toEpochMilliseconds()
+            val repoOwner = repo.fullName.substringBefore('/')
+            
+            val favoriteRepo = FavoriteRepo(
+                repoId = repo.id,
+                repoName = repo.name,
+                repoOwner = repoOwner,
+                repoOwnerAvatarUrl = _state.value.profile?.avatarUrl.orEmpty(),
+                repoDescription = repo.description,
+                primaryLanguage = repo.language,
+                repoUrl = repo.htmlUrl,
+                latestVersion = repo.latestVersion,
+                latestReleaseUrl = null,
+                addedAt = currentTime,
+                lastSyncedAt = currentTime
+            )
+
+            favouritesRepository.toggleFavorite(favoriteRepo)
+
+            // Update local state
+            _state.update { state ->
+                val updatedRepos = state.repositories.map {
+                    if (it.id == repo.id) {
+                        it.copy(isFavorite = !it.isFavorite)
+                    } else {
+                        it
+                    }
+                }.toImmutableList()
+
+                state.copy(repositories = updatedRepos)
+            }
+            
+            applyFiltersAndSort()
         }
     }
 }
