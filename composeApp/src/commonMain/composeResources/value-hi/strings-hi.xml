@@ -6,12 +6,12 @@
     <!-- Apps feature - Navigation / Top bar -->
     <string name="installed_apps">इंस्टॉल किए गए ऐप्स</string>
     <string name="navigate_back">वापस नेविगेट करें</string>
-    <string name="check_for_updates">अपडेट के लिए जाँच</string>
+    <string name="check_for_updates">अपडेट के लिए जाँच करें</string>
 
     <!-- Apps feature - Errors / messages -->
-    <string name="cannot_launch">लॉन्च नहीं किया जा सकता %1$s</string>
-    <string name="failed_to_open">खोलने में विफल रहा %1$s</string>
-    <string name="failed_to_update">अपडेट करने में विफल रहा %1$s: %2$s</string>
+    <string name="cannot_launch">%1$s को लॉन्च नहीं किया जा सकता</string>
+    <string name="failed_to_open">%1$s को खोलने में विफल रहा</string>
+    <string name="failed_to_update">%1$s अपडेट करने में विफल रहा: %2$s</string>
     <string name="update_all_failed">सभी अपडेट विफल रहे: %1$s</string>
     <string name="all_apps_updated_successfully">सभी ऐप्स सफलतापूर्वक अपडेट हो गए</string>
     <string name="no_updates_available">कोई अपडेट उपलब्ध नहीं</string>
@@ -79,9 +79,9 @@
     <string name="sort_by">क्रमबद्ध करें</string>
     <string name="close">बंद</string>
 
-    <string name="sort_most_stars">अधिकांश Stars</string>
-    <string name="sort_most_forks">अधिकांश Forks</string>
-    <string name="sort_best_match">श्रेष्ठ Match</string>
+    <string name="sort_most_stars">सबसे अधिक स्टार</string>
+    <string name="sort_most_forks">सबसे अधिक फोर्क्स</string>
+    <string name="sort_best_match">सबसे अच्छा मिलान</string>
 
     <!-- Programming languages -->
     <string name="language_all">सभी भाषाएँ</string>
@@ -152,7 +152,7 @@
 
     <!-- Headers -->
     <string name="about_this_app">इस ऐप के बारे में</string>
-    <string name="install_logs">लॉग इनस्टॉल करें</string>
+    <string name="install_logs">इंस्टॉल लॉग्स</string>
     <string name="author">लेखक</string>
     <string name="whats_new">नया क्या है</string>
 
@@ -168,7 +168,7 @@
     <string name="downloading">डाउनलोड</string>
     <string name="updating">अपडेट हो रहा है</string>
     <string name="verifying">सत्यापन</string>
-    <string name="installing">स्थापित कर रहा है</string>
+    <string name="installing">स्थापित हो रहा है</string>
 
     <!-- Install helpers -->
     <string name="open_in_obtainium">ओब्टेनियम में खोलें</string>
@@ -238,14 +238,14 @@
     <string name="rate_limit_tip_sign_in">💡 60 रिक्वेस्ट प्रति घंटे के बजाय 5,000 रिक्वेस्ट प्रति घंटे पाने के लिए साइन इन करें!</string>
     <string name="rate_limit_sign_in">साइन इन</string>
     <string name="rate_limit_ok">ठीक है</string>
-    <string name="rate_limit_close">बंद करना</string>
+    <string name="rate_limit_close">बंद करेंा</string>
 
     <string name="system_font">सिस्टम फ़ॉन्ट</string>
     <string name="system_font_description">बेहतर पठनीयता के लिए अपने डिवाइस के फ़ॉन्ट से मिलान करें।</string>
 
-    <string name="theme_light">Light</string>
-    <string name="theme_dark">Dark</string>
-    <string name="theme_system">System</string>
+    <string name="theme_light">हल्का</string>
+    <string name="theme_dark">डार्क</string>
+    <string name="theme_system">सिस्टम</string>
 
     <string name="added_to_favourites">रिपॉजिटरी को पसंदीदा में जोड़ा गया</string>
     <string name="removed_from_favourites">रिपॉजिटरी को पसंदीदा से हटा दिया गया</string>
@@ -270,7 +270,7 @@
     <string name="no_starred_repos">कोई तारांकित रिपॉजिटरी नहीं</string>
     <string name="star_repos_hint">उन्हें यहां देखने के लिए इंस्टॉलेबल रिलीज़ वाले GitHub पर रिपॉजिटरी को स्टार करें।</string>
     <string name="last_synced">पिछला सिंक किया गया</string>
-    <string name="just_now">अभी अभी</string>
+    <string name="just_now">अभी-अभी</string>
     <string name="minutes_ago">%d मिनट पहले</string>
     <string name="hours_ago">%d घंटे पहले</string>
     <string name="days_ago">%d दिन पहले</string>
@@ -301,7 +301,7 @@
 
     <!-- Developer Profile - Repository Count -->
     <string name="repository_singular">रिपॉजिटरी</string>
-    <string name="repositories_plural">रिपॉजिटरीज्</string>
+    <string name="repositories_plural">रिपॉजिटरीज़</string>
     <string name="showing_x_of_y_repositories">%2$d रिपॉजिटरी में से %1$d दिखाए जा रहे हैं</string>
 
     <!-- Developer Profile - Empty States -->
@@ -310,7 +310,7 @@
     <string name="no_favorite_repos">कोई पसंदीदा रिपॉजिटरी नहीं</string>
 
     <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">अपडेट %1$s</string>
+    <string name="updated_x_ago">%1$s पहले अपडेट</string>
     <string name="has_release">रिलीज़ हो गया है</string>
 
     <string name="time_years_ago">%1$d साल पहले</string>
