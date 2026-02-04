@@ -131,12 +131,12 @@
     <string name="logout_confirmation">क्या आप लॉग आउट करना चाहते हैं?</string>
 
     <!-- Theme names -->
-    <string name="theme_dynamic">Dynamic</string>
-    <string name="theme_ocean">Ocean</string>
-    <string name="theme_purple">Purple</string>
-    <string name="theme_forest">Forest</string>
-    <string name="theme_slate">Slate</string>
-    <string name="theme_amber">Amber</string>
+    <string name="theme_dynamic">डायनामिक</string>
+    <string name="theme_ocean">ओशन</string>
+    <string name="theme_purple">पर्पल</string>
+    <string name="theme_forest">फॉरेस्ट</string>
+    <string name="theme_slate">स्लेट</string>
+    <string name="theme_amber">एम्बर</string>
 
     <!-- Navigation & actions -->
     <string name="open_repository">रिपॉजिटरी खोलें</string>
@@ -310,7 +310,7 @@
     <string name="no_favorite_repos">कोई पसंदीदा रिपॉजिटरी नहीं</string>
 
     <!-- Developer Profile - Repository Item -->
-    <string name="updated_x_ago">%1$s पहले अपडेट</string>
+    <string name="updated_x_ago">%1$s पहले अपडेट किया गया</string>
     <string name="has_release">रिलीज़ हो गया है</string>
 
     <string name="time_years_ago">%1$d साल पहले</string>
