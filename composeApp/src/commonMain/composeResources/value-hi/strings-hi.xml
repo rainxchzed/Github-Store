@@ -32,7 +32,7 @@
     <string name="error_with_message">गलती: %1$s</string>
 
     <!-- Apps feature - Update all progress -->
-    <string name="updating_x_of_y">अपडेट करने %1$d of %2$d</string>
+    <string name="updating_x_of_y">%2$d में से %1$d अपडेट हो रहा है</string>
     <string name="currently_updating">वर्तमान में: %1$s</string>
 
 
