@@ -180,9 +180,9 @@
     <string name="profile">प्रोफ़ाइल</string>
 
     <!-- Stats -->
-    <string name="forks">Forks</string>
-    <string name="stars">Stars</string>
-    <string name="issues">Issues</string>
+    <string name="forks">फोर्क्स</string>
+    <string name="stars">स्टार्स</string>
+    <string name="issues">इश्यूज़</string>
 
     <!-- Misc -->
     <string name="by_author">द्वारा %1$s</string>
@@ -238,7 +238,7 @@
     <string name="rate_limit_tip_sign_in">💡 60 रिक्वेस्ट प्रति घंटे के बजाय 5,000 रिक्वेस्ट प्रति घंटे पाने के लिए साइन इन करें!</string>
     <string name="rate_limit_sign_in">साइन इन</string>
     <string name="rate_limit_ok">ठीक है</string>
-    <string name="rate_limit_close">बंद करेंा</string>
+    <string name="rate_limit_close">बंद करें</string>
 
     <string name="system_font">सिस्टम फ़ॉन्ट</string>
     <string name="system_font_description">बेहतर पठनीयता के लिए अपने डिवाइस के फ़ॉन्ट से मिलान करें।</string>
