@@ -48,7 +48,7 @@
     <!-- Device flow -->
     <string name="enter_code_on_github">यह कोड GitHub पर डालें:</string>
     <string name="copy_code">कोड कॉपी करें</string>
-    <string name="open_github">गिटहब खोलें</string>
+    <string name="open_github">GitHub खोलें</string>
 
     <!-- Logged out -->
     <string name="unlock_full_experience">पूरा अनुभव अनलॉक\nकरें</string>
@@ -58,7 +58,7 @@
         ज़्यादा API रेट लिमिट पाने और रुकावटों से बचने के लिए साइन इन करें।
     </string>
 
-    <string name="sign_in_with_github">गिटहब से साइन इन करें</string>
+    <string name="sign_in_with_github">GitHub से साइन इन करें</string>
 
     <string name="error_cancelled">रद्द किया गया</string>
     <string name="error_unknown">अज्ञात त्रुटि</string>
@@ -165,9 +165,9 @@
     <string name="update_app">ऐप अपडेट करें</string>
 
     <!-- Download stages -->
-    <string name="downloading">डाउनलोड</string>
+    <string name="downloading">डाउनलोड हो रहा है</string>
     <string name="updating">अपडेट हो रहा है</string>
-    <string name="verifying">सत्यापन</string>
+    <string name="verifying">सत्यापन हो रहा है</string>
     <string name="installing">स्थापित हो रहा है</string>
 
     <!-- Install helpers -->
