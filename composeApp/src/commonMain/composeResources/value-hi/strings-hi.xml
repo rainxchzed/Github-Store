@@ -261,7 +261,7 @@
 
     <string name="starred_repositories">तारांकित रिपॉजिटरी</string>
     <string name="repository_starred">रिपॉजिटरी स्टार की गई</string>
-    <string name="repository_not_starred">रिपॉजिटरी शुरू नहीं हुई है</string>
+    <string name="repository_not_starred">रिपॉजिटरी स्टार नहीं की गई</string>
     <string name="star_from_github">आप GitHub से किसी रिपॉजिटरी को स्टार कर सकते हैं।</string>
     <string name="unstar_from_github">आप GitHub से किसी रिपॉजिटरी को अनस्टार कर सकते हैं।</string>
 
