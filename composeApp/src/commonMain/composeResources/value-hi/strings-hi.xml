@@ -23,7 +23,7 @@
     <!-- Apps feature - Actions -->
     <string name="update_all">सभी अपडेट करें</string>
     <string name="update">अपडेट</string>
-    <string name="open">खोले</string>
+    <string name="open">खोलें</string>
     <string name="cancel">रद्द करें</string>
 
     <!-- Apps feature - Update states -->
