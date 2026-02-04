@@ -313,11 +313,11 @@
     <string name="updated_x_ago">अपडेट %1$s</string>
     <string name="has_release">रिलीज़ हो गया है</string>
 
-    <string name="time_years_ago">%1$d साल पाहेले</string>
-    <string name="time_months_ago">%1$d महीने  पाहेले</string>
-    <string name="time_days_ago">%1$d दिन पाहेले</string>
-    <string name="time_hours_ago">%1$d घंटे पाहेले</string>
-    <string name="time_minutes_ago">%1$d मिनीट पाहेले</string>
+    <string name="time_years_ago">%1$d साल पहले</string>
+    <string name="time_months_ago">%1$d महीने पहले</string>
+    <string name="time_days_ago">%1$d दिन पहले</string>
+    <string name="time_hours_ago">%1$d घंटे पहले</string>
+    <string name="time_minutes_ago">%1$d मिनट पहले</string>
 
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
