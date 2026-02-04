@@ -373,7 +373,7 @@ Sync the project and run the app. You should now be able to sign in with GitHub.
 
 ### ❗ Important Notes
 - `local.properties` is **not committed to Git**, so your Client ID stays local.
-- Never share your **Client Secret** publicly.
+- This project only needs the **Client ID** (not the Client Secret).
 - Each developer should create their own OAuth app for development.
 
 ---
