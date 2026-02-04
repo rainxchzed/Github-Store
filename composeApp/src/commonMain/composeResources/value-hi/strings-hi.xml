@@ -188,7 +188,7 @@
     <string name="by_author">द्वारा %1$s</string>
     <string name="installed_version">• स्थापित: %1$s</string>
     <string name="architecture_compatible">आर्किटेक्चर संगत</string>
-    <string name="update_to_version">अपडेट को %1$s</string>
+    <string name="update_to_version">%1$s पर अपडेट करें</string>
 
     <!-- General -->
     <string name="error_load_details">विवरण लोड करने में विफल</string>
@@ -196,7 +196,7 @@
 
     <!-- Download / install states -->
     <string name="log_download_started">डाउनलोड शुरू हो गया</string>
-    <string name="log_downloaded">डाउनलोड हूआ</string>
+    <string name="log_downloaded">डाउनलोड हुआ</string>
     <string name="log_update_started">अपडेट शुरू हो गया</string>
     <string name="log_installed">स्थापित</string>
     <string name="log_updated">अद्यतन</string>
@@ -278,7 +278,7 @@
     <string name="sync_starred_failed">तारांकित रिपॉजिटरी को सिंक करने में विफल रहा</string>
 
     <string name="developer_profile_title">डेवलपर प्रोफ़ाइल</string>
-    <string name="open_developer_profile">खोलें डेवलपर प्रोफ़ाइल</string>
+    <string name="open_developer_profile">डेवलपर प्रोफ़ाइल खोलें</string>
 
     <string name="failed_to_load_repositories">रिपॉजिटरी लोड करने में विफल रहा</string>
     <string name="failed_to_load_profile">प्रोफ़ाइल लोड करने में विफल</string>
