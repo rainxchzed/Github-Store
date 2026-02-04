@@ -5,7 +5,7 @@
 
     <!-- Apps feature - Navigation / Top bar -->
     <string name="installed_apps">इंस्टॉल किए गए ऐप्स</string>
-    <string name="navigate_back">वापस नेविगेट करें</string>
+    <string name="navigate_back">वापस जाएँ</string>
     <string name="check_for_updates">अपडेट के लिए जाँच करें</string>
 
     <!-- Apps feature - Errors / messages -->
@@ -161,7 +161,7 @@
     <string name="update_available">उपलब्ध अपडेट</string>
     <string name="not_available">उपलब्ध नहीं है</string>
     <string name="install_latest">नवीनतम स्थापित करें</string>
-    <string name="reinstall">पुनर्स्थापित</string>
+    <string name="reinstall">पुनः इंस्टॉल करें</string>
     <string name="update_app">ऐप अपडेट करें</string>
 
     <!-- Download stages -->
