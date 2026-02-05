@@ -249,7 +249,7 @@
 
     <string name="added_to_favourites">रिपॉजिटरी को पसंदीदा में जोड़ा गया</string>
     <string name="removed_from_favourites">रिपॉजिटरी को पसंदीदा से हटा दिया गया</string>
-    <string name="add_to_favourites">पसंदीदा करने के लिए जोड़ें</string>
+    <string name="add_to_favourites">पसंदीदा में जोड़ें</string>
     <string name="remove_from_favourites">पसंदीदा से निकालें</string>
     <string name="favourites">पसंदीदा</string>
 
@@ -269,7 +269,7 @@
     <string name="sign_in_with_github_for_stars">अपने स्टार किए गए रिपॉजिटरी देखने के लिए GitHub से साइन इन करें</string>
     <string name="no_starred_repos">कोई तारांकित रिपॉजिटरी नहीं</string>
     <string name="star_repos_hint">उन्हें यहां देखने के लिए इंस्टॉलेबल रिलीज़ वाले GitHub पर रिपॉजिटरी को स्टार करें।</string>
-    <string name="last_synced">पिछला सिंक किया गया</string>
+    <string name="last_synced">अंतिम सिंका</string>
     <string name="just_now">अभी-अभी</string>
     <string name="minutes_ago">%d मिनट पहले</string>
     <string name="hours_ago">%d घंटे पहले</string>
