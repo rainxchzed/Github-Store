@@ -7,33 +7,23 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import zed.rainxch.githubstore.MainViewModel
-import zed.rainxch.githubstore.app.app_state.AppStateManager
-import zed.rainxch.githubstore.core.data.services.PackageMonitor
-import zed.rainxch.githubstore.core.data.data_source.DefaultTokenDataSource
-import zed.rainxch.githubstore.core.data.data_source.TokenDataSource
-import zed.rainxch.githubstore.core.data.local.db.AppDatabase
-import zed.rainxch.githubstore.core.data.repository.FavouritesRepositoryImpl
-import zed.rainxch.githubstore.core.data.repository.InstalledAppsRepositoryImpl
-import zed.rainxch.githubstore.core.data.repository.StarredRepositoryImpl
-import zed.rainxch.githubstore.core.data.repository.ThemesRepositoryImpl
-import zed.rainxch.githubstore.core.domain.getPlatform
-import zed.rainxch.githubstore.core.domain.repository.FavouritesRepository
-import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
-import zed.rainxch.githubstore.core.domain.repository.ThemesRepository
+import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.network.Downloader
+import zed.rainxch.core.domain.repository.FavouritesRepository
+import zed.rainxch.core.domain.repository.InstalledAppsRepository
+import zed.rainxch.core.domain.repository.ThemesRepository
 import zed.rainxch.githubstore.feature.apps.data.repository.AppsRepositoryImpl
 import zed.rainxch.githubstore.feature.apps.domain.repository.AppsRepository
 import zed.rainxch.githubstore.feature.apps.presentation.AppsViewModel
-import zed.rainxch.githubstore.network.buildAuthedGitHubHttpClient
+import zed.rainxch.core.data.network.buildAuthedGitHubHttpClient
 import zed.rainxch.githubstore.feature.auth.data.repository.AuthenticationRepositoryImpl
 import zed.rainxch.githubstore.feature.auth.domain.repository.AuthenticationRepository
 import zed.rainxch.githubstore.feature.auth.presentation.AuthenticationViewModel
 import zed.rainxch.githubstore.feature.details.data.repository.DetailsRepositoryImpl
 import zed.rainxch.githubstore.feature.details.domain.repository.DetailsRepository
 import zed.rainxch.githubstore.feature.details.presentation.DetailsViewModel
-import zed.rainxch.githubstore.core.data.services.Downloader
-import zed.rainxch.githubstore.core.data.services.Installer
-import zed.rainxch.githubstore.core.domain.repository.StarredRepository
-import zed.rainxch.githubstore.core.domain.use_cases.SyncInstalledAppsUseCase
+import zed.rainxch.core.domain.repository.StarredRepository
+import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.githubstore.feature.developer_profile.data.repository.DeveloperProfileRepositoryImpl
 import zed.rainxch.githubstore.feature.developer_profile.domain.repository.DeveloperProfileRepository
 import zed.rainxch.githubstore.feature.favourites.presentation.FavouritesViewModel
@@ -49,16 +39,9 @@ import zed.rainxch.githubstore.feature.settings.data.repository.SettingsReposito
 import zed.rainxch.githubstore.feature.settings.domain.repository.SettingsRepository
 import zed.rainxch.githubstore.feature.settings.presentation.SettingsViewModel
 import zed.rainxch.githubstore.feature.starred_repos.presentation.StarredReposViewModel
-import zed.rainxch.githubstore.network.RateLimitHandler
+import zed.rainxch.core.data.network.RateLimitHandler
 
 val coreModule: Module = module {
-    // Token Management
-    single<TokenDataSource> {
-        DefaultTokenDataSource(
-            tokenStore = get()
-        )
-    }
-
     // Rate Limiting
     single { RateLimitHandler() }
 
@@ -76,7 +59,7 @@ val coreModule: Module = module {
     // HTTP Client
     single {
         buildAuthedGitHubHttpClient(
-            tokenDataSource = get(),
+            tokenStore = get(),
             rateLimitHandler = get()
         )
     }
@@ -93,10 +76,10 @@ val coreModule: Module = module {
     }
 
     // Database DAOs (kept for repositories that need them)
-    single { get<AppDatabase>().installedAppDao }
-    single { get<AppDatabase>().favoriteRepoDao }
-    single { get<AppDatabase>().updateHistoryDao }
-    single { get<AppDatabase>().starredReposDao }
+    single { get<zed.rainxch.core.data.local.db.AppDatabase>().installedAppDao }
+    single { get<zed.rainxch.core.data.local.db.AppDatabase>().favoriteRepoDao }
+    single { get<zed.rainxch.core.data.local.db.AppDatabase>().updateHistoryDao }
+    single { get<zed.rainxch.core.data.local.db.AppDatabase>().starredReposDao }
 
     single<SyncInstalledAppsUseCase> {
         SyncInstalledAppsUseCase(
@@ -108,7 +91,7 @@ val coreModule: Module = module {
 
     // Repositories
     single<FavouritesRepository> {
-        FavouritesRepositoryImpl(
+        _root_ide_package_.zed.rainxch.core.data.repository.FavouritesRepositoryImpl(
             dao = get(),
             installedAppsDao = get(),
             detailsRepository = get()
@@ -116,7 +99,7 @@ val coreModule: Module = module {
     }
 
     single<InstalledAppsRepository> {
-        InstalledAppsRepositoryImpl(
+        _root_ide_package_.zed.rainxch.core.data.repository.InstalledAppsRepositoryImpl(
             database = get(),
             dao = get(),
             historyDao = get(),
@@ -232,12 +215,12 @@ val detailsModule: Module = module {
             repositoryId = params.get(),
             detailsRepository = get(),
             downloader = get<Downloader>(),
-            installer = get<Installer>(),
+            installer = get<zed.rainxch.core.data.services.Installer>(),
             platform = get(),
             helper = get(),
             installedAppsRepository = get(),
             favouritesRepository = get(),
-            packageMonitor = get<PackageMonitor>(),
+            packageMonitor = get<zed.rainxch.core.data.services.PackageMonitor>(),
             syncInstalledAppsUseCase = get(),
             starredRepository = get()
         )
@@ -284,7 +267,7 @@ val settingsModule: Module = module {
 val starredReposModule: Module = module {
     // Repository
     single<StarredRepository> {
-        StarredRepositoryImpl(
+        _root_ide_package_.zed.rainxch.core.data.repository.StarredRepositoryImpl(
             httpClient = get(),
             dao = get(),
             installedAppsDao = get(),

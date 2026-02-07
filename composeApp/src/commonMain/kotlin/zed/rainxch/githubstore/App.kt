@@ -16,7 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.githubstore.app.app_state.components.RateLimitDialog
+import zed.rainxch.githubstore.app.state.components.RateLimitDialog
 import zed.rainxch.githubstore.app.navigation.AppNavigation
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
@@ -35,7 +35,7 @@ fun App(
         serializer = SnapshotStateListSerializer<GithubStoreGraph>()
     ) {
         mutableStateListOf(GithubStoreGraph.HomeScreen)
-    }
+    }˜
 
     GithubStoreTheme(
         fontTheme = state.currentFontTheme,

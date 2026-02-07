@@ -1,0 +1,38 @@
+plugins {
+    alias(libs.plugins.convention.cmp.library)
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(libs.kotlin.stdlib)
+
+                implementation(projects.core.domain)
+                implementation(projects.core.presentation)
+
+                implementation(libs.bundles.landscapist)
+                implementation(libs.liquid)
+
+                implementation(libs.jetbrains.lifecycle.compose)
+                implementation(libs.kotlinx.datetime)
+
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+            }
+        }
+
+        androidMain {
+            dependencies {
+
+            }
+        }
+
+        jvmMain {
+            dependencies {
+
+            }
+        }
+    }
+
+}

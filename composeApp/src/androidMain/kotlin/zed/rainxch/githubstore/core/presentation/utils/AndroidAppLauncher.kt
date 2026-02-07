@@ -5,13 +5,12 @@ import android.content.Intent
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.githubstore.core.data.local.db.entities.InstalledApp
 
 class AndroidAppLauncher(
     private val context: Context
 ) : AppLauncher {
 
-    override suspend fun launchApp(installedApp: InstalledApp): Result<Unit> =
+    override suspend fun launchApp(installedApp: zed.rainxch.core.data.local.db.entities.InstalledAppEntity): Result<Unit> =
         withContext(Dispatchers.Main) {
             runCatching {
                 val packageManager = context.packageManager
@@ -30,7 +29,7 @@ class AndroidAppLauncher(
             }
         }
 
-    override suspend fun canLaunchApp(installedApp: InstalledApp): Boolean =
+    override suspend fun canLaunchApp(installedApp: zed.rainxch.core.data.local.db.entities.InstalledAppEntity): Boolean =
         withContext(Dispatchers.IO) {
             try {
                 val packageManager = context.packageManager

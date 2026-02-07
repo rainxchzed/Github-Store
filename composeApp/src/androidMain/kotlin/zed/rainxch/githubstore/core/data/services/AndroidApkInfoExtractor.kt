@@ -6,12 +6,12 @@ import android.os.Build
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.githubstore.core.domain.model.ApkPackageInfo
+import zed.rainxch.core.domain.model.ApkPackageInfo
 import java.io.File
 
 class AndroidApkInfoExtractor(
     private val context: Context
-) : ApkInfoExtractor {
+) : zed.rainxch.core.data.services.ApkInfoExtractor {
 
     override suspend fun extractPackageInfo(filePath: String): ApkPackageInfo? =
         withContext(Dispatchers.IO) {

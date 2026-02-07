@@ -10,25 +10,25 @@ import androidx.core.content.FileProvider
 import java.io.File
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
-import zed.rainxch.githubstore.core.domain.model.Architecture
-import zed.rainxch.githubstore.core.domain.model.GithubAsset
+import zed.rainxch.core.domain.model.SystemArchitecture
+import zed.rainxch.core.domain.model.GithubAsset
 
 class AndroidInstaller(
     private val context: Context,
-    private val apkInfoExtractor: ApkInfoExtractor
-) : Installer {
+    private val apkInfoExtractor: zed.rainxch.core.data.services.ApkInfoExtractor
+) : zed.rainxch.core.data.services.Installer {
 
-    override fun getApkInfoExtractor(): ApkInfoExtractor {
+    override fun getApkInfoExtractor(): zed.rainxch.core.data.services.ApkInfoExtractor {
         return apkInfoExtractor
     }
-    override fun detectSystemArchitecture(): Architecture {
-        val arch = Build.SUPPORTED_ABIS.firstOrNull() ?: return Architecture.UNKNOWN
+    override fun detectSystemArchitecture(): SystemArchitecture {
+        val arch = Build.SUPPORTED_ABIS.firstOrNull() ?: return SystemArchitecture.UNKNOWN
         return when {
-            arch.contains("arm64") || arch.contains("aarch64") -> Architecture.AARCH64
-            arch.contains("armeabi") -> Architecture.ARM
-            arch.contains("x86_64") -> Architecture.X86_64
-            arch.contains("x86") -> Architecture.X86
-            else -> Architecture.UNKNOWN
+            arch.contains("arm64") || arch.contains("aarch64") -> SystemArchitecture.AARCH64
+            arch.contains("armeabi") -> SystemArchitecture.ARM
+            arch.contains("x86_64") -> SystemArchitecture.X86_64
+            arch.contains("x86") -> SystemArchitecture.X86
+            else -> SystemArchitecture.UNKNOWN
         }
     }
 
@@ -39,7 +39,7 @@ class AndroidInstaller(
         return isArchitectureCompatible(name, systemArch)
     }
 
-    private fun isArchitectureCompatible(assetName: String, systemArch: Architecture): Boolean {
+    private fun isArchitectureCompatible(assetName: String, systemArch: SystemArchitecture): Boolean {
         val name = assetName.lowercase()
         val hasArchInName = listOf(
             "x86_64", "amd64", "x64",
@@ -51,19 +51,19 @@ class AndroidInstaller(
         if (!hasArchInName) return true
 
         return when (systemArch) {
-            Architecture.X86_64 -> {
+            SystemArchitecture.X86_64 -> {
                 name.contains("x86_64") || name.contains("amd64") || name.contains("x64")
             }
-            Architecture.AARCH64 -> {
+            SystemArchitecture.AARCH64 -> {
                 name.contains("aarch64") || name.contains("arm64")
             }
-            Architecture.X86 -> {
+            SystemArchitecture.X86 -> {
                 name.contains("i386") || name.contains("i686") || name.contains("x86")
             }
-            Architecture.ARM -> {
+            SystemArchitecture.ARM -> {
                 name.contains("armv7") || name.contains("armeabi") || name.contains("arm")
             }
-            Architecture.UNKNOWN -> true
+            SystemArchitecture.UNKNOWN -> true
         }
     }
 
@@ -77,19 +77,19 @@ class AndroidInstaller(
         return assetsToConsider.maxByOrNull { asset ->
             val name = asset.name.lowercase()
             val archBoost = when (systemArch) {
-                Architecture.X86_64 -> {
+                SystemArchitecture.X86_64 -> {
                     if (name.contains("x86_64") || name.contains("amd64")) 10000 else 0
                 }
-                Architecture.AARCH64 -> {
+                SystemArchitecture.AARCH64 -> {
                     if (name.contains("aarch64") || name.contains("arm64")) 10000 else 0
                 }
-                Architecture.X86 -> {
+                SystemArchitecture.X86 -> {
                     if (name.contains("i386") || name.contains("i686")) 10000 else 0
                 }
-                Architecture.ARM -> {
+                SystemArchitecture.ARM -> {
                     if (name.contains("armv7") || name.contains("armeabi")) 10000 else 0
                 }
-                Architecture.UNKNOWN -> 0
+                SystemArchitecture.UNKNOWN -> 0
             }
             archBoost + asset.size
         }

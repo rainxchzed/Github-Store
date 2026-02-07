@@ -1,16 +1,12 @@
 package zed.rainxch.githubstore.app.di
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import zed.rainxch.githubstore.core.data.services.AndroidApkInfoExtractor
 import zed.rainxch.githubstore.core.data.services.AndroidLocalizationManager
 import zed.rainxch.githubstore.core.data.services.AndroidPackageMonitor
-import zed.rainxch.githubstore.core.data.services.PackageMonitor
-import zed.rainxch.githubstore.core.data.local.data_store.createDataStore
-import zed.rainxch.githubstore.core.data.local.db.AppDatabase
+import zed.rainxch.core.data.local.data_store.createDataStore
 import zed.rainxch.githubstore.core.data.local.db.initDatabase
 import zed.rainxch.githubstore.core.presentation.utils.AndroidAppLauncher
 import zed.rainxch.githubstore.core.presentation.utils.AndroidBrowserHelper
@@ -18,15 +14,13 @@ import zed.rainxch.githubstore.core.presentation.utils.AndroidClipboardHelper
 import zed.rainxch.githubstore.core.presentation.utils.AppLauncher
 import zed.rainxch.githubstore.core.presentation.utils.BrowserHelper
 import zed.rainxch.githubstore.core.presentation.utils.ClipboardHelper
-import zed.rainxch.githubstore.feature.auth.data.AndroidTokenStore
-import zed.rainxch.githubstore.feature.auth.data.TokenStore
+import zed.rainxch.core.data.data_source.impl.DefaultTokenStore
+import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.githubstore.core.data.services.AndroidDownloader
 import zed.rainxch.githubstore.core.data.services.AndroidFileLocationsProvider
 import zed.rainxch.githubstore.core.data.services.AndroidInstaller
-import zed.rainxch.githubstore.core.data.services.Downloader
-import zed.rainxch.githubstore.core.data.services.FileLocationsProvider
-import zed.rainxch.githubstore.core.data.services.Installer
-import zed.rainxch.githubstore.core.data.services.LocalizationManager
+import zed.rainxch.core.domain.network.Downloader
+import zed.rainxch.core.domain.system.PackageMonitor
 
 actual val platformModule: Module = module {
     single<Downloader> {
@@ -36,14 +30,14 @@ actual val platformModule: Module = module {
         )
     }
 
-    single<Installer> {
+    single<zed.rainxch.core.data.services.Installer> {
         AndroidInstaller(
             context = get(),
             apkInfoExtractor = AndroidApkInfoExtractor(androidContext())
         )
     }
 
-    single<FileLocationsProvider> {
+    single<zed.rainxch.core.data.services.FileLocationsProvider> {
         AndroidFileLocationsProvider(context = get())
     }
 
@@ -59,13 +53,7 @@ actual val platformModule: Module = module {
         AndroidClipboardHelper(androidContext())
     }
 
-    single<TokenStore> {
-        AndroidTokenStore(
-            dataStore = get()
-        )
-    }
-
-    single<AppDatabase> {
+    single<zed.rainxch.core.data.local.db.AppDatabase> {
         initDatabase(androidContext())
     }
 
@@ -73,7 +61,7 @@ actual val platformModule: Module = module {
         AndroidPackageMonitor(androidContext())
     }
 
-    single<LocalizationManager> {
+    single<zed.rainxch.core.data.services.LocalizationManager> {
         AndroidLocalizationManager()
     }
 

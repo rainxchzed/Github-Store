@@ -5,7 +5,7 @@ import java.io.File
 
 class AndroidFileLocationsProvider(
     private val context: Context
-) : FileLocationsProvider {
+) : zed.rainxch.core.data.services.FileLocationsProvider {
     override fun appDownloadsDir(): String {
         val externalFilesRoot = context.getExternalFilesDir(null)
         val dir = File(externalFilesRoot, "ghs_downloads")

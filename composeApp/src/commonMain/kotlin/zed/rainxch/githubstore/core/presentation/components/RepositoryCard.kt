@@ -48,8 +48,8 @@ import githubstore.composeapp.generated.resources.open_in_browser
 import githubstore.composeapp.generated.resources.update_available
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import zed.rainxch.githubstore.core.domain.model.GithubRepoSummary
-import zed.rainxch.githubstore.core.domain.model.GithubUser
+import zed.rainxch.core.domain.model.GithubRepoSummary
+import zed.rainxch.core.domain.model.GithubUser
 import zed.rainxch.githubstore.core.presentation.model.DiscoveryRepository
 import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.githubstore.core.presentation.utils.formatUpdatedAt

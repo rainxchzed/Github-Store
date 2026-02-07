@@ -4,8 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zed.rainxch.githubstore.core.data.local.db.entities.InstalledApp
-import zed.rainxch.githubstore.core.domain.Platform
-import zed.rainxch.githubstore.core.domain.model.PlatformType
+import zed.rainxch.core.domain.model.Platform
 import java.io.File
 
 class DesktopAppLauncher(
@@ -16,9 +15,9 @@ class DesktopAppLauncher(
         withContext(Dispatchers.IO) {
             runCatching {
                 when (platform.type) {
-                    PlatformType.WINDOWS -> launchWindowsApp(installedApp)
-                    PlatformType.MACOS -> launchMacOSApp(installedApp)
-                    PlatformType.LINUX -> launchLinuxApp(installedApp)
+                    Platform.WINDOWS -> launchWindowsApp(installedApp)
+                    Platform.MACOS -> launchMacOSApp(installedApp)
+                    Platform.LINUX -> launchLinuxApp(installedApp)
                     else -> throw Exception("Unsupported platform: ${platform.type}")
                 }
             }.onFailure { error ->
@@ -29,9 +28,9 @@ class DesktopAppLauncher(
     override suspend fun canLaunchApp(installedApp: InstalledApp): Boolean =
         withContext(Dispatchers.IO) {
             when (platform.type) {
-                PlatformType.WINDOWS -> canLaunchWindowsApp(installedApp)
-                PlatformType.MACOS -> canLaunchMacOSApp(installedApp)
-                PlatformType.LINUX -> canLaunchLinuxApp(installedApp)
+                Platform.WINDOWS -> canLaunchWindowsApp(installedApp)
+                Platform.MACOS -> canLaunchMacOSApp(installedApp)
+                Platform.LINUX -> canLaunchLinuxApp(installedApp)
                 else -> false
             }
         }

@@ -24,6 +24,7 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.fletchmckee.liquid.rememberLiquidState
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.githubstore.feature.apps.presentation.AppsRoot
 import zed.rainxch.githubstore.feature.auth.presentation.AuthenticationRoot
 import zed.rainxch.githubstore.feature.details.presentation.DetailsRoot

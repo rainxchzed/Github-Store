@@ -3,9 +3,9 @@ package zed.rainxch.githubstore.core.data.services
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import zed.rainxch.githubstore.core.domain.model.Architecture
-import zed.rainxch.githubstore.core.domain.model.GithubAsset
-import zed.rainxch.githubstore.core.domain.model.PlatformType
+import zed.rainxch.core.domain.model.SystemArchitecture
+import zed.rainxch.core.domain.model.GithubAsset
+import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.githubstore.feature.details.data.model.LinuxPackageType
 import zed.rainxch.githubstore.feature.details.data.model.LinuxTerminal
 import java.awt.Desktop
@@ -16,7 +16,7 @@ import java.io.IOException
 import kotlin.collections.iterator
 
 class DesktopInstaller(
-    private val platform: PlatformType,
+    private val platform: Platform,
     private val apkInfoExtractor: ApkInfoExtractor
 ) : Installer {
 
@@ -24,7 +24,7 @@ class DesktopInstaller(
         determineLinuxPackageType()
     }
 
-    private val systemArchitecture: Architecture by lazy {
+    private val systemArchitecture: SystemArchitecture by lazy {
         determineSystemArchitecture()
     }
 
@@ -32,7 +32,7 @@ class DesktopInstaller(
         return apkInfoExtractor
     }
 
-    override fun detectSystemArchitecture(): Architecture = systemArchitecture
+    override fun detectSystemArchitecture(): SystemArchitecture = systemArchitecture
     override fun isObtainiumInstalled(): Boolean {
         return false
     }
@@ -56,10 +56,10 @@ class DesktopInstaller(
         val name = assetName.lowercase()
 
         val hasValidExtension = when (platform) {
-            PlatformType.ANDROID -> name.endsWith(".apk")
-            PlatformType.WINDOWS -> name.endsWith(".msi") || name.endsWith(".exe")
-            PlatformType.MACOS -> name.endsWith(".dmg") || name.endsWith(".pkg")
-            PlatformType.LINUX -> {
+            Platform.ANDROID -> name.endsWith(".apk")
+            Platform.WINDOWS -> name.endsWith(".msi") || name.endsWith(".exe")
+            Platform.MACOS -> name.endsWith(".dmg") || name.endsWith(".pkg")
+            Platform.LINUX -> {
                 name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(".rpm")
             }
         }
@@ -73,10 +73,10 @@ class DesktopInstaller(
         if (assets.isEmpty()) return null
 
         val priority = when (platform) {
-            PlatformType.ANDROID -> listOf(".apk")
-            PlatformType.WINDOWS -> listOf(".msi", ".exe")
-            PlatformType.MACOS -> listOf(".dmg", ".pkg")
-            PlatformType.LINUX -> {
+            Platform.ANDROID -> listOf(".apk")
+            Platform.WINDOWS -> listOf(".msi", ".exe")
+            Platform.MACOS -> listOf(".dmg", ".pkg")
+            Platform.LINUX -> {
                 when (linuxPackageType) {
                     LinuxPackageType.DEB -> listOf(".appimage", ".deb", ".rpm")
                     LinuxPackageType.RPM -> listOf(".appimage", ".rpm", ".deb")
@@ -119,28 +119,28 @@ class DesktopInstaller(
         }
     }
 
-    private fun determineSystemArchitecture(): Architecture {
-        if (platform == PlatformType.MACOS) {
+    private fun determineSystemArchitecture(): SystemArchitecture {
+        if (platform == Platform.MACOS) {
             try {
                 val process = ProcessBuilder("uname", "-m").start()
                 val output = process.inputStream.bufferedReader().readText().trim()
                 process.waitFor()
 
                 return when (output) {
-                    "arm64" -> Architecture.AARCH64
-                    "x86_64" -> Architecture.X86_64
-                    else -> Architecture.fromString(System.getProperty("os.arch"))
+                    "arm64" -> SystemArchitecture.AARCH64
+                    "x86_64" -> SystemArchitecture.X86_64
+                    else -> SystemArchitecture.fromString(System.getProperty("os.arch"))
                 }
             } catch (_: Exception) {
             }
         }
 
-        val osArch = System.getProperty("os.arch") ?: return Architecture.UNKNOWN
-        return Architecture.fromString(osArch)
+        val osArch = System.getProperty("os.arch") ?: return SystemArchitecture.UNKNOWN
+        return SystemArchitecture.fromString(osArch)
     }
 
     private fun determineLinuxPackageType(): LinuxPackageType {
-        if (platform != PlatformType.LINUX) return LinuxPackageType.UNIVERSAL
+        if (platform != Platform.LINUX) return LinuxPackageType.UNIVERSAL
 
         return try {
 
@@ -249,10 +249,10 @@ class DesktopInstaller(
         }
     }
 
-    private fun isArchitectureCompatible(assetName: String, systemArch: Architecture): Boolean {
+    private fun isArchitectureCompatible(assetName: String, systemArch: SystemArchitecture): Boolean {
         val name = assetName.lowercase()
 
-        if (platform == PlatformType.MACOS) {
+        if (platform == Platform.MACOS) {
             if (name.contains("universal") || name.contains("darwin")) {
                 return true
             }
@@ -274,46 +274,46 @@ class DesktopInstaller(
         if (!hasArchInName) return true
 
         return when (systemArch) {
-            Architecture.X86_64 -> {
+            SystemArchitecture.X86_64 -> {
                 name.contains("x86_64") || name.contains("amd64") || name.contains("x64")
             }
 
-            Architecture.AARCH64 -> {
+            SystemArchitecture.AARCH64 -> {
                 name.contains("aarch64") || name.contains("arm64")
             }
 
-            Architecture.X86 -> {
+            SystemArchitecture.X86 -> {
                 name.contains("i386") || name.contains("i686") || name.contains("x86")
             }
 
-            Architecture.ARM -> {
+            SystemArchitecture.ARM -> {
                 name.contains("armv7") || name.contains("arm")
             }
 
-            Architecture.UNKNOWN -> true
+            SystemArchitecture.UNKNOWN -> true
         }
     }
 
-    private fun isExactArchitectureMatch(assetName: String, systemArch: Architecture): Boolean {
+    private fun isExactArchitectureMatch(assetName: String, systemArch: SystemArchitecture): Boolean {
         val name = assetName.lowercase()
         return when (systemArch) {
-            Architecture.X86_64 -> name.contains("x86_64") || name.contains("amd64") || name.contains(
+            SystemArchitecture.X86_64 -> name.contains("x86_64") || name.contains("amd64") || name.contains(
                 "x64"
             )
 
-            Architecture.AARCH64 -> name.contains("aarch64") || name.contains("arm64")
-            Architecture.X86 -> name.contains("i386") || name.contains("i686")
-            Architecture.ARM -> name.contains("armv7") || name.contains("arm")
-            Architecture.UNKNOWN -> false
+            SystemArchitecture.AARCH64 -> name.contains("aarch64") || name.contains("arm64")
+            SystemArchitecture.X86 -> name.contains("i386") || name.contains("i686")
+            SystemArchitecture.ARM -> name.contains("armv7") || name.contains("arm")
+            SystemArchitecture.UNKNOWN -> false
         }
     }
 
     override suspend fun isSupported(extOrMime: String): Boolean {
         val ext = extOrMime.lowercase().removePrefix(".")
         return when (platform) {
-            PlatformType.WINDOWS -> ext in listOf("msi", "exe")
-            PlatformType.MACOS -> ext in listOf("dmg", "pkg")
-            PlatformType.LINUX -> ext in listOf("appimage", "deb", "rpm")
+            Platform.WINDOWS -> ext in listOf("msi", "exe")
+            Platform.MACOS -> ext in listOf("dmg", "pkg")
+            Platform.LINUX -> ext in listOf("appimage", "deb", "rpm")
             else -> false
         }
     }
@@ -321,7 +321,7 @@ class DesktopInstaller(
     override suspend fun ensurePermissionsOrThrow(extOrMime: String) = withContext(Dispatchers.IO) {
         val ext = extOrMime.lowercase().removePrefix(".")
 
-        if (platform == PlatformType.LINUX && ext == "appimage") {
+        if (platform == Platform.LINUX && ext == "appimage") {
             try {
                 val tempFile = File.createTempFile("appimage_perm_test", ".tmp")
                 try {
@@ -359,9 +359,9 @@ class DesktopInstaller(
             val ext = extOrMime.lowercase().removePrefix(".")
 
             when (platform) {
-                PlatformType.WINDOWS -> installWindows(file, ext)
-                PlatformType.MACOS -> installMacOS(file, ext)
-                PlatformType.LINUX -> installLinux(file, ext)
+                Platform.WINDOWS -> installWindows(file, ext)
+                Platform.MACOS -> installMacOS(file, ext)
+                Platform.LINUX -> installLinux(file, ext)
                 else -> throw UnsupportedOperationException("Installation not supported on $platform")
             }
         }
@@ -424,7 +424,7 @@ class DesktopInstaller(
     }
 
     private fun tryShowNotification(title: String, message: String) {
-        if (platform == PlatformType.MACOS) {
+        if (platform == Platform.MACOS) {
             try {
                 val script = """
                 display notification "$message" with title "$title"

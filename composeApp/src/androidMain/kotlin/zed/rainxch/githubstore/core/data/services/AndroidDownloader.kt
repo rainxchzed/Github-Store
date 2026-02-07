@@ -14,13 +14,14 @@ import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOn
-import zed.rainxch.githubstore.feature.details.domain.model.DownloadProgress
+import zed.rainxch.core.domain.model.DownloadProgress
 import java.util.concurrent.ConcurrentHashMap
 import androidx.core.net.toUri
+import zed.rainxch.core.domain.network.Downloader
 
 class AndroidDownloader(
     private val context: Context,
-    private val files: FileLocationsProvider
+    private val files: zed.rainxch.core.data.services.FileLocationsProvider
 ) : Downloader {
 
     private val downloadManager by lazy {

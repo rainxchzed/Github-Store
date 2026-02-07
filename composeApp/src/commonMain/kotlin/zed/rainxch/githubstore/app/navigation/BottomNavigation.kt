@@ -3,7 +3,6 @@ package zed.rainxch.githubstore.app.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -16,13 +15,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.liquid
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
-import zed.rainxch.githubstore.core.domain.getPlatform
-import zed.rainxch.githubstore.core.domain.model.PlatformType
-import zed.rainxch.githubstore.feature.details.presentation.utils.isLiquidTopbarEnabled
+import zed.rainxch.core.domain.getPlatform
+import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
+import zed.rainxch.githubstore.feature.details.presentation.utils.isLiquidFrostAvailable
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -38,7 +36,7 @@ fun BottomNavigation(
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 .then(
-                    if (isLiquidTopbarEnabled()) {
+                    if (isLiquidFrostAvailable()) {
                         Modifier.liquid(liquidState) {
                             this.shape = CircleShape
                             this.frost = 16.dp
@@ -54,7 +52,7 @@ fun BottomNavigation(
             BottomNavigationUtils
                 .items()
                 .filterNot {
-                    getPlatform().type != PlatformType.ANDROID &&
+                    getPlatform().type != Platform.ANDROID &&
                             it.screen == GithubStoreGraph.AppsScreen
                 }
                 .forEach { item ->

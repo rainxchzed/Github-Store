@@ -1,6 +1,6 @@
 package zed.rainxch.githubstore.core.data.services
 
-import zed.rainxch.githubstore.core.domain.model.SystemPackageInfo
+import zed.rainxch.core.domain.model.SystemPackageInfo
 
 class DesktopPackageMonitor : PackageMonitor {
     override suspend fun isPackageInstalled(packageName: String): Boolean {
