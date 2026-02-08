@@ -104,6 +104,9 @@ GitHub® is a registered trademark of GitHub, Inc.
 <a href="https://f-droid.org/en/packages/zed.rainxch.githubstore/">
    <img src="https://f-droid.org/badge/get-it-on.png" height="80"/>
 </a>
+<a href="https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/rainxchzed/Github-Store/">
+  <img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" height="60" alt="Get it on Obtainium">
+</a>
 </p>
 
 > [!IMPORTANT]
@@ -153,16 +156,6 @@ GitHub® is a registered trademark of GitHub, Inc.
 - **Cross‑platform UX**
     - Android: opens APK downloads with the package installer, tracks installations in a local database, and shows them in a dedicated Apps screen with update indicators.
     - Desktop (Windows/macOS/Linux): downloads installers to the user’s Downloads folder and opens them with the default handler; no hidden temp locations.
-
-- **Appearance & theming**
-- Material 3 design with **Material 3 Expressive** components on all platforms.
-- Material You dynamic color support on Android where available.
-- Optional AMOLED black mode for dark theme on OLED devices.
-
-- **Safety & inspection (Android)**
-- Optional GitHub sign‑in via OAuth device flow for higher rate limits with minimal scopes.
-- “Open in AppManager” action to inspect an APK’s permissions and trackers before installing.
-
 
 ---
 
@@ -226,51 +219,6 @@ automatically—no manual submission required.
 
 ---
 
-## ⚙️ Tech stack
-
-- **Minimum Android SDK: 24**
-
-- **Language & Platform**
-    - [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html) (Android + JVM Desktop)
-    - [Compose Multiplatform UI](https://www.jetbrains.com/compose-multiplatform/) ([Material 3](https://m3.material.io/),
-      icons, resources)
-
-- **Async & state**
-    - [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) + [Flow](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/)
-    - AndroidX Lifecycle (ViewModel + Runtime Compose)
-
-- **Networking & Data**
-    - [Ktor 3](https://ktor.io/) (HttpClient with OkHttp on Android, Java on Desktop)
-    - [Kotlinx Serialization JSON](https://github.com/Kotlin/kotlinx.serialization).
-    - [Kotlinx Datetime](https://github.com/Kotlin/kotlinx-datetime) for time handling
-    - [Room](https://developer.android.com/jetpack/androidx/releases/room) + KSP for the installed apps database on Android.
-
-- **Dependency injection**
-    - [Koin 4](https://insert-koin.io/)
-
-- **Navigation**
-    - [JetBrains Navigation Compose](https://kotlinlang.org/docs/multiplatform/compose-navigation.html)
-      for shared navigation graph
-
-- **Auth & Security**
-    - GitHub OAuth (Device Code flow)
-    - [Androidx DataStore](https://developer.android.com/kotlin/multiplatform/datastore) for token
-      storage
-
-- **Media & markdown**
-    - [Coil 3](https://coil-kt.github.io/coil/getting_started/) (Ktor3 image loader)
-    - [multiplatform-markdown-renderer-m3](https://github.com/mikepenz/multiplatform-markdown-renderer) (+
-      Coil3 integration) for README/release notes
-
-- **Logging & tooling**
-    - [Kermit logging](https://kermit.touchlab.co/)
-    - [Compose Hot Reload](https://kotlinlang.org/docs/multiplatform/compose-hot-reload.html) (
-      desktop)
-    - [ProGuard/R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization) +
-      resource shrinking for release builds
-
----
-
 ## ✅ Pros / Why use GitHub Store?
 
 - **No more hunting through GitHub releases**
@@ -301,50 +249,18 @@ SHA-256:
 
 ---
 
-## ☕ Support the project
+## 🔑 GitHub OAuth Configuration
 
-**GitHub Store** has reached **48,000+ active users** and **5,500+ GitHub stars** — and it's **100% free** with no ads, no tracking, and no premium features.
+**TL;DR**
+1. Create a GitHub OAuth App  
+2. Copy **Client ID**  
+3. Put it in `local.properties`
 
-I built and maintain this entirely on my own while finishing high school. Your support (even $3) helps me:
+<details>
+<summary><strong>Show full setup guide</strong></summary>
 
-✅ **Keep the app bug-free** — respond to issues and ship fixes quickly  
-✅ **Add community-requested features** — implement what users actually need  
-✅ **Maintain infrastructure** — servers, APIs, and deployment costs
-
-### 💖 Ways to Support
-
-<a href="https://www.buymeacoffee.com/rainxchzed">
-  <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕%20$3-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee">
-</a>
-
-<a href="https://github.com/sponsors/rainxchzed">
-  <img src="https://img.shields.io/badge/GitHub%20Sponsors-💖%20Monthly-pink?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Sponsors">
-</a>
-
-**Can't sponsor right now?** That's okay! You can still help by:
-- ⭐ **Starring this repo** — helps others discover GitHub Store
-- 🐛 **Reporting bugs** — makes the app better for everyone
-- 📢 **Sharing with friends** — spread the word to other developers
-- 💬 **Joining discussions** — your feedback shapes the roadmap
-
-Every bit of support—financial or not—means the world and keeps this project alive. Thank you! 🙏
-
----
-
-## Star History
-
-<a href="https://www.star-history.com/#rainxchzed/Github-Store&type=timeline&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=rainxchzed/Github-Store&type=timeline&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=rainxchzed/Github-Store&type=timeline&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=rainxchzed/Github-Store&type=timeline&legend=top-left" />
- </picture>
-</a>
-
-## 🔑 Configuration (GitHub OAuth)
-
-This project requires your own GitHub OAuth App to handle authentication and avoid shared API rate limits.
-
+  <br/>
+  
 ### 1 - Create a GitHub OAuth App
 Go to:
 **GitHub → Settings → Developer settings → OAuth Apps → New OAuth App**
@@ -376,6 +292,38 @@ Sync the project and run the app. You should now be able to sign in with GitHub.
 - This project only needs the **Client ID** (not the Client Secret).
 - Each developer should create their own OAuth app for development.
 
+</details>
+
+---
+
+## ☕ Support the project
+
+**GitHub Store** has reached **48,000+ active users** and **5,500+ GitHub stars** — and it's **100% free** with no ads, no tracking, and no premium features.
+
+I built and maintain this entirely on my own while finishing high school. Your support (even $3) helps me:
+
+✅ **Keep the app bug-free** — respond to issues and ship fixes quickly  
+✅ **Add community-requested features** — implement what users actually need  
+✅ **Maintain infrastructure** — servers, APIs, and deployment costs
+
+### 💖 Ways to Support
+
+<a href="https://www.buymeacoffee.com/rainxchzed">
+  <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕%20$3-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee">
+</a>
+
+<a href="https://github.com/sponsors/rainxchzed">
+  <img src="https://img.shields.io/badge/GitHub%20Sponsors-💖%20Monthly-pink?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Sponsors">
+</a>
+
+**Can't sponsor right now?** That's okay! You can still help by:
+- ⭐ **Starring this repo** — helps others discover GitHub Store
+- 🐛 **Reporting bugs** — makes the app better for everyone
+- 📢 **Sharing with friends** — spread the word to other developers
+- 💬 **Joining discussions** — your feedback shapes the roadmap
+
+Every bit of support—financial or not—means the world and keeps this project alive. Thank you!
+
 ---
 
 ## ⚠️ Disclaimer
@@ -390,7 +338,18 @@ your own risk.
 This project does not review, validate, or guarantee that any installer is safe, free of malware, or
 fit for any particular purpose.
 
-## Stats
+---
+
+## Star History
+
+<a href="https://www.star-history.com/#rainxchzed/Github-Store&type=timeline&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=rainxchzed/Github-Store&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=rainxchzed/Github-Store&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=rainxchzed/Github-Store&type=timeline&legend=top-left" />
+ </picture>
+</a>
+
 ![Alt](https://repobeats.axiom.co/api/embed/20367dca127572e9c47db33850979d78df2c6a8b.svg "Repobeats analytics image")
 
 ## 📄 License
