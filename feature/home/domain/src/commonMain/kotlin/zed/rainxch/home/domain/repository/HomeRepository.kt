@@ -1,7 +1,7 @@
 package zed.rainxch.home.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.home.domain.model.PaginatedDiscoveryRepositories
+import zed.rainxch.core.domain.model.PaginatedDiscoveryRepositories
 
 interface HomeRepository {
     fun getTrendingRepositories(page: Int): Flow<PaginatedDiscoveryRepositories>

@@ -10,20 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.Res
-import githubstore.composeapp.generated.resources.error_loading_details
-import githubstore.composeapp.generated.resources.install_logs
 import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.install_logs
 import io.github.fletchmckee.liquid.liquefiable
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.details.presentation.model.LogResult
-import zed.rainxch.details.presentation.model.asText
 import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
-import zed.rainxch.githubstore.feature.details.presentation.DetailsState
-import zed.rainxch.githubstore.feature.details.presentation.model.LogResult
-import zed.rainxch.githubstore.feature.details.presentation.model.asText
-import zed.rainxch.githubstore.feature.details.presentation.utils.LocalTopbarLiquidState
+import zed.rainxch.details.presentation.utils.asText
 
 fun LazyListScope.logs(state: DetailsState) {
     item {

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -26,8 +28,8 @@ import githubstore.composeapp.generated.resources.rate_limit_used_all
 import githubstore.composeapp.generated.resources.rate_limit_used_all_free
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.core.data.network.RateLimitInfo
+import zed.rainxch.core.domain.model.RateLimitInfo
+import zed.rainxch.core.presentation.theme.GithubStoreTheme
 
 @Composable
 fun RateLimitDialog(
@@ -37,7 +39,7 @@ fun RateLimitDialog(
     onSignIn: () -> Unit
 ) {
     val timeUntilReset = remember(rateLimitInfo) {
-        rateLimitInfo?.let { (it.timeUntilReset() / 1000 / 60).toInt() } // minutes
+        rateLimitInfo?.timeUntilReset()?.inWholeMinutes?.toInt()
     }
 
     AlertDialog(

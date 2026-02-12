@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.crossfade.CrossfadePlugin
-import githubstore.composeapp.generated.resources.remove_from_favourites
 import githubstore.feature.favourites.presentation.generated.resources.Res
+import githubstore.feature.favourites.presentation.generated.resources.remove_from_favourites
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.favourites.presentation.model.FavouriteRepository
 

@@ -6,15 +6,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import zed.rainxch.core.data.local.db.entities.StarredRepoEntity
+import zed.rainxch.core.data.local.db.entities.StarredRepositoryEntity
 
 @Dao
 interface StarredRepoDao {
     @Query("SELECT * FROM starred_repos ORDER BY starredAt DESC")
-    fun getAllStarred(): Flow<List<StarredRepoEntity>>
+    fun getAllStarred(): Flow<List<StarredRepositoryEntity>>
     
     @Query("SELECT * FROM starred_repos WHERE repoId = :repoId")
-    suspend fun getStarredById(repoId: Long): StarredRepoEntity?
+    suspend fun getStarredById(repoId: Long): StarredRepositoryEntity?
     
     @Query("SELECT EXISTS(SELECT 1 FROM starred_repos WHERE repoId = :repoId)")
     suspend fun isStarred(repoId: Long): Boolean
@@ -26,10 +26,10 @@ interface StarredRepoDao {
     suspend fun isStarredSync(repoId: Long): Boolean
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStarred(repo: StarredRepoEntity)
+    suspend fun insertStarred(repo: StarredRepositoryEntity)
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllStarred(repos: List<StarredRepoEntity>)
+    suspend fun insertAllStarred(repos: List<StarredRepositoryEntity>)
     
     @Query("DELETE FROM starred_repos WHERE repoId = :repoId")
     suspend fun deleteStarredById(repoId: Long)
@@ -70,7 +70,7 @@ interface StarredRepoDao {
     suspend fun getLastSyncTime(): Long?
 
     @Transaction
-    suspend fun replaceAllStarred(repos: List<StarredRepoEntity>) {
+    suspend fun replaceAllStarred(repos: List<StarredRepositoryEntity>) {
         clearAll()
         insertAllStarred(repos)
     }

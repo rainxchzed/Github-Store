@@ -35,18 +35,13 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.coil3.CoilImage
-import githubstore.composeapp.generated.resources.Res
-import githubstore.composeapp.generated.resources.by_author
-import githubstore.composeapp.generated.resources.installed
-import githubstore.composeapp.generated.resources.installed_version
-import githubstore.composeapp.generated.resources.no_description
-import githubstore.composeapp.generated.resources.update_available
+import githubstore.feature.details.presentation.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.githubstore.core.data.local.db.entities.InstalledApp
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.domain.model.GithubUserProfile
-import zed.rainxch.githubstore.feature.details.presentation.DownloadStage
+import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.details.presentation.model.DownloadStage
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

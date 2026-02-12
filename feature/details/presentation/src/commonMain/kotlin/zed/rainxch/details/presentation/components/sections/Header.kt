@@ -18,11 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.appmanager_description
-import githubstore.composeapp.generated.resources.inspect_with_appmanager
-import githubstore.composeapp.generated.resources.obtainium_description
-import githubstore.composeapp.generated.resources.open_in_obtainium
 import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.*
 import io.github.fletchmckee.liquid.liquefiable
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.details.presentation.DetailsAction

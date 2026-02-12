@@ -3,6 +3,8 @@ package zed.rainxch.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import githubstore.feature.home.presentation.generated.resources.Res
+import githubstore.feature.home.presentation.generated.resources.home_failed_to_load_repositories
+import githubstore.feature.home.presentation.generated.resources.no_repositories_found
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
@@ -29,6 +32,7 @@ class HomeViewModel(
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
+    private val logger: GitHubStoreLogger
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -61,10 +65,10 @@ class HomeViewModel(
             try {
                 val result = syncInstalledAppsUseCase()
                 if (result.isFailure) {
-                    Logger.w { "Initial sync had issues: ${result.exceptionOrNull()?.message}" }
+                    logger.warn("Initial sync had issues: ${result.exceptionOrNull()?.message}")
                 }
             } catch (e: Exception) {
-                Logger.e { "Initial sync failed: ${e.message}" }
+                logger.error("Initial sync failed: ${e.message}")
             }
         }
     }
@@ -97,7 +101,7 @@ class HomeViewModel(
 
     private fun loadRepos(isInitial: Boolean = false, category: HomeCategory? = null) {
         if (_state.value.isLoading || _state.value.isLoadingMore) {
-            Logger.d { "Already loading, skipping..." }
+            logger.debug("Already loading, skipping...")
             return
         }
 
@@ -109,7 +113,7 @@ class HomeViewModel(
 
         val targetCategory = category ?: _state.value.currentCategory
 
-        Logger.d { "Loading repos: category=$targetCategory, page=$nextPageIndex, isInitial=$isInitial" }
+        logger.debug("Loading repos: category=$targetCategory, page=$nextPageIndex, isInitial=$isInitial")
 
         currentJob = viewModelScope.launch {
 
@@ -131,7 +135,7 @@ class HomeViewModel(
                 }
 
                 flow.collect { paginatedRepos ->
-                    Logger.d { "Received ${paginatedRepos.repos.size} repos, hasMore=${paginatedRepos.hasMore}, nextPage=${paginatedRepos.nextPageIndex}" }
+                    logger.debug("Received ${paginatedRepos.repos.size} repos, hasMore=${paginatedRepos.hasMore}, nextPage=${paginatedRepos.nextPageIndex}")
 
                     this@HomeViewModel.nextPageIndex = paginatedRepos.nextPageIndex
 
@@ -178,18 +182,18 @@ class HomeViewModel(
                     }
                 }
 
-                Logger.d { "Flow completed" }
+                logger.debug("Flow completed")
                 _state.update {
                     it.copy(isLoading = false, isLoadingMore = false)
                 }
 
             } catch (t: Throwable) {
                 if (t is CancellationException) {
-                    Logger.d { "Load cancelled (expected)" }
+                    logger.debug("Load cancelled (expected)")
                     throw t
                 }
 
-                Logger.e { "Load failed: ${t.message}" }
+                logger.error("Load failed: ${t.message}")
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -218,7 +222,7 @@ class HomeViewModel(
             }
 
             HomeAction.LoadMore -> {
-                Logger.d { "LoadMore action: isLoading=${_state.value.isLoading}, isLoadingMore=${_state.value.isLoadingMore}, hasMore=${_state.value.hasMorePages}" }
+                logger.debug("LoadMore action: isLoading=${_state.value.isLoading}, isLoadingMore=${_state.value.isLoadingMore}, hasMore=${_state.value.hasMorePages}")
 
                 if (!_state.value.isLoadingMore && !_state.value.isLoading && _state.value.hasMorePages) {
                     loadRepos(isInitial = false)

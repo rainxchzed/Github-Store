@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import zed.rainxch.core.data.local.db.dao.InstalledAppDao
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.devprofile.data.dto.GitHubRepoResponse
@@ -30,7 +31,8 @@ class DeveloperProfileRepositoryImpl(
     private val httpClient: HttpClient,
     private val platform: Platform,
     private val installedAppsDao: InstalledAppDao,
-    private val favouritesRepository: FavouritesRepository
+    private val favouritesRepository: FavouritesRepository,
+    private val logger: GitHubStoreLogger
 ) : DeveloperProfileRepository {
 
     override suspend fun getDeveloperProfile(username: String): Result<DeveloperProfile> {
@@ -49,7 +51,7 @@ class DeveloperProfileRepositoryImpl(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Logger.e(e) { "Failed to fetch developer profile for $username" }
+                logger.error("Failed to fetch developer profile for $username")
                 Result.failure(e)
             }
         }
@@ -103,10 +105,10 @@ class DeveloperProfileRepositoryImpl(
                 }
 
                 Result.success(processedRepos)
-            }  catch (e: CancellationException) {
+            } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Logger.e(e) { "Failed to fetch repositories for $username" }
+                logger.error("Failed to fetch repositories for $username")
                 Result.failure(e)
             }
         }
@@ -175,7 +177,7 @@ class DeveloperProfileRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Logger.w(e) { "Failed to check releases for $owner/$repoName" }
+            logger.warn("Failed to check releases for $owner/$repoName : ${e.message}")
             Triple(false, false, null)
         }
     }

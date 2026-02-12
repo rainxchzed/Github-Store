@@ -7,15 +7,8 @@ import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubUserProfile
 import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.details.domain.model.RepoStats
-import zed.rainxch.details.presentation.model.LogResult
-
-data class InstallLogItem(
-    val timeIso: String,
-    val assetName: String,
-    val assetSizeBytes: Long,
-    val releaseTag: String,
-    val result: LogResult
-)
+import zed.rainxch.details.presentation.model.DownloadStage
+import zed.rainxch.details.presentation.model.InstallLogItem
 
 data class DetailsState(
     val isLoading: Boolean = true,
@@ -54,7 +47,3 @@ data class DetailsState(
     val isFavourite: Boolean = false,
     val isStarred: Boolean = false,
 )
-
-enum class DownloadStage {
-    IDLE, DOWNLOADING, VERIFYING, INSTALLING
-}

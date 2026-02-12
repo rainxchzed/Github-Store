@@ -57,25 +57,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skydoves.landscapist.coil3.CoilImage
-import githubstore.composeapp.generated.resources.cancel
-import githubstore.composeapp.generated.resources.check_for_updates
-import githubstore.composeapp.generated.resources.checking
-import githubstore.composeapp.generated.resources.currently_updating
-import githubstore.composeapp.generated.resources.downloading
-import githubstore.composeapp.generated.resources.error_with_message
-import githubstore.composeapp.generated.resources.installed_apps
-import githubstore.composeapp.generated.resources.installing
-import githubstore.composeapp.generated.resources.navigate_back
-import githubstore.composeapp.generated.resources.no_apps_found
-import githubstore.composeapp.generated.resources.open
-import githubstore.composeapp.generated.resources.search_your_apps
-import githubstore.composeapp.generated.resources.update
-import githubstore.composeapp.generated.resources.update_all
-import githubstore.composeapp.generated.resources.updated_successfully
-import githubstore.composeapp.generated.resources.updating_x_of_y
 import githubstore.feature.apps.presentation.generated.resources.Res
+import githubstore.feature.apps.presentation.generated.resources.cancel
+import githubstore.feature.apps.presentation.generated.resources.check_for_updates
+import githubstore.feature.apps.presentation.generated.resources.checking
+import githubstore.feature.apps.presentation.generated.resources.currently_updating
+import githubstore.feature.apps.presentation.generated.resources.downloading
+import githubstore.feature.apps.presentation.generated.resources.error_with_message
+import githubstore.feature.apps.presentation.generated.resources.installed_apps
+import githubstore.feature.apps.presentation.generated.resources.installing
+import githubstore.feature.apps.presentation.generated.resources.navigate_back
+import githubstore.feature.apps.presentation.generated.resources.no_apps_found
+import githubstore.feature.apps.presentation.generated.resources.open
+import githubstore.feature.apps.presentation.generated.resources.search_your_apps
+import githubstore.feature.apps.presentation.generated.resources.update
+import githubstore.feature.apps.presentation.generated.resources.update_all
+import githubstore.feature.apps.presentation.generated.resources.updated_successfully
+import githubstore.feature.apps.presentation.generated.resources.updating_x_of_y
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.apps.presentation.model.AppItem
 import zed.rainxch.apps.presentation.model.UpdateAllProgress
@@ -406,8 +407,9 @@ fun AppItemCard(
 
             if (app.repoDescription != null) {
                 Spacer(Modifier.height(8.dp))
+
                 Text(
-                    text = app.repoDescription,
+                    text = app.repoDescription!!,
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -429,7 +431,7 @@ fun AppItemCard(
                             )
                             if (appItem.downloadProgress != null) {
                                 Text(
-                                    text = "${appItem.downloadProgress ?: 0}%",
+                                    text = "${appItem.downloadProgress}%",
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }

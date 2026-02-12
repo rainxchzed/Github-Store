@@ -1,17 +1,17 @@
 package zed.rainxch.core.presentation.utils
 
 import androidx.compose.runtime.Composable
-import githubstore.composeapp.generated.resources.added_days_ago
-import githubstore.composeapp.generated.resources.added_hours_ago
-import githubstore.composeapp.generated.resources.added_just_now
-import githubstore.composeapp.generated.resources.added_on_date
-import githubstore.composeapp.generated.resources.added_yesterday
-import githubstore.composeapp.generated.resources.updated_days_ago
-import githubstore.composeapp.generated.resources.updated_hours_ago
-import githubstore.composeapp.generated.resources.updated_just_now
-import githubstore.composeapp.generated.resources.updated_on_date
-import githubstore.composeapp.generated.resources.updated_yesterday
 import githubstore.core.presentation.generated.resources.Res
+import githubstore.core.presentation.generated.resources.added_days_ago
+import githubstore.core.presentation.generated.resources.added_hours_ago
+import githubstore.core.presentation.generated.resources.added_just_now
+import githubstore.core.presentation.generated.resources.added_on_date
+import githubstore.core.presentation.generated.resources.added_yesterday
+import githubstore.core.presentation.generated.resources.updated_days_ago
+import githubstore.core.presentation.generated.resources.updated_hours_ago
+import githubstore.core.presentation.generated.resources.updated_just_now
+import githubstore.core.presentation.generated.resources.updated_on_date
+import githubstore.core.presentation.generated.resources.updated_yesterday
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.getString

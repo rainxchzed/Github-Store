@@ -28,8 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import githubstore.composeapp.generated.resources.favourites
-import githubstore.composeapp.generated.resources.navigate_back
+import githubstore.feature.favourites.presentation.generated.resources.favourites
+import githubstore.feature.favourites.presentation.generated.resources.navigate_back
 import githubstore.feature.favourites.presentation.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview

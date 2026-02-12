@@ -9,7 +9,6 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
 
                 implementation(projects.core.domain)
-                implementation(projects.core.presentation)
 
                 implementation(libs.bundles.landscapist)
                 implementation(libs.liquid)

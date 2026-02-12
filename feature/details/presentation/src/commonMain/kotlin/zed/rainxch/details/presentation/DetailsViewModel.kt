@@ -2,11 +2,10 @@ package zed.rainxch.details.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
-import githubstore.composeapp.generated.resources.Res
-import githubstore.composeapp.generated.resources.added_to_favourites
-import githubstore.composeapp.generated.resources.installer_saved_downloads
-import githubstore.composeapp.generated.resources.removed_from_favourites
+import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.added_to_favourites
+import githubstore.feature.details.presentation.generated.resources.installer_saved_downloads
+import githubstore.feature.details.presentation.generated.resources.removed_from_favourites
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -20,21 +19,27 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.getString
-import zed.rainxch.core.data.local.db.entities.FavoriteRepoEntity
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.model.FavoriteRepo
 import zed.rainxch.core.domain.model.InstallSource
-import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
+import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
-import zed.rainxch.githubstore.core.presentation.utils.BrowserHelper
 import zed.rainxch.core.domain.repository.StarredRepository
+import zed.rainxch.core.domain.system.Installer
+import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
-import zed.rainxch.githubstore.feature.details.domain.repository.DetailsRepository
-import zed.rainxch.githubstore.feature.details.presentation.model.LogResult
+import zed.rainxch.core.domain.utils.BrowserHelper
+import zed.rainxch.details.domain.repository.DetailsRepository
+import zed.rainxch.details.presentation.model.DownloadStage
+import zed.rainxch.details.presentation.model.InstallLogItem
+import zed.rainxch.details.presentation.model.LogResult
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
 
@@ -42,14 +47,15 @@ class DetailsViewModel(
     private val repositoryId: Long,
     private val detailsRepository: DetailsRepository,
     private val downloader: Downloader,
-    private val installer: zed.rainxch.core.data.services.Installer,
+    private val installer: Installer,
     private val platform: Platform,
     private val helper: BrowserHelper,
     private val installedAppsRepository: InstalledAppsRepository,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
-    private val packageMonitor: zed.rainxch.core.data.services.PackageMonitor,
-    private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase
+    private val packageMonitor: PackageMonitor,
+    private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
+    private val logger: GitHubStoreLogger
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -81,7 +87,7 @@ class DetailsViewModel(
 
                 val syncResult = syncInstalledAppsUseCase()
                 if (syncResult.isFailure) {
-                    Logger.w { "Sync had issues but continuing: ${syncResult.exceptionOrNull()?.message}" }
+                    logger.warn("Sync had issues but continuing: ${syncResult.exceptionOrNull()?.message}")
                 }
 
                 val repo = detailsRepository.getRepositoryById(repositoryId)
@@ -89,7 +95,7 @@ class DetailsViewModel(
                     try {
                         favouritesRepository.isFavoriteSync(repo.id)
                     } catch (t: Throwable) {
-                        Logger.e { "Failed to load if repo is favourite: ${t.localizedMessage}" }
+                        logger.error("Failed to load if repo is favourite: ${t.localizedMessage}")
                         false
                     }
                 }
@@ -98,7 +104,7 @@ class DetailsViewModel(
                     try {
                         starredRepository.isStarred(repo.id)
                     } catch (t: Throwable) {
-                        Logger.e { "Failed to load if repo is starred: ${t.localizedMessage}" }
+                        logger.error("Failed to load if repo is starred: ${t.localizedMessage}")
                         false
                     }
                 }
@@ -121,7 +127,7 @@ class DetailsViewModel(
                             defaultBranch = repo.defaultBranch
                         )
                     } catch (t: Throwable) {
-                        Logger.w { "Failed to load latest release: ${t.message}" }
+                        logger.warn("Failed to load latest release: ${t.message}")
                         null
                     }
                 }
@@ -150,7 +156,7 @@ class DetailsViewModel(
                     try {
                         detailsRepository.getUserProfile(owner)
                     } catch (t: Throwable) {
-                        Logger.w { "Failed to load user profile: ${t.message}" }
+                        logger.warn("Failed to load user profile: ${t.message}")
                         null
                     }
                 }
@@ -175,13 +181,13 @@ class DetailsViewModel(
                             null
                         }
                     } catch (t: Throwable) {
-                        Logger.e { "Failed to load installed app: ${t.message}" }
+                        logger.error("Failed to load installed app: ${t.message}")
                         null
                     }
                 }
 
-                val isObtainiumEnabled = platform.type == Platform.ANDROID
-                val isAppManagerEnabled = platform.type == Platform.ANDROID
+                val isObtainiumEnabled = platform == Platform.ANDROID
+                val isAppManagerEnabled = platform == Platform.ANDROID
 
                 val latestRelease = latestReleaseDeferred.await()
                 val stats = statsDeferred.await()
@@ -198,7 +204,7 @@ class DetailsViewModel(
                 val isObtainiumAvailable = installer.isObtainiumInstalled()
                 val isAppManagerAvailable = installer.isAppManagerInstalled()
 
-                Logger.d { "Loaded repo: ${repo.name}, installedApp: ${installedApp?.packageName}" }
+                logger.debug("Loaded repo: ${repo.name}, installedApp: ${installedApp?.packageName}")
 
                 _state.value = _state.value.copy(
                     isLoading = false,
@@ -219,7 +225,7 @@ class DetailsViewModel(
                     installedApp = installedApp,
                 )
             } catch (t: Throwable) {
-                Logger.e { "Details load failed: ${t.message}" }
+                logger.error("Details load failed: ${t.message}")
                 _state.value = _state.value.copy(
                     isLoading = false,
                     errorMessage = t.message ?: "Failed to load details"
@@ -268,7 +274,7 @@ class DetailsViewModel(
                     viewModelScope.launch {
                         try {
                             val deleted = downloader.cancelDownload(assetName)
-                            Logger.d { "Cancel download - file deleted: $deleted" }
+                            logger.debug("Cancel download - file deleted: $deleted")
 
                             appendLog(
                                 assetName = assetName,
@@ -277,7 +283,7 @@ class DetailsViewModel(
                                 result = LogResult.Cancelled
                             )
                         } catch (t: Throwable) {
-                            Logger.e { "Failed to cancel download: ${t.message}" }
+                            logger.error("Failed to cancel download: ${t.message}")
                         }
                     }
                 }
@@ -296,7 +302,7 @@ class DetailsViewModel(
                         val repo = _state.value.repository ?: return@launch
                         val latestRelease = _state.value.latestRelease
 
-                        val favoriteRepo = FavoriteRepoEntity(
+                        val favoriteRepo = FavoriteRepo(
                             repoId = repo.id,
                             repoName = repo.name,
                             repoOwner = repo.owner.login,
@@ -328,7 +334,7 @@ class DetailsViewModel(
                         )
 
                     } catch (t: Throwable) {
-                        Logger.e { "Failed to toggle favorite: ${t.message}" }
+                        logger.error("Failed to toggle favorite: ${t.message}")
                     }
                 }
             }
@@ -348,7 +354,7 @@ class DetailsViewModel(
                             _state.value = _state.value.copy(installedApp = updatedApp)
                         }
                     } catch (t: Throwable) {
-                        Logger.e { "Failed to check for updates: ${t.message}" }
+                        logger.error("Failed to check for updates: ${t.message}")
                     }
                 }
             }
@@ -470,7 +476,7 @@ class DetailsViewModel(
                             )
                         }
                     } catch (t: Throwable) {
-                        Logger.e { "Failed to open in AppManager: ${t.message}" }
+                        logger.error("Failed to open in AppManager: ${t.message}")
                         _state.value = _state.value.copy(
                             downloadStage = DownloadStage.IDLE,
                             installError = t.message
@@ -569,7 +575,7 @@ class DetailsViewModel(
                     throw IllegalStateException("Asset type .$ext not supported")
                 }
 
-                if (platform.type == Platform.ANDROID) {
+                if (platform == Platform.ANDROID) {
                     saveInstalledAppToDatabase(
                         assetName = assetName,
                         assetUrl = downloadUrl,
@@ -598,7 +604,7 @@ class DetailsViewModel(
                 )
 
             } catch (t: Throwable) {
-                Logger.e { "Install failed: ${t.message}" }
+                logger.error("Install failed: ${t.message}")
                 t.printStackTrace()
                 _state.value = _state.value.copy(
                     downloadStage = DownloadStage.IDLE,
@@ -632,16 +638,16 @@ class DetailsViewModel(
             var versionName: String? = null
             var versionCode = 0L
 
-            if (platform.type == Platform.ANDROID && assetName.lowercase().endsWith(".apk")) {
+            if (platform == Platform.ANDROID && assetName.lowercase().endsWith(".apk")) {
                 val apkInfo = installer.getApkInfoExtractor().extractPackageInfo(filePath)
                 if (apkInfo != null) {
                     packageName = apkInfo.packageName
                     appName = apkInfo.appName
                     versionName = apkInfo.versionName
                     versionCode = apkInfo.versionCode
-                    Logger.d { "Extracted APK info - package: $packageName, name: $appName, versionName: $versionName, versionCode: $versionCode" }
+                    logger.debug("Extracted APK info - package: $packageName, name: $appName, versionName: $versionName, versionCode: $versionCode")
                 } else {
-                    Logger.e { "Failed to extract APK info for $assetName" }
+                    logger.error("Failed to extract APK info for $assetName")
                     return
                 }
             } else {
@@ -658,7 +664,7 @@ class DetailsViewModel(
                     newVersionCode = versionCode
                 )
             } else {
-                val installedApp = InstalledAppEntity(
+                val installedApp = InstalledApp(
                     packageName = packageName,
                     repoId = repo.id,
                     repoName = repo.name,
@@ -706,10 +712,10 @@ class DetailsViewModel(
             val updatedApp = installedAppsRepository.getAppByPackage(packageName)
             _state.value = _state.value.copy(installedApp = updatedApp)
 
-            Logger.d { "Successfully saved and reloaded app: ${updatedApp?.packageName}" }
+            logger.debug("Successfully saved and reloaded app: ${updatedApp?.packageName}")
 
         } catch (t: Throwable) {
-            Logger.e { "Failed to save installed app to database: ${t.message}" }
+            logger.error("Failed to save installed app to database: ${t.message}")
             t.printStackTrace()
         }
     }

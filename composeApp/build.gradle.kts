@@ -56,13 +56,14 @@ kotlin {
             implementation(projects.feature.starred.data)
             implementation(projects.feature.starred.presentation)
 
-
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.bundles.koin.common)
+            implementation(libs.liquid)
+            implementation(libs.jetbrains.compose.material.icons.extended)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
+            implementation(libs.jetbrains.compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)

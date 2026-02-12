@@ -2,6 +2,8 @@ package zed.rainxch.core.presentation.utils
 
 import androidx.compose.runtime.Composable
 import githubstore.core.presentation.generated.resources.Res
+import githubstore.core.presentation.generated.resources.count_millions
+import githubstore.core.presentation.generated.resources.count_thousands
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

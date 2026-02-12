@@ -3,27 +3,38 @@ package zed.rainxch.core.data.repository
 import androidx.room.immediateTransaction
 import androidx.room.useWriterConnection
 import co.touchlab.kermit.Logger
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import zed.rainxch.githubstore.core.data.local.db.AppDatabase
-import zed.rainxch.githubstore.core.data.local.db.dao.InstalledAppDao
-import zed.rainxch.githubstore.core.data.local.db.dao.UpdateHistoryDao
-import zed.rainxch.githubstore.core.data.local.db.entities.InstallSource
-import zed.rainxch.githubstore.core.data.local.db.entities.InstalledApp
-import zed.rainxch.githubstore.core.data.local.db.entities.UpdateHistory
-import zed.rainxch.githubstore.core.domain.repository.InstalledAppsRepository
-import zed.rainxch.githubstore.core.data.services.Downloader
-import zed.rainxch.githubstore.core.data.services.Installer
-import zed.rainxch.githubstore.feature.details.domain.repository.DetailsRepository
+import kotlinx.coroutines.flow.map
+import zed.rainxch.core.data.dto.ReleaseNetwork
+import zed.rainxch.core.data.dto.RepoByIdNetwork
+import zed.rainxch.core.data.local.db.AppDatabase
+import zed.rainxch.core.data.local.db.dao.InstalledAppDao
+import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
+import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
+import zed.rainxch.core.data.mappers.toDomain
+import zed.rainxch.core.data.mappers.toEntity
+import zed.rainxch.core.data.network.executeRequest
+import zed.rainxch.core.domain.system.Installer
+import zed.rainxch.core.domain.model.GithubRelease
+import zed.rainxch.core.domain.model.InstallSource
+import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.core.domain.network.Downloader
+import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import java.io.File
 
 class InstalledAppsRepositoryImpl(
     private val database: AppDatabase,
-    private val dao: InstalledAppDao,
+    private val installedAppsDao: InstalledAppDao,
     private val historyDao: UpdateHistoryDao,
-    private val detailsRepository: DetailsRepository,
     private val installer: Installer,
-    private val downloader: Downloader
+    private val downloader: Downloader,
+    private val httpClient: HttpClient
 ) : InstalledAppsRepository {
 
     override suspend fun <R> executeInTransaction(block: suspend () -> R): R {
@@ -34,37 +45,97 @@ class InstalledAppsRepositoryImpl(
         }
     }
 
-    override fun getAllInstalledApps(): Flow<List<InstalledApp>> = dao.getAllInstalledApps()
+    override fun getAllInstalledApps(): Flow<List<InstalledApp>> {
+        return installedAppsDao
+            .getAllInstalledApps()
+            .map { it.map { app -> app.toDomain() } }
+    }
 
-    override fun getAppsWithUpdates(): Flow<List<InstalledApp>> = dao.getAppsWithUpdates()
+    override fun getAppsWithUpdates(): Flow<List<InstalledApp>> {
+        return installedAppsDao
+            .getAppsWithUpdates()
+            .map { it.map { app -> app.toDomain() } }
+    }
 
-    override fun getUpdateCount(): Flow<Int> = dao.getUpdateCount()
+    override fun getUpdateCount(): Flow<Int> = installedAppsDao.getUpdateCount()
 
-    override suspend fun getAppByPackage(packageName: String): InstalledApp? =
-        dao.getAppByPackage(packageName)
+    override suspend fun getAppByPackage(packageName: String): InstalledApp? {
+        return installedAppsDao
+            .getAppByPackage(packageName)
+            ?.toDomain()
+    }
 
     override suspend fun getAppByRepoId(repoId: Long): InstalledApp? =
-        dao.getAppByRepoId(repoId)
+        installedAppsDao.getAppByRepoId(repoId)?.toDomain()
 
     override suspend fun isAppInstalled(repoId: Long): Boolean =
-        dao.getAppByRepoId(repoId) != null
+        installedAppsDao.getAppByRepoId(repoId) != null
 
     override suspend fun saveInstalledApp(app: InstalledApp) {
-        dao.insertApp(app)
+        installedAppsDao.insertApp(app.toEntity())
     }
 
     override suspend fun deleteInstalledApp(packageName: String) {
-        dao.deleteByPackageName(packageName)
+        installedAppsDao.deleteByPackageName(packageName)
     }
 
-    override suspend fun checkForUpdates(packageName: String): Boolean {
-        val app = dao.getAppByPackage(packageName) ?: return false
+    private suspend fun fetchDefaultBranch(owner: String, repo: String): String? {
+        return try {
+            val repoInfo = httpClient.executeRequest<RepoByIdNetwork> {
+                get("/repos/$owner/$repo") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                }
+            }.getOrNull()
+
+            repoInfo?.defaultBranch
+        } catch (e: Exception) {
+            Logger.e { "Failed to fetch default branch for $owner/$repo: ${e.message}" }
+            null
+        }
+    }
+
+    private suspend fun fetchLatestPublishedRelease(
+        owner: String,
+        repo: String
+    ): GithubRelease? {
+        return try {
+            val releases = httpClient.executeRequest<List<ReleaseNetwork>> {
+                get("/repos/$owner/$repo/releases") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                    parameter("per_page", 10)
+                }
+            }.getOrNull() ?: return null
+
+            val latest = releases
+                .asSequence()
+                .filter { (it.draft != true) && (it.prerelease != true) }
+                .maxByOrNull { it.publishedAt ?: it.createdAt ?: "" }
+                ?: return null
+
+            latest.toDomain()
+        } catch (e: Exception) {
+            Logger.e { "Failed to fetch latest release for $owner/$repo: ${e.message}" }
+            null
+        }
+    }
+
+    override suspend fun checkForUpdates(
+        packageName: String,
+    ): Boolean {
+        val app = installedAppsDao.getAppByPackage(packageName) ?: return false
 
         try {
-            val latestRelease = detailsRepository.getLatestPublishedRelease(
+            val branch = fetchDefaultBranch(app.repoOwner, app.repoName)
+
+            if (branch == null) {
+                Logger.w { "Could not determine default branch for ${app.repoOwner}/${app.repoName}" }
+                installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
+                return false
+            }
+
+            val latestRelease = fetchLatestPublishedRelease(
                 owner = app.repoOwner,
-                repo = app.repoName,
-                defaultBranch = ""
+                repo = app.repoName
             )
 
             if (latestRelease != null) {
@@ -72,7 +143,7 @@ class InstalledAppsRepositoryImpl(
                 val normalizedLatestTag = normalizeVersion(latestRelease.tagName)
 
                 if (normalizedInstalledTag == normalizedLatestTag) {
-                    dao.updateVersionInfo(
+                    installedAppsDao.updateVersionInfo(
                         packageName = packageName,
                         available = false,
                         version = latestRelease.tagName,
@@ -103,7 +174,8 @@ class InstalledAppsRepositoryImpl(
 
                     val tempPath = downloader.getDownloadedFilePath(tempAssetName)
                     if (tempPath != null) {
-                        val latestInfo = installer.getApkInfoExtractor().extractPackageInfo(tempPath)
+                        val latestInfo =
+                            installer.getApkInfoExtractor().extractPackageInfo(tempPath)
                         File(tempPath).delete()
 
                         if (latestInfo != null) {
@@ -129,7 +201,7 @@ class InstalledAppsRepositoryImpl(
                             "primaryAsset=${primaryAsset?.name}"
                 }
 
-                dao.updateVersionInfo(
+                installedAppsDao.updateVersionInfo(
                     packageName = packageName,
                     available = isUpdateAvailable,
                     version = latestRelease.tagName,
@@ -146,14 +218,14 @@ class InstalledAppsRepositoryImpl(
             }
         } catch (e: Exception) {
             Logger.e { "Failed to check updates for $packageName: ${e.message}" }
-            dao.updateLastChecked(packageName, System.currentTimeMillis())
+            installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
         }
 
         return false
     }
 
     override suspend fun checkAllForUpdates() {
-        val apps = dao.getAllInstalledApps().first()
+        val apps = installedAppsDao.getAllInstalledApps().first()
         apps.forEach { app ->
             if (app.updateCheckEnabled) {
                 try {
@@ -173,14 +245,14 @@ class InstalledAppsRepositoryImpl(
         newVersionName: String,
         newVersionCode: Long
     ) {
-        val app = dao.getAppByPackage(packageName) ?: return
+        val app = installedAppsDao.getAppByPackage(packageName) ?: return
 
         Logger.d {
             "Updating app version: $packageName from ${app.installedVersion} to $newTag"
         }
 
         historyDao.insertHistory(
-            UpdateHistory(
+            UpdateHistoryEntity(
                 packageName = packageName,
                 appName = app.appName,
                 repoOwner = app.repoOwner,
@@ -193,7 +265,7 @@ class InstalledAppsRepositoryImpl(
             )
         )
 
-        dao.updateApp(
+        installedAppsDao.updateApp(
             app.copy(
                 installedVersion = newTag,
                 installedAssetName = newAssetName,
@@ -213,12 +285,12 @@ class InstalledAppsRepositoryImpl(
     }
 
     override suspend fun updateApp(app: InstalledApp) {
-        dao.updateApp(app)
+        installedAppsDao.updateApp(app.toEntity())
     }
 
     override suspend fun updatePendingStatus(packageName: String, isPending: Boolean) {
-        val app = dao.getAppByPackage(packageName) ?: return
-        dao.updateApp(app.copy(isPendingInstall = isPending))
+        val app = installedAppsDao.getAppByPackage(packageName) ?: return
+        installedAppsDao.updateApp(app.copy(isPendingInstall = isPending))
     }
 
     private fun normalizeVersion(version: String): String {

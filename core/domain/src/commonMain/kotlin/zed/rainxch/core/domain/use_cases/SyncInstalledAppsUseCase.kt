@@ -1,12 +1,13 @@
 package zed.rainxch.core.domain.use_cases
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import zed.rainxch.core.data.local.db.entities.InstalledApp
-import zed.rainxch.core.data.services.PackageMonitor
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
+import zed.rainxch.core.domain.system.PackageMonitor
 
 /**
  * Use case for synchronizing installed apps state with the system package manager.
@@ -20,7 +21,8 @@ import zed.rainxch.core.domain.repository.InstalledAppsRepository
 class SyncInstalledAppsUseCase(
     private val packageMonitor: PackageMonitor,
     private val installedAppsRepository: InstalledAppsRepository,
-    private val platform: Platform
+    private val platform: Platform,
+    private val logger: GitHubStoreLogger
 ) {
     /**
      * Executes the sync operation.
@@ -40,6 +42,7 @@ class SyncInstalledAppsUseCase(
                     !installedPackageNames.contains(app.packageName) -> {
                         toDelete.add(app.packageName)
                     }
+
                     app.installedVersionName == null -> {
                         val migrationResult = determineMigrationData(app)
                         toMigrate.add(app.packageName to migrationResult)
@@ -51,9 +54,9 @@ class SyncInstalledAppsUseCase(
                 toDelete.forEach { packageName ->
                     try {
                         installedAppsRepository.deleteInstalledApp(packageName)
-                        Logger.d { "Removed uninstalled app: $packageName" }
+                        logger.info("Removed uninstalled app: $packageName")
                     } catch (e: Exception) {
-                        Logger.e { "Failed to delete $packageName: ${e.message}" }
+                        logger.error("Failed to delete $packageName: ${e.message}")
                     }
                 }
 
@@ -70,31 +73,30 @@ class SyncInstalledAppsUseCase(
                             )
                         )
 
-                        Logger.d {
+                        logger.info(
                             "Migrated $packageName: ${migrationResult.source} " +
                                     "(versionName=${migrationResult.versionName}, code=${migrationResult.versionCode})"
-                        }
+                        )
                     } catch (e: Exception) {
-                        Logger.e { "Failed to migrate $packageName: ${e.message}" }
+                        logger.error("Failed to migrate $packageName: ${e.message}")
                     }
                 }
             }
 
-            Logger.d { 
-                "Sync completed: ${toDelete.size} deleted, ${toMigrate.size} migrated" 
-            }
-            
+            logger.info(
+                "Sync completed: ${toDelete.size} deleted, ${toMigrate.size} migrated"
+            )
+
             Result.success(Unit)
-            
+
         } catch (e: Exception) {
-            Logger.e { "Sync failed: ${e.message}" }
-            e.printStackTrace()
+            logger.error("Sync failed: ${e.message}")
             Result.failure(e)
         }
     }
 
-    private suspend fun determineMigrationData(app: zed.rainxch.core.data.local.db.entities.InstalledApp): MigrationResult {
-        return if (platform.type == Platform.ANDROID) {
+    private suspend fun determineMigrationData(app: InstalledApp): MigrationResult {
+        return if (platform == Platform.ANDROID) {
             val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
             if (systemInfo != null) {
                 MigrationResult(

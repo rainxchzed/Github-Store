@@ -15,6 +15,7 @@ kotlin {
 
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.bundles.ktor.common)
+                implementation(libs.bundles.koin.common)
             }
         }
 

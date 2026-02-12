@@ -17,6 +17,7 @@ kotlin {
 
                 implementation(compose.components.resources)
                 implementation(libs.liquid)
+                implementation(libs.kotlinx.datetime)
 
                 implementation(compose.components.uiToolingPreview)
                 implementation(libs.bundles.landscapist)

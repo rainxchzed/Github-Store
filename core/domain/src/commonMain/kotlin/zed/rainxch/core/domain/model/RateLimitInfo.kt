@@ -1,5 +1,6 @@
 package zed.rainxch.core.domain.model
 
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -12,12 +13,12 @@ data class RateLimitInfo(
     val isExhausted: Boolean
         get() = remaining == 0
 
-    fun timeUntilReset(currentTimeSeconds: Long): Duration {
-        val diff = resetTimestamp - currentTimeSeconds
+    fun timeUntilReset(): Duration {
+        val diff = resetTimestamp - Clock.System.now().toEpochMilliseconds()
         return diff.seconds.coerceAtLeast(Duration.ZERO)
     }
 
-    fun isCurrentlyLimited(currentTimeSeconds: Long): Boolean {
-        return isExhausted && timeUntilReset(currentTimeSeconds) > Duration.ZERO
+    fun isCurrentlyLimited(): Boolean {
+        return isExhausted && timeUntilReset() > Duration.ZERO
     }
 }

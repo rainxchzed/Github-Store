@@ -15,11 +15,12 @@ import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.domain.model.GithubUser
 import zed.rainxch.core.domain.model.GithubUserProfile
-import zed.rainxch.details.data.dto.ReleaseNetwork
-import zed.rainxch.details.data.dto.RepoByIdNetwork
-import zed.rainxch.details.data.dto.RepoInfoNetwork
-import zed.rainxch.details.data.dto.UserProfileNetwork
-import zed.rainxch.details.data.mappers.toDomain
+import zed.rainxch.core.data.dto.ReleaseNetwork
+import zed.rainxch.core.data.dto.RepoByIdNetwork
+import zed.rainxch.core.data.dto.RepoInfoNetwork
+import zed.rainxch.core.data.dto.UserProfileNetwork
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.details.data.utils.ReadmeLocalizationHelper
 import zed.rainxch.details.data.utils.preprocessMarkdown
 import zed.rainxch.details.domain.model.RepoStats
@@ -27,7 +28,8 @@ import zed.rainxch.details.domain.repository.DetailsRepository
 
 class DetailsRepositoryImpl(
     private val httpClient: HttpClient,
-    private val localizationManager: LocalizationManager
+    private val localizationManager: LocalizationManager,
+    private val logger: GitHubStoreLogger
 ) : DetailsRepository {
 
     private val readmeHelper = ReadmeLocalizationHelper(localizationManager)
@@ -76,8 +78,7 @@ class DetailsRepositoryImpl(
         val latest = releases
             .asSequence()
             .filter { (it.draft != true) && (it.prerelease != true) }
-            .sortedByDescending { it.publishedAt ?: it.createdAt ?: "" }
-            .firstOrNull()
+            .maxByOrNull { it.publishedAt ?: it.createdAt ?: "" }
             ?: return null
 
         val processedLatestRelease = latest.copy(
@@ -107,22 +108,22 @@ class DetailsRepositoryImpl(
         val baseUrl = "https://raw.githubusercontent.com/$owner/$repo/$defaultBranch/"
         val primaryLang = localizationManager.getPrimaryLanguageCode()
 
-        Logger.d {
+        logger.debug(
             "Attempting to fetch README for language preference: ${localizationManager.getCurrentLanguageCode()}"
-        }
+        )
 
         val foundReadmes = coroutineScope {
             attempts.map { attempt ->
                 async(start = CoroutineStart.LAZY) {
                     try {
-                        Logger.d { "Trying ${attempt.path} (priority: ${attempt.priority})..." }
+                        logger.debug("Trying ${attempt.path} (priority: ${attempt.priority})...")
 
                         val rawMarkdown = httpClient.executeRequest<String> {
                             get("$baseUrl${attempt.path}")
                         }.getOrNull()
 
                         if (rawMarkdown != null) {
-                            Logger.d { "Successfully fetched ${attempt.path}" }
+                            logger.debug("Successfully fetched ${attempt.path}")
 
                             val processed = preprocessMarkdown(
                                 markdown = rawMarkdown,
@@ -130,14 +131,14 @@ class DetailsRepositoryImpl(
                             )
 
                             val detectedLang = readmeHelper.detectReadmeLanguage(processed)
-                            Logger.d { "Detected language: ${detectedLang ?: "unknown"} for ${attempt.path}" }
+                            logger.debug("Detected language: ${detectedLang ?: "unknown"} for ${attempt.path}")
 
                             attempt to Pair(processed, detectedLang)
                         } else {
                             null
                         }
                     } catch (e: Throwable) {
-                        Logger.d { "Failed to fetch ${attempt.path}: ${e.message}" }
+                        logger.debug("Failed to fetch ${attempt.path}: ${e.message}")
                         null
                     }
                 }
@@ -149,14 +150,14 @@ class DetailsRepositoryImpl(
         }
 
         if (foundReadmes.isEmpty()) {
-            Logger.e { "Failed to fetch any README variant." }
+            logger.error("Failed to fetch any README variant.")
             return null
         }
 
         foundReadmes.entries.firstOrNull { (attempt, content) ->
             attempt.filename != "README.md" && content.second == primaryLang
         }?.let { (attempt, content) ->
-            Logger.d { "Found localized README matching user language: ${attempt.path}" }
+            logger.debug("Found localized README matching user language: ${attempt.path}")
             return Triple(content.first, content.second, attempt.path)
         }
 
@@ -164,14 +165,14 @@ class DetailsRepositoryImpl(
             attempt.filename.contains(".${primaryLang}.", ignoreCase = true) ||
                     attempt.filename.contains("-${primaryLang.uppercase()}.", ignoreCase = true)
         }?.let { (attempt, content) ->
-            Logger.d { "Found explicit language file for user: ${attempt.path}" }
+            logger.debug("Found explicit language file for user: ${attempt.path}")
             return Triple(content.first, content.second ?: primaryLang, attempt.path)
         }
 
         foundReadmes.entries.firstOrNull { (attempt, content) ->
             attempt.filename == "README.md" && content.second == primaryLang
         }?.let { (attempt, content) ->
-            Logger.d { "Default README matches user language: ${attempt.path}" }
+            logger.debug("Default README matches user language: ${attempt.path}")
             return Triple(content.first, content.second, attempt.path)
         }
 
@@ -179,7 +180,7 @@ class DetailsRepositoryImpl(
             foundReadmes.entries.firstOrNull { (_, content) ->
                 content.second == "en"
             }?.let { (attempt, content) ->
-                Logger.d { "Found English README for English user: ${attempt.path}" }
+                logger.debug("Found English README for English user: ${attempt.path}")
                 return Triple(content.first, content.second, attempt.path)
             }
         }
@@ -187,7 +188,7 @@ class DetailsRepositoryImpl(
         foundReadmes.entries.firstOrNull { (_, content) ->
             content.second == primaryLang
         }?.let { (attempt, content) ->
-            Logger.d { "Fallback: Using README matching user language: ${attempt.path}" }
+            logger.debug("Fallback: Using README matching user language: ${attempt.path}")
             return Triple(content.first, content.second, attempt.path)
         }
 
@@ -195,7 +196,7 @@ class DetailsRepositoryImpl(
             foundReadmes.entries.firstOrNull { (_, content) ->
                 content.second == "en"
             }?.let { (attempt, content) ->
-                Logger.d { "Fallback: Using English README: ${attempt.path}" }
+                logger.debug("Fallback: Using English README: ${attempt.path}")
                 return Triple(content.first, content.second, attempt.path)
             }
         }
@@ -203,19 +204,19 @@ class DetailsRepositoryImpl(
         foundReadmes.entries.firstOrNull { (attempt, _) ->
             attempt.path == "README.md"
         }?.let { (attempt, content) ->
-            Logger.d { "Fallback: Using root README.md (language: ${content.second}): ${attempt.path}" }
+            logger.debug("Fallback: Using root README.md (language: ${content.second}): ${attempt.path}")
             return Triple(content.first, content.second, attempt.path)
         }
 
         foundReadmes.entries.firstOrNull { (attempt, _) ->
             attempt.path.startsWith(".github/")
         }?.let { (attempt, content) ->
-            Logger.d { "Fallback: Using .github README: ${attempt.path}" }
+            logger.debug("Fallback: Using .github README: ${attempt.path}")
             return Triple(content.first, content.second, attempt.path)
         }
 
         foundReadmes.entries.minByOrNull { it.key.priority }?.let { (attempt, content) ->
-            Logger.d { "Fallback: Using highest priority README: ${attempt.path}" }
+            logger.debug("Fallback: Using highest priority README: ${attempt.path}")
             return Triple(content.first, content.second, attempt.path)
         }
 

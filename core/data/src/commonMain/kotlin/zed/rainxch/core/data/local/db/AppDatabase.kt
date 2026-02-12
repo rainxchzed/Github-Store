@@ -8,7 +8,7 @@ import zed.rainxch.core.data.local.db.dao.StarredRepoDao
 import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
 import zed.rainxch.core.data.local.db.entities.FavoriteRepoEntity
 import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
-import zed.rainxch.core.data.local.db.entities.StarredRepoEntity
+import zed.rainxch.core.data.local.db.entities.StarredRepositoryEntity
 import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
 
 @Database(
@@ -16,7 +16,7 @@ import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
         InstalledAppEntity::class,
         FavoriteRepoEntity::class,
         UpdateHistoryEntity::class,
-        StarredRepoEntity::class,
+        StarredRepositoryEntity::class,
     ],
     version = 3,
     exportSchema = true

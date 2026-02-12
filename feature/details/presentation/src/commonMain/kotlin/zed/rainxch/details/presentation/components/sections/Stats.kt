@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.*
 import io.github.fletchmckee.liquid.liquefiable
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.details.domain.model.RepoStats

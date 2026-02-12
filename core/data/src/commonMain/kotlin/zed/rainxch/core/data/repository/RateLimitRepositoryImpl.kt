@@ -22,8 +22,7 @@ class RateLimitRepositoryImpl : RateLimitRepository {
 
     override fun isCurrentlyLimited(): Boolean {
         val info = getCurrentRateLimit() ?: return false
-        val currentTime = Clock.System.now().epochSeconds
-        return info.isCurrentlyLimited(currentTime)
+        return info.isCurrentlyLimited()
     }
 
     override fun clear() {

@@ -2,8 +2,8 @@ package zed.rainxch.search.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import githubstore.composeapp.generated.resources.no_repositories_found
-import githubstore.composeapp.generated.resources.search_failed
+import githubstore.feature.search.presentation.generated.resources.no_repositories_found
+import githubstore.feature.search.presentation.generated.resources.search_failed
 import githubstore.feature.search.presentation.generated.resources.Res
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.StarredRepository
@@ -28,7 +29,8 @@ class SearchViewModel(
     private val installedAppsRepository: InstalledAppsRepository,
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
-    private val starredRepository: StarredRepository
+    private val starredRepository: StarredRepository,
+    private val logger: GitHubStoreLogger,
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -60,10 +62,10 @@ class SearchViewModel(
             try {
                 val result = syncInstalledAppsUseCase()
                 if (result.isFailure) {
-                    Logger.w { "Initial sync had issues: ${result.exceptionOrNull()?.message}" }
+                    logger.warn("Initial sync had issues: ${result.exceptionOrNull()?.message}")
                 }
             } catch (e: Exception) {
-                Logger.e { "Initial sync failed: ${e.message}" }
+                logger.error("Initial sync failed: ${e.message}")
             }
         }
     }
@@ -226,9 +228,9 @@ class SearchViewModel(
                     it.copy(isLoading = false, isLoadingMore = false)
                 }
             } catch (e: CancellationException) {
-                Logger.d { "Search cancelled (expected): ${e.message}" }
+                logger.debug("Search cancelled (expected): ${e.message}")
             } catch (e: Exception) {
-                Logger.e { "Search failed: ${e.message}" }
+                logger.error("Search failed: ${e.message}")
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -286,7 +288,7 @@ class SearchViewModel(
                             currentPage = 1
                             performSearch(isInitial = true)
                         } catch (_: CancellationException) {
-                            Logger.d { "Debounce cancelled (expected)" }
+                            logger.debug("Debounce cancelled (expected)")
                         }
                     }
                 }
@@ -326,6 +328,7 @@ class SearchViewModel(
                 searchDebounceJob?.cancel()
                 performSearch(isInitial = true)
             }
+
             is SearchAction.OnRepositoryClick -> {
                 /* Handled in composable */
             }

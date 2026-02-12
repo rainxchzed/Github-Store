@@ -7,9 +7,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import zed.rainxch.githubstore.core.domain.repository.ThemesRepository
-import zed.rainxch.githubstore.core.presentation.model.AppTheme
-import zed.rainxch.githubstore.core.presentation.model.FontTheme
+import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.FontTheme
+import zed.rainxch.core.domain.repository.ThemesRepository
 
 class ThemesRepositoryImpl(
     private val preferences: DataStore<Preferences>

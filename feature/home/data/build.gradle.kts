@@ -14,8 +14,10 @@ kotlin {
                 implementation(projects.feature.home.domain)
 
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.bundles.ktor.common)
                 implementation(libs.kotlinx.datetime)
+
+                implementation(libs.bundles.ktor.common)
+                implementation(libs.bundles.koin.common)
             }
         }
 

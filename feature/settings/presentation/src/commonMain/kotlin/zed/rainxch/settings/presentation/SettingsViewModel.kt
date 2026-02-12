@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.ThemesRepository
-import zed.rainxch.core.presentation.utils.BrowserHelper
+import zed.rainxch.core.domain.utils.BrowserHelper
 import zed.rainxch.settings.domain.repository.SettingsRepository
 
 class SettingsViewModel(
@@ -28,6 +28,7 @@ class SettingsViewModel(
             if (!hasLoadedInitialData) {
                 loadCurrentTheme()
                 collectIsUserLoggedIn()
+                loadVersionName()
 
                 hasLoadedInitialData = true
             }
@@ -40,6 +41,14 @@ class SettingsViewModel(
 
     private val _events = Channel<SettingsEvent>()
     val events = _events.receiveAsFlow()
+
+    private fun loadVersionName() {
+        viewModelScope.launch {
+            _state.update { it.copy(
+                versionName = settingsRepository.getVersionName()
+            ) }
+        }
+    }
 
     private fun collectIsUserLoggedIn() {
         viewModelScope.launch {

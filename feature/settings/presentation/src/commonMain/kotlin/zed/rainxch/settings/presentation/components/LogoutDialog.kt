@@ -19,10 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.close
-import githubstore.composeapp.generated.resources.logout
-import githubstore.composeapp.generated.resources.logout_confirmation
-import githubstore.composeapp.generated.resources.warning
+import githubstore.feature.settings.presentation.generated.resources.close
+import githubstore.feature.settings.presentation.generated.resources.logout
+import githubstore.feature.settings.presentation.generated.resources.logout_confirmation
+import githubstore.feature.settings.presentation.generated.resources.warning
 import githubstore.feature.settings.presentation.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 

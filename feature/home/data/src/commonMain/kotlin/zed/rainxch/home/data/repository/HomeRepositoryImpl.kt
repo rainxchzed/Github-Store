@@ -27,32 +27,34 @@ import zed.rainxch.core.data.dto.GithubRepoNetworkModel
 import zed.rainxch.core.data.dto.GithubRepoSearchResponse
 import zed.rainxch.core.data.mappers.toSummary
 import zed.rainxch.core.data.network.executeRequest
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.GithubRepoSummary
+import zed.rainxch.core.domain.model.PaginatedDiscoveryRepositories
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.RateLimitException
-import zed.rainxch.home.data.data_source.CachedTrendingDataSource
-import zed.rainxch.home.data.data_source.toGithubRepoSummary
-import zed.rainxch.home.domain.model.PaginatedDiscoveryRepositories
+import zed.rainxch.home.data.data_source.CachedRepositoriesDataSource
+import zed.rainxch.home.data.mappers.toGithubRepoSummary
 import zed.rainxch.home.domain.repository.HomeRepository
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 class HomeRepositoryImpl(
-    private val httpClient: HttpClient, // Already has RateLimitInterceptor
+    private val httpClient: HttpClient,
     private val platform: Platform,
-    private val cachedDataSource: CachedTrendingDataSource
+    private val cachedDataSource: CachedRepositoriesDataSource,
+    private val logger: GitHubStoreLogger
 ) : HomeRepository {
 
     @OptIn(ExperimentalTime::class)
     override fun getTrendingRepositories(page: Int): Flow<PaginatedDiscoveryRepositories> = flow {
         if (page == 1) {
-            Logger.d { "Attempting to load cached trending repositories..." }
+            logger.debug("Attempting to load cached trending repositories...")
 
             val cachedData = cachedDataSource.getCachedTrendingRepos()
 
             if (cachedData != null && cachedData.repositories.isNotEmpty()) {
-                Logger.d { "Using cached data: ${cachedData.repositories.size} repos" }
+                logger.debug("Using cached data: ${cachedData.repositories.size} repos")
 
                 val repos = cachedData.repositories.map { it.toGithubRepoSummary() }
 
@@ -66,7 +68,7 @@ class HomeRepositoryImpl(
 
                 return@flow
             } else {
-                Logger.d { "No cached data available, falling back to live API" }
+                logger.debug("No cached data available, falling back to live API")
             }
         }
 
@@ -74,143 +76,145 @@ class HomeRepositoryImpl(
 
     }.flowOn(Dispatchers.IO)
 
-    private fun searchReposWithInstallersFlow(startPage: Int): Flow<PaginatedDiscoveryRepositories> = flow {
-        val oneWeekAgo = Clock.System.now()
-            .minus(7.days)
-            .toLocalDateTime(TimeZone.UTC)
-            .date
+    private fun searchReposWithInstallersFlow(startPage: Int): Flow<PaginatedDiscoveryRepositories> =
+        flow {
+            val oneWeekAgo = Clock.System.now()
+                .minus(7.days)
+                .toLocalDateTime(TimeZone.UTC)
+                .date
 
-        val results = mutableListOf<GithubRepoSummary>()
-        var currentApiPage = startPage
-        val perPage = 100
-        val semaphore = Semaphore(25)
-        val maxPagesToFetch = 5
-        var pagesFetchedCount = 0
-        var lastEmittedCount = 0
-        val desiredCount = 10
+            val results = mutableListOf<GithubRepoSummary>()
+            var currentApiPage = startPage
+            val perPage = 100
+            val semaphore = Semaphore(25)
+            val maxPagesToFetch = 5
+            var pagesFetchedCount = 0
+            var lastEmittedCount = 0
+            val desiredCount = 10
 
-        val query = buildSimplifiedQuery("stars:>500 archived:false pushed:>=$oneWeekAgo")
-        Logger.d { "Live API Query: $query | Page: $startPage" }
+            val query = buildSimplifiedQuery("stars:>500 archived:false pushed:>=$oneWeekAgo")
+            logger.debug("Live API Query: $query | Page: $startPage")
 
-        while (pagesFetchedCount < maxPagesToFetch) {
-            currentCoroutineContext().ensureActive()
+            while (pagesFetchedCount < maxPagesToFetch) {
+                currentCoroutineContext().ensureActive()
 
-            try {
-                // ✅ Clean! No manual rate limit handling
-                val response = httpClient.executeRequest<GithubRepoSearchResponse> {
-                    get("/search/repositories") {
-                        parameter("q", query)
-                        parameter("sort", "stars")
-                        parameter("order", "desc")
-                        parameter("per_page", perPage)
-                        parameter("page", currentApiPage)
+                try {
+                    // ✅ Clean! No manual rate limit handling
+                    val response = httpClient.executeRequest<GithubRepoSearchResponse> {
+                        get("/search/repositories") {
+                            parameter("q", query)
+                            parameter("sort", "stars")
+                            parameter("order", "desc")
+                            parameter("per_page", perPage)
+                            parameter("page", currentApiPage)
+                        }
+                    }.getOrElse { error ->
+                        logger.error ("Search request failed: ${error.message}")
+                        throw error // Rate limit already handled globally
                     }
-                }.getOrElse { error ->
-                    Logger.e { "Search request failed: ${error.message}" }
-                    throw error // Rate limit already handled globally
-                }
 
-                Logger.d { "API Page $currentApiPage: Got ${response.items.size} repos" }
+                    logger.debug("API Page $currentApiPage: Got ${response.items.size} repos")
 
-                if (response.items.isEmpty()) {
-                    Logger.d { "No more items from API, breaking" }
-                    break
-                }
+                    if (response.items.isEmpty()) {
+                        logger.debug("No more items from API, breaking")
+                        break
+                    }
 
-                val candidates = response.items
-                    .map { repo -> repo to calculatePlatformScore(repo) }
-                    .filter { it.second > 0 }
-                    .take(50)
-                    .map { it.first }
+                    val candidates = response.items
+                        .map { repo -> repo to calculatePlatformScore(repo) }
+                        .filter { it.second > 0 }
+                        .take(50)
+                        .map { it.first }
 
-                Logger.d { "Checking ${candidates.size} candidates for installers" }
+                    logger.debug("Checking ${candidates.size} candidates for installers")
 
-                coroutineScope {
-                    val deferredResults = candidates.map { repo ->
-                        async {
-                            semaphore.withPermit {
-                                withTimeoutOrNull(5000) {
-                                    checkRepoHasInstallers(repo)
+                    coroutineScope {
+                        val deferredResults = candidates.map { repo ->
+                            async {
+                                semaphore.withPermit {
+                                    withTimeoutOrNull(5000) {
+                                        checkRepoHasInstallers(repo)
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    for (deferred in deferredResults) {
-                        currentCoroutineContext().ensureActive()
+                        for (deferred in deferredResults) {
+                            currentCoroutineContext().ensureActive()
 
-                        val result = deferred.await()
-                        if (result != null) {
-                            results.add(result)
-                            Logger.d { "Found installer repo: ${result.fullName} (${results.size}/$desiredCount)" }
+                            val result = deferred.await()
+                            if (result != null) {
+                                results.add(result)
+                                logger.debug("Found installer repo: ${result.fullName} (${results.size}/$desiredCount)")
 
-                            if (results.size % 3 == 0 || results.size >= desiredCount) {
-                                val newItems = results.subList(lastEmittedCount, results.size)
+                                if (results.size % 3 == 0 || results.size >= desiredCount) {
+                                    val newItems = results.subList(lastEmittedCount, results.size)
 
-                                if (newItems.isNotEmpty()) {
-                                    emit(
-                                        PaginatedDiscoveryRepositories(
-                                            repos = newItems.toList(),
-                                            hasMore = true,
-                                            nextPageIndex = currentApiPage + 1
+                                    if (newItems.isNotEmpty()) {
+                                        emit(
+                                            PaginatedDiscoveryRepositories(
+                                                repos = newItems.toList(),
+                                                hasMore = true,
+                                                nextPageIndex = currentApiPage + 1
+                                            )
                                         )
-                                    )
-                                    Logger.d { "Emitted ${newItems.size} repos (total: ${results.size})" }
-                                    lastEmittedCount = results.size
+                                        logger.debug("Emitted ${newItems.size} repos (total: ${results.size})")
+                                        lastEmittedCount = results.size
+                                    }
                                 }
-                            }
 
-                            if (results.size >= desiredCount) {
-                                Logger.d { "Reached desired count, breaking" }
-                                break
+                                if (results.size >= desiredCount) {
+                                    logger.debug("Reached desired count, breaking")
+                                    break
+                                }
                             }
                         }
                     }
-                }
 
-                if (results.size >= desiredCount || response.items.size < perPage) {
-                    Logger.d { "Breaking: results=${results.size}, response size=${response.items.size}" }
+                    if (results.size >= desiredCount || response.items.size < perPage) {
+                        logger.debug("Breaking: results=${results.size}, response size=${response.items.size}")
+                        break
+                    }
+
+                    currentApiPage++
+                    pagesFetchedCount++
+
+                } catch (e: RateLimitException) {
+                    // ✅ Dialog already shown globally, just log and break
+                    logger.error ("Rate limited during search")
+                    break
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logger.error ("Search failed: ${e.message}")
+                    e.printStackTrace()
                     break
                 }
-
-                currentApiPage++
-                pagesFetchedCount++
-
-            } catch (e: RateLimitException) {
-                // ✅ Dialog already shown globally, just log and break
-                Logger.e { "Rate limited during search" }
-                break
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Logger.e { "Search failed: ${e.message}" }
-                e.printStackTrace()
-                break
             }
-        }
 
-        if (results.size > lastEmittedCount) {
-            val finalBatch = results.subList(lastEmittedCount, results.size)
-            val finalHasMore = pagesFetchedCount < maxPagesToFetch && results.size >= desiredCount
-            emit(
-                PaginatedDiscoveryRepositories(
-                    repos = finalBatch.toList(),
-                    hasMore = finalHasMore,
-                    nextPageIndex = if (finalHasMore) currentApiPage + 1 else currentApiPage
+            if (results.size > lastEmittedCount) {
+                val finalBatch = results.subList(lastEmittedCount, results.size)
+                val finalHasMore =
+                    pagesFetchedCount < maxPagesToFetch && results.size >= desiredCount
+                emit(
+                    PaginatedDiscoveryRepositories(
+                        repos = finalBatch.toList(),
+                        hasMore = finalHasMore,
+                        nextPageIndex = if (finalHasMore) currentApiPage + 1 else currentApiPage
+                    )
                 )
-            )
-            Logger.d { "Final emit: ${finalBatch.size} repos (total: ${results.size})" }
-        } else if (results.isEmpty()) {
-            emit(
-                PaginatedDiscoveryRepositories(
-                    repos = emptyList(),
-                    hasMore = false,
-                    nextPageIndex = currentApiPage
+                logger.debug("Final emit: ${finalBatch.size} repos (total: ${results.size})")
+            } else if (results.isEmpty()) {
+                emit(
+                    PaginatedDiscoveryRepositories(
+                        repos = emptyList(),
+                        hasMore = false,
+                        nextPageIndex = currentApiPage
+                    )
                 )
-            )
-            Logger.d { "No results found" }
-        }
-    }.flowOn(Dispatchers.IO)
+                logger.debug("No results found")
+            }
+        }.flowOn(Dispatchers.IO)
 
     @OptIn(ExperimentalTime::class)
     override fun getNew(page: Int): Flow<PaginatedDiscoveryRepositories> {
@@ -258,7 +262,7 @@ class HomeRepositoryImpl(
         var lastEmittedCount = 0
 
         val query = buildSimplifiedQuery(baseQuery)
-        Logger.d { "Query: $query | Sort: $sort | Page: $startPage" }
+        logger.debug("Query: $query | Sort: $sort | Page: $startPage")
 
         while (results.size < desiredCount && pagesFetchedCount < maxPagesToFetch) {
             currentCoroutineContext().ensureActive()
@@ -274,14 +278,14 @@ class HomeRepositoryImpl(
                         parameter("page", currentApiPage)
                     }
                 }.getOrElse { error ->
-                    Logger.e { "Search request failed: ${error.message}" }
+                    logger.error ("Search request failed: ${error.message}")
                     throw error
                 }
 
-                Logger.d { "API Page $currentApiPage: Got ${response.items.size} repos" }
+                logger.debug("API Page $currentApiPage: Got ${response.items.size} repos")
 
                 if (response.items.isEmpty()) {
-                    Logger.d { "No more items from API, breaking" }
+                    logger.debug("No more items from API, breaking")
                     break
                 }
 
@@ -291,7 +295,7 @@ class HomeRepositoryImpl(
                     .take(50)
                     .map { it.first }
 
-                Logger.d { "Checking ${candidates.size} candidates for installers" }
+                logger.debug("Checking ${candidates.size} candidates for installers")
 
                 coroutineScope {
                     val deferredResults = candidates.map { repo ->
@@ -310,7 +314,7 @@ class HomeRepositoryImpl(
                         val result = deferred.await()
                         if (result != null) {
                             results.add(result)
-                            Logger.d { "Found installer repo: ${result.fullName} (${results.size}/$desiredCount)" }
+                            logger.debug("Found installer repo: ${result.fullName} (${results.size}/$desiredCount)")
 
                             if (results.size % 3 == 0 || results.size >= desiredCount) {
                                 val newItems = results.subList(lastEmittedCount, results.size)
@@ -323,13 +327,13 @@ class HomeRepositoryImpl(
                                             nextPageIndex = currentApiPage + 1
                                         )
                                     )
-                                    Logger.d { "Emitted ${newItems.size} repos (total: ${results.size})" }
+                                    logger.debug("Emitted ${newItems.size} repos (total: ${results.size})")
                                     lastEmittedCount = results.size
                                 }
                             }
 
                             if (results.size >= desiredCount) {
-                                Logger.d { "Reached desired count, breaking" }
+                                logger.debug("Reached desired count, breaking")
                                 break
                             }
                         }
@@ -337,7 +341,7 @@ class HomeRepositoryImpl(
                 }
 
                 if (results.size >= desiredCount || response.items.size < perPage) {
-                    Logger.d { "Breaking: results=${results.size}, response size=${response.items.size}" }
+                    logger.debug("Breaking: results=${results.size}, response size=${response.items.size}")
                     break
                 }
 
@@ -345,12 +349,12 @@ class HomeRepositoryImpl(
                 pagesFetchedCount++
 
             } catch (e: RateLimitException) {
-                Logger.e { "Rate limited during search" }
+                logger.error ("Rate limited during search")
                 break
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Logger.e { "Search failed: ${e.message}" }
+                logger.error ("Search failed: ${e.message}")
                 e.printStackTrace()
                 break
             }
@@ -366,7 +370,7 @@ class HomeRepositoryImpl(
                     nextPageIndex = if (finalHasMore) currentApiPage + 1 else currentApiPage
                 )
             )
-            Logger.d { "Final emit: ${finalBatch.size} repos (total: ${results.size})" }
+            logger.debug("Final emit: ${finalBatch.size} repos (total: ${results.size})")
         } else if (results.isEmpty()) {
             emit(
                 PaginatedDiscoveryRepositories(
@@ -375,7 +379,7 @@ class HomeRepositoryImpl(
                     nextPageIndex = currentApiPage
                 )
             )
-            Logger.d { "No results found" }
+            logger.debug("No results found")
         }
     }.flowOn(Dispatchers.IO)
 
@@ -405,7 +409,15 @@ class HomeRepositoryImpl(
             }
 
             Platform.WINDOWS, Platform.MACOS, Platform.LINUX -> {
-                if (topics.any { it in setOf("desktop", "electron", "app", "gui", "compose-desktop") }) score += 10
+                if (topics.any {
+                        it in setOf(
+                            "desktop",
+                            "electron",
+                            "app",
+                            "gui",
+                            "compose-desktop"
+                        )
+                    }) score += 10
                 if (topics.contains("cross-platform") || topics.contains("multiplatform")) score += 8
                 if (language in setOf("kotlin", "c++", "rust", "c#", "swift", "dart")) score += 5
                 if (desc.contains("desktop") || desc.contains("application")) score += 3
@@ -439,7 +451,9 @@ class HomeRepositoryImpl(
                     Platform.ANDROID -> name.endsWith(".apk")
                     Platform.WINDOWS -> name.endsWith(".msi") || name.endsWith(".exe")
                     Platform.MACOS -> name.endsWith(".dmg") || name.endsWith(".pkg")
-                    Platform.LINUX -> name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(".rpm")
+                    Platform.LINUX -> name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(
+                        ".rpm"
+                    )
                 }
             }
 
@@ -449,7 +463,6 @@ class HomeRepositoryImpl(
                 null
             }
         } catch (e: Exception) {
-            // Rate limit exceptions are caught here too, just return null
             null
         }
     }

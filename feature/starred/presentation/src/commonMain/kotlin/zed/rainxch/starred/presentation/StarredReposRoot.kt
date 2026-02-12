@@ -43,15 +43,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import githubstore.composeapp.generated.resources.dismiss
-import githubstore.composeapp.generated.resources.last_synced
-import githubstore.composeapp.generated.resources.navigate_back
-import githubstore.composeapp.generated.resources.no_starred_repos
-import githubstore.composeapp.generated.resources.retry
-import githubstore.composeapp.generated.resources.sign_in_required
-import githubstore.composeapp.generated.resources.sign_in_with_github_for_stars
-import githubstore.composeapp.generated.resources.star_repos_hint
-import githubstore.composeapp.generated.resources.starred_repositories
+import githubstore.feature.starred.presentation.generated.resources.dismiss
+import githubstore.feature.starred.presentation.generated.resources.last_synced
+import githubstore.feature.starred.presentation.generated.resources.navigate_back
+import githubstore.feature.starred.presentation.generated.resources.no_starred_repos
+import githubstore.feature.starred.presentation.generated.resources.retry
+import githubstore.feature.starred.presentation.generated.resources.sign_in_required
+import githubstore.feature.starred.presentation.generated.resources.sign_in_with_github_for_stars
+import githubstore.feature.starred.presentation.generated.resources.star_repos_hint
+import githubstore.feature.starred.presentation.generated.resources.starred_repositories
 import githubstore.feature.starred.presentation.generated.resources.Res
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
@@ -59,7 +59,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.starred.presentation.components.StarredRepositoryItem
-import zed.rainxch.starred.presentation.utils.formatStarredRelativeTime
+import zed.rainxch.starred.presentation.utils.formatRelativeTime
 import kotlin.time.ExperimentalTime
 
 @Composable
@@ -236,7 +236,7 @@ private fun StarredTopBar(
                     if (lastSyncTime != null && !isSyncing) {
                         Text(
                             text = "${stringResource(Res.string.last_synced)}:" +
-                                    " ${formatStarredRelativeTime(lastSyncTime)}",
+                                    " ${formatRelativeTime(lastSyncTime)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

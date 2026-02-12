@@ -31,20 +31,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.coil3.CoilImage
-import githubstore.composeapp.generated.resources.Res
-import githubstore.composeapp.generated.resources.author
-import githubstore.composeapp.generated.resources.ic_github
-import githubstore.composeapp.generated.resources.open_developer_profile
-import githubstore.composeapp.generated.resources.profile
 import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.author
+import githubstore.feature.details.presentation.generated.resources.ic_github
+import githubstore.feature.details.presentation.generated.resources.open_developer_profile
+import githubstore.feature.details.presentation.generated.resources.profile
 import io.github.fletchmckee.liquid.liquefiable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.GithubUserProfile
 import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
-import zed.rainxch.githubstore.feature.details.presentation.DetailsAction
-import zed.rainxch.githubstore.feature.details.presentation.utils.LocalTopbarLiquidState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.author(

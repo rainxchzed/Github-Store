@@ -14,7 +14,7 @@ compose-hot-reload = "1.0.0-beta04"
 compose-multiplatform = "1.9.0-beta01"
 # Maintain compose multiplatform version aligned with navigation, cache error could happen
 compose-lifecycle = "2.9.1"
-navigation-compose = "2.9.0-beta04"
+navigation-compose = "2.9.1"
 jetbrains-core-bundle = "1.0.1"
 material-icons = "1.7.3"
 compose-gradle-plugin = "1.10.0"

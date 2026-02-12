@@ -1,6 +1,7 @@
 package zed.rainxch.apps.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstalledApp
 
 interface AppsRepository {
@@ -9,4 +10,9 @@ interface AppsRepository {
         installedApp: InstalledApp,
         onCantLaunchApp : () -> Unit = { }
     )
+    suspend fun getLatestRelease(
+        owner: String,
+        repo: String
+    ): GithubRelease?
+
 }

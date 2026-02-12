@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.FontTheme
+import zed.rainxch.core.presentation.utils.darkScheme
+import zed.rainxch.core.presentation.utils.lightScheme
 
 val oceanBlueLight = lightColorScheme(
     primary = primaryLight,

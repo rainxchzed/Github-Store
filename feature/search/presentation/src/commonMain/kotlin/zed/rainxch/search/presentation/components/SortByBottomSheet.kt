@@ -12,6 +12,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.domain.model.SortBy
+import zed.rainxch.search.presentation.utils.label
 
 @Composable
 fun SortByBottomSheet(

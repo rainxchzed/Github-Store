@@ -35,26 +35,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.add_to_favourites
-import githubstore.composeapp.generated.resources.count_millions
-import githubstore.composeapp.generated.resources.count_thousands
-import githubstore.composeapp.generated.resources.forks
-import githubstore.composeapp.generated.resources.has_release
-import githubstore.composeapp.generated.resources.installed
-import githubstore.composeapp.generated.resources.issues
-import githubstore.composeapp.generated.resources.just_now
-import githubstore.composeapp.generated.resources.remove_from_favourites
-import githubstore.composeapp.generated.resources.stars
-import githubstore.composeapp.generated.resources.time_days_ago
-import githubstore.composeapp.generated.resources.time_hours_ago
-import githubstore.composeapp.generated.resources.time_minutes_ago
-import githubstore.composeapp.generated.resources.time_months_ago
-import githubstore.composeapp.generated.resources.time_years_ago
-import githubstore.composeapp.generated.resources.updated_on_date
 import githubstore.feature.dev_profile.presentation.generated.resources.Res
+import githubstore.feature.dev_profile.presentation.generated.resources.add_to_favourites
+import githubstore.feature.dev_profile.presentation.generated.resources.forks
+import githubstore.feature.dev_profile.presentation.generated.resources.has_release
+import githubstore.feature.dev_profile.presentation.generated.resources.installed
+import githubstore.feature.dev_profile.presentation.generated.resources.issues
+import githubstore.feature.dev_profile.presentation.generated.resources.just_now
+import githubstore.feature.dev_profile.presentation.generated.resources.remove_from_favourites
+import githubstore.feature.dev_profile.presentation.generated.resources.stars
+import githubstore.feature.dev_profile.presentation.generated.resources.time_days_ago
+import githubstore.feature.dev_profile.presentation.generated.resources.time_hours_ago
+import githubstore.feature.dev_profile.presentation.generated.resources.time_minutes_ago
+import githubstore.feature.dev_profile.presentation.generated.resources.time_months_ago
+import githubstore.feature.dev_profile.presentation.generated.resources.time_years_ago
+import githubstore.feature.dev_profile.presentation.generated.resources.updated_on_date
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.utils.formatCount
 import zed.rainxch.devprofile.domain.model.DeveloperRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -149,7 +148,7 @@ fun DeveloperRepoItem(
                 RepoStat(
                     icon = Icons.Default.Star,
                     value = formatCount(repository.stargazersCount),
-                    contentDescription = "${repository.stargazersCount} ${stringResource(Res.string.stars)}"
+                    contentDescription = $$"$${repository.stargazersCount} $${stringResource(Res.string.stars)}"
                 )
 
                 RepoStat(

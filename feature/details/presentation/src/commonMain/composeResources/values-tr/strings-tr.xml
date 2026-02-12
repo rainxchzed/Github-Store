@@ -1,0 +1,325 @@
+<resources>
+
+    <!-- Apps feature - App -->
+    <string name="app_name">GitHub Store</string>
+
+    <!-- Apps feature - Navigation / Top bar -->
+    <string name="installed_apps">Yüklü Uygulamalar</string>
+    <string name="navigate_back">Geri git</string>
+    <string name="check_for_updates">Güncellemeleri kontrol et</string>
+
+    <!-- Apps feature - Errors / messages -->
+    <string name="cannot_launch">%1$s çalıştırılamadı</string>
+    <string name="failed_to_open">%1$s açılamadı</string>
+    <string name="failed_to_update">%1$s: %2$s güncellenemedi</string>
+    <string name="update_all_failed">Tümünü güncelleme başarısız: %1$s</string>
+    <string name="all_apps_updated_successfully">Tüm uygulamalar başarılı şekilde güncellendi</string>
+    <string name="no_updates_available">Güncelleme yok</string>
+
+    <!-- Apps feature - Search -->
+    <string name="search_your_apps">Uygulamalarınızı arayın</string>
+    <string name="no_apps_found">Uygulama Bulunamadı</string>
+
+    <!-- Apps feature - Actions -->
+    <string name="update_all">Tümünü Güncelle</string>
+    <string name="update">Güncelle</string>
+    <string name="open">Aç</string>
+    <string name="cancel">İptal et</string>
+
+    <!-- Apps feature - Update states -->
+    <string name="checking">Kontrol ediliyor…</string>
+    <string name="updated_successfully">Başarıyla güncellendi</string>
+    <string name="error_with_message">Hata: %1$s</string>
+
+    <!-- Apps feature - Update all progress -->
+    <string name="updating_x_of_y">%2$d içinden %1$d güncelleniyor</string>
+    <string name="currently_updating">Şu anda: %1$s</string>
+
+
+    <!-- Auth general -->
+    <string name="waiting_for_authorization">Yetki bekleniyor</string>
+    <string name="signed_in">Giriş Yapıldı!</string>
+    <string name="redirecting_message">Artık uygulamayı kullanabilirsiniz. Yönlendiriliyor...</string>
+    <string name="try_again">Tekrar dene</string>
+
+    <!-- Errors -->
+    <string name="auth_error_with_message">Hata: %1$s</string>
+
+    <!-- Device flow -->
+    <string name="enter_code_on_github">Kodu GitHub'da gir</string>
+    <string name="copy_code">Kodu kopyala</string>
+    <string name="open_github">Github'ı aç</string>
+
+    <!-- Logged out -->
+    <string name="unlock_full_experience">Tam Deneyimi Keşfedin</string>
+
+    <string name="more_requests">Daha Fazla İstek</string>
+    <string name="more_requests_description">
+        Daha yüksek API hız sınırları elde etmek ve kesintileri önlemek için oturum açın. </string>
+
+    <string name="sign_in_with_github">Github ile giriş yap</string>
+
+    <string name="error_cancelled">İptal edildi</string>
+    <string name="error_unknown">Bilinmeyen hata</string>
+
+    <string name="language_label">Dil:</string>
+
+    <string name="discover_repositories">Repoları keşfet</string>
+    <string name="search_repositories_hint">Repo, açıklama ara...</string>
+
+    <!-- Filters -->
+    <string name="filter_by_language">Dil ile filtrele</string>
+
+    <!-- Results -->
+    <string name="results_found">%1$d sonuç bulundu</string>
+
+
+    <!-- Sorting -->
+    <string name="sort_by">Sırala</string>
+    <string name="close">Kapat</string>
+
+    <string name="sort_most_stars">En Çok Yıldız</string>
+    <string name="sort_most_forks">En Çok Fork</string>
+    <string name="sort_best_match">En İyi Eşleşme</string>
+
+    <!-- Programming languages -->
+    <string name="language_all">Tüm Diller</string>
+    <string name="language_kotlin">Kotlin</string>
+    <string name="language_java">Java</string>
+    <string name="language_javascript">JavaScript</string>
+    <string name="language_typescript">TypeScript</string>
+    <string name="language_python">Python</string>
+    <string name="language_swift">Swift</string>
+    <string name="language_rust">Rust</string>
+    <string name="language_go">Go</string>
+    <string name="language_csharp">C#</string>
+    <string name="language_cpp">C++</string>
+    <string name="language_c">C</string>
+    <string name="language_dart">Dart</string>
+    <string name="language_ruby">Ruby</string>
+    <string name="language_php">PHP</string>
+
+    <string name="search_failed">Arama Başarısız</string>
+    <string name="no_repositories_found">Repo bulunamadı</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ayarlar</string>
+
+    <!-- Sections -->
+    <string name="section_appearance">GÖRÜNÜM</string>
+    <string name="section_about">HAKKINDA</string>
+
+    <!-- Appearance -->
+    <string name="theme_color">Tema Rengi</string>
+    <string name="amoled_black_theme">AMOLED Siyah Tema</string>
+    <string name="amoled_black_description">Karanlık mod için saf siyah arka plan</string>
+    <string name="selected_color">Seçilmiş renk: %1$s</string>
+
+    <!-- About -->
+    <string name="version">Sürüm</string>
+    <string name="help_support">Yardım &amp; Destek</string>
+
+    <!-- Account -->
+    <string name="logout">Çıkış Yap</string>
+
+    <!-- Snackbar -->
+    <string name="logout_success">Başarılı şekilde çıkış yapıldı, yönlendiriliyor...</string>
+
+    <!-- Dialog -->
+    <string name="warning">Uyarı!</string>
+    <string name="logout_confirmation">Çıkmak istediğinden emin misin?</string>
+
+    <!-- Theme names -->
+    <string name="theme_dynamic">Dinamik</string>
+    <string name="theme_ocean">Deniz</string>
+    <string name="theme_purple">Mor</string>
+    <string name="theme_forest">Orman</string>
+    <string name="theme_slate">Arduvaz</string>
+    <string name="theme_amber">Amber</string>
+
+    <!-- Navigation & actions -->
+    <string name="open_repository">Repoyu Aç</string>
+    <string name="open_in_browser">Tarayıcıda aç</string>
+    <string name="cancel_download">İndirmeyi iptal et</string>
+    <string name="show_install_options">Yükleme seçeneklerini göster</string>
+
+    <!-- Errors & states -->
+    <string name="error_loading_details">Detaylar yüklenirken hata</string>
+    <string name="retry">Tekrar dene</string>
+    <string name="no_description">Açıklama sağlanmadı.</string>
+    <string name="no_release_notes">Sürüm notu yok</string>
+
+    <!-- Headers -->
+    <string name="about_this_app">Bu uygulama hakkında</string>
+    <string name="install_logs">Yükleme günlükleri</string>
+    <string name="author">Yazar</string>
+    <string name="whats_new">Neler Yeni</string>
+
+    <!-- Install status -->
+    <string name="installed">Yüklü</string>
+    <string name="update_available">Güncelleme mevcut</string>
+    <string name="not_available">Mevcut değil</string>
+    <string name="install_latest">En son sürümü yükle</string>
+    <string name="reinstall">Tekrar yükle</string>
+    <string name="update_app">Uygulamayı güncelle</string>
+
+    <!-- Download stages -->
+    <string name="downloading">İndiriliyor</string>
+    <string name="updating">Güncelleniyor</string>
+    <string name="verifying">Doğrulanıyor</string>
+    <string name="installing">Yükleniyor</string>
+
+    <!-- Install helpers -->
+    <string name="open_in_obtainium">Obtainium'da aç</string>
+    <string name="obtainium_description">Uygulamaları otomatik güncelle</string>
+    <string name="inspect_with_appmanager">AppManager ile incele</string>
+    <string name="appmanager_description">İzinleri, izleyici ve güvenliği kontrol et</string>
+
+    <!-- Author -->
+    <string name="profile">Profil</string>
+
+    <!-- Stats -->
+    <string name="forks">Forklar</string>
+    <string name="stars">Yıldızlar</string>
+    <string name="issues">Sorunlar</string>
+
+    <!-- Misc -->
+    <string name="by_author">%1$s</string>
+    <string name="installed_version">Yüklenmiş: %1$s</string>
+    <string name="architecture_compatible">Mimari uyumlu</string>
+    <string name="update_to_version">%1$s'e güncelle</string>
+
+    <!-- General -->
+    <string name="error_load_details">Detaylar yüklenemedi</string>
+    <string name="installer_saved_downloads">Yükleyici, İndirilenler klasörüne kaydedildi</string>
+
+    <!-- Download / install states -->
+    <string name="log_download_started">İndirme başladı</string>
+    <string name="log_downloaded">İndirildi</string>
+    <string name="log_update_started">Güncelleme başladı</string>
+    <string name="log_installed">Yüklendi</string>
+    <string name="log_updated">Güncellendi</string>
+    <string name="log_cancelled">İptal edildi</string>
+    <string name="log_install_started">Yükleme Başladı</string>
+    <string name="log_error">Hata</string>
+    <string name="log_error_with_message">Hata: %1$s</string>
+
+    <!-- External tools -->
+    <string name="log_prepare_appmanager">AppManager için hazırlanıyor</string>
+    <string name="log_opened_appmanager">AppManager'da açıldı</string>
+
+    <!-- Errors -->
+    <string name="error_generic">Hata: %1$s</string>
+    <string name="error_asset_not_supported">Tür .%1$s desteklenmiyor</string>
+    <string name="error_file_not_found">İndirilen dosya bulunamadı</string>
+
+    <string name="home_category_trending">Trendler</string>
+    <string name="home_category_new">Yeni</string>
+    <string name="home_category_recently_updated">Yakında güncellenenler</string>
+
+    <string name="home_finding_repositories">Repolar bulunuyor...</string>
+    <string name="home_loading_more">Daha fazla yükleniyor...</string>
+    <string name="home_no_more_repositories">Başka repo yok</string>
+    <string name="home_retry">Tekrar dene</string>
+    <string name="home_failed_to_load_repositories">Repolar yüklenemedi</string>
+    <string name="home_view_details">Detayları Görüntüle</string>
+
+    <string name="updated_just_now">şimdi güncellendi</string>
+    <string name="updated_hours_ago">%1$d saat önce güncellendi</string>
+    <string name="updated_yesterday">dün güncellendi</string>
+    <string name="updated_days_ago">%1$d gün önce güncellendi</string>
+    <string name="updated_on_date">%1$s tarihinde güncellendi</string>
+
+    <string name="rate_limit_exceeded">Hız Sınırı Aşıldı</string>
+    <string name="rate_limit_used_all">Tüm %1$d API isteklerini kullandınız.</string>
+    <string name="rate_limit_used_all_free">Tüm %1$s ücretsiz API isteğinizi kullandınız.</string>
+    <string name="rate_limit_resets_in_minutes">%1$d dakika içinde yenilenir</string>
+    <string name="rate_limit_tip_sign_in">Saat başı 60 yerine 5,000 istek için giriş yapın!</string>
+    <string name="rate_limit_sign_in">Giriş Yap</string>
+    <string name="rate_limit_ok">Tamam</string>
+    <string name="rate_limit_close">Kapat</string>
+
+    <string name="system_font">Sistem fontu</string>
+    <string name="system_font_description">Daha iyi okunabilirlik için cihazınızın yazı tipini eşleştirin</string>
+
+    <string name="theme_light">Aydınlık</string>
+    <string name="theme_dark">Karanlık</string>
+    <string name="theme_system">Sistem</string>
+
+    <string name="added_to_favourites">Repo favorilere eklendi</string>
+    <string name="removed_from_favourites">Repo favorilerden kaldırıldı</string>
+    <string name="add_to_favourites">Favorilere ekle</string>
+    <string name="remove_from_favourites">Favorilerden kaldır</string>
+    <string name="favourites">Favoriler</string>
+
+    <string name="added_just_now">şimdi eklendi</string>
+    <string name="added_hours_ago">%1$d saat önce eklendi</string>
+    <string name="added_yesterday">dün eklendi</string>
+    <string name="added_days_ago">%1$d gün önce eklendi</string>
+    <string name="added_on_date">%1$s tarihinde eklendi</string>
+
+    <string name="starred_repositories">Yıldızlı Repolar</string>
+    <string name="repository_starred">Repo yıldızlandı</string>
+    <string name="repository_not_starred">Repo yıldızlanmadı</string>
+    <string name="star_from_github">GitHub'dan repo yıldızlayabilirsiniz</string>
+    <string name="unstar_from_github">GitHub'dan repo yıldız kaldırabilirsiniz</string>
+
+    <string name="sign_in_required">Giriş gerekli</string>
+    <string name="sign_in_with_github_for_stars">GitHub ile oturum açarak yıldızlı repolarınızı görüntüleyin</string>
+    <string name="no_starred_repos">Yıldızlı repo yok</string>
+    <string name="star_repos_hint">Yüklenebilir sürümlü repoları görmek için GitHub'da yıldızlayın</string>
+    <string name="last_synced">Son eşitleme</string>
+    <string name="just_now">Şimdi</string>
+    <string name="minutes_ago">%d dakika önce</string>
+    <string name="hours_ago">%d saat önce</string>
+    <string name="days_ago">%d gün önce</string>
+    <string name="dismiss">Kapat</string>
+		<string name="sync_starred_failed">Yıldızlı repoları eşitlerken hata</string>
+
+		<string name="developer_profile_title">Geliştirici Profili</string>
+    <string name="open_developer_profile">Geliştirici profilini aç</string>
+
+    <string name="failed_to_load_repositories">Repolar yüklenirken hata</string>
+    <string name="failed_to_load_profile">Profil yüklenirken hata</string>
+
+    <!-- Developer Profile - Stats -->
+    <string name="repositories">Repolar</string>
+    <string name="followers">Takipçiler</string>
+    <string name="following">Takip edilenler</string>
+
+    <!-- Developer Profile - Filter & Sort -->
+    <string name="search_repositories">Repo ara…</string>
+    <string name="clear_search">Aramayı temizle</string>
+    <string name="filter_all">Hepsi</string>
+    <string name="filter_with_releases">Yayınlanmış</string>
+    <string name="filter_installed">İndirilmiş</string>
+    <string name="filter_favorites">Favoriler</string>
+    <string name="sort">Sırala</string>
+    <string name="sort_recently_updated">Yeni Güncellenmiş</string>
+    <string name="sort_name">Ad</string>
+
+    <!-- Developer Profile - Repository Count -->
+    <string name="repository_singular">repo</string>
+    <string name="repositories_plural">repolar</string>
+    <string name="showing_x_of_y_repositories">%2$d repodan %1$d tanesi gösteriliyor</string>
+
+    <!-- Developer Profile - Empty States -->
+    <string name="no_repos_with_releases">Yüklenebilir sürümleri olan repo yok</string>
+    <string name="no_installed_repos">Yüklü repo yok</string>
+    <string name="no_favorite_repos">Favori repo yok</string>
+
+    <!-- Developer Profile - Repository Item -->
+    <string name="updated_x_ago">%1$s güncellendi</string>
+    <string name="has_release">Yayınlanmış</string>
+
+    <string name="time_years_ago">%1$d y önce</string>
+    <string name="time_months_ago">%1$d ay önce</string>
+    <string name="time_days_ago">%1$d g önce</string>
+    <string name="time_hours_ago">%1$d s önce</string>
+    <string name="time_minutes_ago">%1$d d önce</string>
+
+    <!-- Developer Profile - Count Formatting -->
+    <string name="count_millions">%1$dM</string>
+    <string name="count_thousands">%1$dk</string>
+
+</resources>

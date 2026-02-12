@@ -1,11 +1,7 @@
 package zed.rainxch.details.data.utils
 
-import co.touchlab.kermit.Logger
-
 fun preprocessMarkdown(markdown: String, baseUrl: String): String {
     val normalizedBaseUrl = if (baseUrl.endsWith("/")) baseUrl else "$baseUrl/"
-
-    Logger.d { "PreprocessMarkdown: Base URL: $normalizedBaseUrl" }
 
     var processed = markdown
     var imageCount = 0
@@ -15,9 +11,6 @@ fun preprocessMarkdown(markdown: String, baseUrl: String): String {
         return if (url.contains("github.com") && url.contains("/blob/")) {
             url.replace("github.com", "raw.githubusercontent.com")
                 .replace("/blob/", "/")
-                .also {
-                    Logger.d { "PreprocessMarkdown: GitHub blob->raw: $url -> $it" }
-                }
         } else {
             url
         }
@@ -48,7 +41,6 @@ fun preprocessMarkdown(markdown: String, baseUrl: String): String {
 
             if (isSvgUrl(normalizedSrc)) {
                 svgSkipped++
-                Logger.d { "PreprocessMarkdown: SVG skipped $svgSkipped: $normalizedSrc" }
 
                 if (alt.isNotEmpty()) {
                     "**$alt**"
@@ -57,7 +49,6 @@ fun preprocessMarkdown(markdown: String, baseUrl: String): String {
                 }
             } else {
                 imageCount++
-                Logger.d { "PreprocessMarkdown: HTML->Markdown $imageCount: $normalizedSrc" }
                 "![$alt]($normalizedSrc)"
             }
         } else {
@@ -84,21 +75,13 @@ fun preprocessMarkdown(markdown: String, baseUrl: String): String {
 
         if (isSvgUrl(finalUrl)) {
             svgSkipped++
-            Logger.d { "PreprocessMarkdown: SVG skipped $svgSkipped: $finalUrl" }
-
             if (alt.isNotEmpty()) {
                 "**$alt**"
             } else {
                 ""
             }
         } else {
-            if (!isAbsolute) {
-                imageCount++
-                Logger.d { "PreprocessMarkdown: Relative path $imageCount: $originalPath -> $finalUrl" }
-            } else {
-                imageCount++
-                Logger.d { "PreprocessMarkdown: Absolute image $imageCount: $finalUrl" }
-            }
+            imageCount++
             "![$alt]($finalUrl)"
         }
     }
@@ -126,10 +109,6 @@ fun preprocessMarkdown(markdown: String, baseUrl: String): String {
         Regex("""^\]\([^)]+\)""", RegexOption.MULTILINE),
         ""
     )
-
-    Logger.d { "PreprocessMarkdown: Total images converted: $imageCount" }
-    Logger.d { "PreprocessMarkdown: Total SVGs skipped: $svgSkipped" }
-    Logger.d { "PreprocessMarkdown: Sample output:\n${processed.take(1000)}" }
 
     return processed
 }

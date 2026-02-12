@@ -57,11 +57,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import githubstore.composeapp.generated.resources.language_label
-import githubstore.composeapp.generated.resources.navigate_back
-import githubstore.composeapp.generated.resources.results_found
-import githubstore.composeapp.generated.resources.retry
-import githubstore.composeapp.generated.resources.search_repositories_hint
+import githubstore.feature.search.presentation.generated.resources.language_label
+import githubstore.feature.search.presentation.generated.resources.navigate_back
+import githubstore.feature.search.presentation.generated.resources.results_found
+import githubstore.feature.search.presentation.generated.resources.retry
+import githubstore.feature.search.presentation.generated.resources.search_repositories_hint
 import githubstore.feature.search.presentation.generated.resources.Res
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
@@ -73,6 +73,7 @@ import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.domain.model.ProgrammingLanguage
 import zed.rainxch.domain.model.SearchPlatform
 import zed.rainxch.search.presentation.components.LanguageFilterBottomSheet
+import zed.rainxch.search.presentation.utils.label
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,8 +1,8 @@
 package zed.rainxch.githubstore
 
+import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.domain.model.RateLimitInfo
-import zed.rainxch.githubstore.core.presentation.model.AppTheme
-import zed.rainxch.githubstore.core.presentation.model.FontTheme
 
 data class MainState(
     val isLoggedIn: Boolean = false,

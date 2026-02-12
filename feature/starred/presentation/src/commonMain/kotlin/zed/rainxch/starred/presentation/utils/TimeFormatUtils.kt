@@ -2,11 +2,15 @@ package zed.rainxch.starred.presentation.utils
 
 import androidx.compose.runtime.Composable
 import githubstore.feature.starred.presentation.generated.resources.Res
+import githubstore.feature.starred.presentation.generated.resources.days_ago
+import githubstore.feature.starred.presentation.generated.resources.hours_ago
+import githubstore.feature.starred.presentation.generated.resources.just_now
+import githubstore.feature.starred.presentation.generated.resources.minutes_ago
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
 
 @Composable
-fun formatStarredRelativeTime(timestamp: Long): String {
+internal fun formatRelativeTime(timestamp: Long): String {
     val now = Clock.System.now().toEpochMilliseconds()
     val diff = now - timestamp
 

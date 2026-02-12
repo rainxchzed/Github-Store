@@ -2,10 +2,9 @@ package zed.rainxch.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import githubstore.composeapp.generated.resources.Res
-import githubstore.composeapp.generated.resources.enter_code_on_github
-import githubstore.composeapp.generated.resources.error_unknown
 import githubstore.feature.auth.presentation.generated.resources.Res
+import githubstore.feature.auth.presentation.generated.resources.enter_code_on_github
+import githubstore.feature.auth.presentation.generated.resources.error_unknown
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,15 +19,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.auth.domain.repository.AuthenticationRepository
+import zed.rainxch.auth.presentation.model.AuthLoginState
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.GithubDeviceStart
-import zed.rainxch.core.presentation.utils.BrowserHelper
-import zed.rainxch.core.presentation.utils.ClipboardHelper
+import zed.rainxch.core.domain.utils.BrowserHelper
+import zed.rainxch.core.domain.utils.ClipboardHelper
 
 class AuthenticationViewModel(
     private val authenticationRepository: AuthenticationRepository,
     private val browserHelper: BrowserHelper,
     private val clipboardHelper: ClipboardHelper,
     private val scope: CoroutineScope,
+    private val logger: GitHubStoreLogger
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -105,7 +107,7 @@ class AuthenticationViewModel(
                         )
                         _state.update { it.copy(copied = true) }
                     } catch (e: Exception) {
-                        Logger.d { "⚠️ Failed to copy to clipboard: ${e.message}" }
+                        logger.debug("⚠️ Failed to copy to clipboard: ${e.message}")
                     }
                 }
 
@@ -140,7 +142,7 @@ class AuthenticationViewModel(
                 val url = start.verificationUriComplete ?: start.verificationUri
                 browserHelper.openUrl(url)
             } catch (e: Exception) {
-                Logger.d { "⚠️ Failed to open browser: ${e.message}" }
+                logger.debug("⚠️ Failed to open browser: ${e.message}")
             }
         }
     }
@@ -160,7 +162,7 @@ class AuthenticationViewModel(
                     )
                 }
             } catch (e: Exception) {
-                Logger.d { "⚠️ Failed to copy to clipboard: ${e.message}" }
+                logger.debug("⚠️ Failed to copy to clipboard: ${e.message}")
                 _state.update {
                     it.copy(
                         loginState = AuthLoginState.DevicePrompt(start),

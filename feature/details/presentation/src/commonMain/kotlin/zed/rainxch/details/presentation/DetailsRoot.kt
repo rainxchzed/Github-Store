@@ -1,5 +1,6 @@
 package zed.rainxch.details.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,18 +36,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import githubstore.composeapp.generated.resources.Res
-import githubstore.composeapp.generated.resources.add_to_favourites
-import githubstore.composeapp.generated.resources.navigate_back
-import githubstore.composeapp.generated.resources.open_repository
-import githubstore.composeapp.generated.resources.remove_from_favourites
-import githubstore.composeapp.generated.resources.repository_not_starred
-import githubstore.composeapp.generated.resources.repository_starred
-import githubstore.composeapp.generated.resources.star_from_github
-import githubstore.composeapp.generated.resources.unstar_from_github
+import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.add_to_favourites
+import githubstore.feature.details.presentation.generated.resources.navigate_back
+import githubstore.feature.details.presentation.generated.resources.open_repository
+import githubstore.feature.details.presentation.generated.resources.remove_from_favourites
+import githubstore.feature.details.presentation.generated.resources.repository_not_starred
+import githubstore.feature.details.presentation.generated.resources.repository_starred
+import githubstore.feature.details.presentation.generated.resources.star_from_github
+import githubstore.feature.details.presentation.generated.resources.unstar_from_github
 import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.liquid
@@ -56,6 +59,7 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.details.presentation.components.sections.about
 import zed.rainxch.details.presentation.components.sections.author
@@ -65,17 +69,7 @@ import zed.rainxch.details.presentation.components.sections.stats
 import zed.rainxch.details.presentation.components.sections.whatsNew
 import zed.rainxch.details.presentation.components.states.ErrorState
 import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
-import zed.rainxch.githubstore.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.githubstore.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.githubstore.feature.details.presentation.components.sections.about
-import zed.rainxch.githubstore.feature.details.presentation.components.sections.header
-import zed.rainxch.githubstore.feature.details.presentation.components.sections.logs
-import zed.rainxch.githubstore.feature.details.presentation.components.sections.author
-import zed.rainxch.githubstore.feature.details.presentation.components.sections.stats
-import zed.rainxch.githubstore.feature.details.presentation.components.sections.whatsNew
-import zed.rainxch.githubstore.feature.details.presentation.components.states.ErrorState
-import zed.rainxch.githubstore.feature.details.presentation.utils.LocalTopbarLiquidState
-import zed.rainxch.githubstore.feature.details.presentation.utils.isLiquidFrostAvailable
+import zed.rainxch.details.presentation.utils.isLiquidFrostAvailable
 
 @Composable
 fun DetailsRoot(
@@ -326,19 +320,30 @@ private fun DetailsTopbar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
         ),
-        modifier = Modifier.then(
-            if (isLiquidFrostAvailable()) {
-                Modifier.liquid(liquidTopbarState) {
-                    this.shape = CutCornerShape(0.dp)
-                    this.frost = 8.dp
-                    this.curve = .4f
-                    this.refraction = .1f
-                    this.dispersion = .2f
+        modifier = Modifier
+            .shadow(
+                elevation = 6.dp,
+                ambientColor = MaterialTheme.colorScheme.surfaceTint,
+                spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            )
+            .background(
+                Brush.linearGradient(
+                    0f to MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    0.5f to MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                    1f to MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+                )
+            )
+            .liquid(liquidTopbarState) {
+                this.shape = CutCornerShape(0.dp)
+                if (isLiquidFrostAvailable()) {
+                    this.frost = 5.dp
                 }
-            } else Modifier
-        )
+                this.curve = .25f
+                this.refraction = .05f
+                this.dispersion = .1f
+            }
     )
 }
 

@@ -12,7 +12,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        title = "Github Store",
+        title = "GitHub Store",
         icon = painterResource(Res.drawable.app_icon)
     ) {
         App()

@@ -54,16 +54,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.amoled_black_description
-import githubstore.composeapp.generated.resources.amoled_black_theme
-import githubstore.composeapp.generated.resources.section_appearance
-import githubstore.composeapp.generated.resources.selected_color
-import githubstore.composeapp.generated.resources.system_font
-import githubstore.composeapp.generated.resources.system_font_description
-import githubstore.composeapp.generated.resources.theme_color
-import githubstore.composeapp.generated.resources.theme_dark
-import githubstore.composeapp.generated.resources.theme_light
-import githubstore.composeapp.generated.resources.theme_system
+import githubstore.feature.settings.presentation.generated.resources.amoled_black_description
+import githubstore.feature.settings.presentation.generated.resources.amoled_black_theme
+import githubstore.feature.settings.presentation.generated.resources.section_appearance
+import githubstore.feature.settings.presentation.generated.resources.selected_color
+import githubstore.feature.settings.presentation.generated.resources.system_font
+import githubstore.feature.settings.presentation.generated.resources.system_font_description
+import githubstore.feature.settings.presentation.generated.resources.theme_color
+import githubstore.feature.settings.presentation.generated.resources.theme_dark
+import githubstore.feature.settings.presentation.generated.resources.theme_light
+import githubstore.feature.settings.presentation.generated.resources.theme_system
 import githubstore.feature.settings.presentation.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.AppTheme
@@ -96,7 +96,6 @@ fun LazyListScope.appearance(
 
         ThemeColorCard(
             selectedThemeColor = selectedThemeColor,
-            isDarkTheme = isDarkTheme,
             onThemeColorSelected = onThemeColorSelected
         )
 
@@ -239,7 +238,6 @@ private fun ThemeModeOption(
 @Composable
 private fun ThemeColorCard(
     selectedThemeColor: AppTheme,
-    isDarkTheme: Boolean?,
     onThemeColorSelected: (AppTheme) -> Unit
 ) {
     ExpressiveCard {

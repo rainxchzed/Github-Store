@@ -20,7 +20,7 @@ import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
-import zed.rainxch.githubstore.feature.details.presentation.utils.isLiquidFrostAvailable
+import zed.rainxch.details.presentation.utils.isLiquidFrostAvailable
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -52,7 +52,7 @@ fun BottomNavigation(
             BottomNavigationUtils
                 .items()
                 .filterNot {
-                    getPlatform().type != Platform.ANDROID &&
+                    getPlatform() != Platform.ANDROID &&
                             it.screen == GithubStoreGraph.AppsScreen
                 }
                 .forEach { item ->

@@ -15,17 +15,19 @@ import zed.rainxch.auth.domain.repository.AuthenticationRepository
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.mappers.toData
 import zed.rainxch.core.data.mappers.toDomain
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.GithubDeviceStart
 import zed.rainxch.core.domain.model.GithubDeviceTokenSuccess
 import zed.rainxch.feature.auth.data.BuildKonfig
 import java.util.concurrent.TimeoutException
 
 class AuthenticationRepositoryImpl(
-    private val tokenDataSource: TokenStore,
+    private val tokenStore: TokenStore,
+    private val logger: GitHubStoreLogger
 ) : AuthenticationRepository {
 
     override val accessTokenFlow: Flow<String?>
-        get() = tokenDataSource.tokenFlow().map { it?.accessToken }
+        get() = tokenStore.tokenFlow().map { it?.accessToken }
 
     override suspend fun startDeviceFlow(): GithubDeviceStart =
         withContext(Dispatchers.IO) {
@@ -36,10 +38,10 @@ class AuthenticationRepositoryImpl(
 
             try {
                 val result = GitHubAuthApi.startDeviceFlow(clientId)
-                Logger.d { "✅ Device flow started. User code: ${result.userCode}" }
+                logger.debug("✅ Device flow started. User code: ${result.userCode}")
                 result.toDomain()
             } catch (e: Exception) {
-                Logger.d { "❌ Failed to start device flow: ${e.message}" }
+                logger.debug("❌ Failed to start device flow: ${e.message}")
                 throw Exception(
                     "Failed to start GitHub authentication. " +
                             "Please check your internet connection and try again.",
@@ -62,7 +64,7 @@ class AuthenticationRepositoryImpl(
             var consecutiveUnknownErrors = 0
             var slowDownCount = 0
 
-            Logger.d { "⏱️ Polling started. Timeout: ${start.expiresInSec}s, Interval: ${start.intervalSec}s" }
+            logger.debug("⏱️ Polling started. Timeout: ${start.expiresInSec}s, Interval: ${start.intervalSec}s")
 
             while (isActive) {
                 if (System.currentTimeMillis() - startTime >= timeoutMs) {
@@ -73,15 +75,15 @@ class AuthenticationRepositoryImpl(
 
                 try {
                     val res = GitHubAuthApi.pollDeviceToken(clientId, start.deviceCode)
-                    val success = res.getOrNull()
+                    val success = res.getOrNull()?.toDomain()
 
                     if (success != null) {
-                        Logger.d { "✅ Token received! Saving..." }
+                        logger.debug("✅ Token received! Saving...")
 
                         saveTokenWithVerification(success)
 
-                        Logger.d { "✅ Token saved and verified successfully!" }
-                        return@withContext success.toDomain()
+                        logger.debug("✅ Token saved and verified successfully!")
+                        return@withContext success
                     }
 
                     val error = res.exceptionOrNull()
@@ -93,7 +95,7 @@ class AuthenticationRepositoryImpl(
                             consecutiveUnknownErrors = 0
                             if (slowDownCount > 0) slowDownCount--
 
-                            Logger.d { "📡 Waiting for user authorization..." }
+                            logger.debug("📡 Waiting for user authorization...")
                             delay(pollingInterval + (0..1000).random())
                         }
 
@@ -103,7 +105,7 @@ class AuthenticationRepositoryImpl(
                             slowDownCount++
                             pollingInterval += 5000
 
-                            Logger.d { "⚠️ Rate limited. New interval: ${pollingInterval}ms (slowdown #$slowDownCount)" }
+                            logger.debug("⚠️ Rate limited. New interval: ${pollingInterval}ms (slowdown #$slowDownCount)")
 
                             if (slowDownCount > 10) {
                                 throw Exception(
@@ -139,7 +141,7 @@ class AuthenticationRepositoryImpl(
                             consecutiveNetworkErrors++
                             consecutiveUnknownErrors = 0
 
-                            Logger.d { "⚠️ Network error ($consecutiveNetworkErrors/8): $errorMsg" }
+                            logger.debug("⚠️ Network error ($consecutiveNetworkErrors/8): $errorMsg")
 
                             if (consecutiveNetworkErrors >= 8) {
                                 throw Exception(
@@ -156,7 +158,7 @@ class AuthenticationRepositoryImpl(
 
                         else -> {
                             consecutiveUnknownErrors++
-                            Logger.d { "⚠️ Unknown error ($consecutiveUnknownErrors/5): $errorMsg" }
+                            logger.debug("⚠️ Unknown error ($consecutiveUnknownErrors/5): $errorMsg")
 
                             if (consecutiveUnknownErrors >= 5) {
                                 throw Exception(
@@ -178,7 +180,7 @@ class AuthenticationRepositoryImpl(
                     throw e
                 } catch (e: Exception) {
                     consecutiveUnknownErrors++
-                    Logger.d { "❌ Unexpected error ($consecutiveUnknownErrors/5): ${e.message}" }
+                    logger.debug("❌ Unexpected error ($consecutiveUnknownErrors/5): ${e.message}")
 
                     if (consecutiveUnknownErrors >= 5) {
                         throw Exception(
@@ -197,15 +199,15 @@ class AuthenticationRepositoryImpl(
     private suspend fun saveTokenWithVerification(token: GithubDeviceTokenSuccess) {
         repeat(5) { attempt ->
             try {
-                tokenDataSource.save(token.toData())
+                tokenStore.save(token.toData())
 
                 delay(100)
-                val saved = tokenDataSource.currentToken()
+                val saved = tokenStore.currentToken()
 
                 if (saved?.accessToken == token.accessToken) {
                     return
                 } else {
-                    Logger.d { "⚠️ Token verification failed (attempt ${attempt + 1}/5)" }
+                    logger.debug("⚠️ Token verification failed (attempt ${attempt + 1}/5)")
                     if (attempt == 4) {
                         throw Exception("Token was not persisted correctly after 5 attempts")
                     }
@@ -213,7 +215,7 @@ class AuthenticationRepositoryImpl(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Logger.d { "⚠️ Token save failed (attempt ${attempt + 1}/5): ${e.message}" }
+                logger.debug("⚠️ Token save failed (attempt ${attempt + 1}/5): ${e.message}")
                 if (attempt == 4) {
                     throw Exception("Failed to save authentication token: ${e.message}", e)
                 }

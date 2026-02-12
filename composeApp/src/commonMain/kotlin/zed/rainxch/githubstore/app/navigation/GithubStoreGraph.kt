@@ -1,10 +1,9 @@
 package zed.rainxch.githubstore.app.navigation
 
-import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface GithubStoreGraph : NavKey {
+sealed interface GithubStoreGraph {
     @Serializable
     data object HomeScreen : GithubStoreGraph
 

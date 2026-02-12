@@ -27,9 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import githubstore.composeapp.generated.resources.logout_success
-import githubstore.composeapp.generated.resources.navigate_back
-import githubstore.composeapp.generated.resources.settings_title
+import githubstore.feature.settings.presentation.generated.resources.logout_success
+import githubstore.feature.settings.presentation.generated.resources.navigate_back
+import githubstore.feature.settings.presentation.generated.resources.settings_title
 import githubstore.feature.settings.presentation.generated.resources.Res
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -151,6 +151,7 @@ fun SettingsScreen(
             }
 
             about(
+                versionName = state.versionName,
                 onAction = onAction
             )
 

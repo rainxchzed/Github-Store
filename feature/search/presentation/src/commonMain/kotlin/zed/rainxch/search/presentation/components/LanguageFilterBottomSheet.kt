@@ -19,10 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.filter_by_language
 import githubstore.feature.search.presentation.generated.resources.Res
+import githubstore.feature.search.presentation.generated.resources.filter_by_language
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.domain.model.ProgrammingLanguage
+import zed.rainxch.search.presentation.utils.label
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

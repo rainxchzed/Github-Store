@@ -14,16 +14,12 @@ object MarkdownImageTransformer : ImageTransformer {
     @Composable
     override fun transform(link: String): ImageData? {
         if (link.isBlank()) {
-            Logger.d { "ImageTransformer: ⚠️ Empty link" }
             return null
         }
 
         val normalizedLink = if (link.contains("github.com") && link.contains("/blob/")) {
             link.replace("github.com", "raw.githubusercontent.com")
                 .replace("/blob/", "/")
-                .also {
-                    Logger.d { "ImageTransformer: 🔄 GitHub blob->raw: $link -> $it" }
-                }
         } else {
             link
         }
@@ -31,7 +27,6 @@ object MarkdownImageTransformer : ImageTransformer {
         if (normalizedLink.endsWith(".svg", ignoreCase = true) ||
             normalizedLink.contains(".svg?", ignoreCase = true) ||
             normalizedLink.contains(".svg#", ignoreCase = true)) {
-            Logger.d { "ImageTransformer: ⚠️ SVG skipped: $normalizedLink" }
             return null
         }
 
@@ -39,20 +34,12 @@ object MarkdownImageTransformer : ImageTransformer {
             !normalizedLink.startsWith("https://") &&
             !normalizedLink.startsWith("data:")
         ) {
-            Logger.w { "ImageTransformer: ⚠️ Invalid URL scheme: $normalizedLink" }
             return null
         }
 
-        Logger.d { "ImageTransformer: 🔄 Loading: $normalizedLink" }
 
         val painter = rememberAsyncImagePainter(
-            model = normalizedLink,
-            onError = { state ->
-                Logger.e { "ImageTransformer: ❌ Failed: $normalizedLink\nError: ${state.result.throwable?.message}" }
-            },
-            onSuccess = {
-                Logger.d { "ImageTransformer: ✅ Success: $normalizedLink" }
-            }
+            model = normalizedLink
         )
 
         return ImageData(

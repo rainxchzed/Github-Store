@@ -4,6 +4,12 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import githubstore.core.presentation.generated.resources.Res
+import githubstore.core.presentation.generated.resources.theme_amber
+import githubstore.core.presentation.generated.resources.theme_dynamic
+import githubstore.core.presentation.generated.resources.theme_forest
+import githubstore.core.presentation.generated.resources.theme_ocean
+import githubstore.core.presentation.generated.resources.theme_purple
+import githubstore.core.presentation.generated.resources.theme_slate
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.AppTheme
 import zed.rainxch.core.domain.model.AppTheme.AMBER
@@ -23,35 +29,34 @@ import zed.rainxch.core.presentation.theme.oceanBlueLight
 import zed.rainxch.core.presentation.theme.slateGrayDark
 import zed.rainxch.core.presentation.theme.slateGrayLight
 
-val AppTheme.lightTheme: ColorScheme?
+val AppTheme.lightScheme: ColorScheme?
     get() = when (this) {
-        AppTheme.DYNAMIC -> null
-        AppTheme.OCEAN -> oceanBlueLight
-        AppTheme.PURPLE -> deepPurpleLight
-        AppTheme.FOREST -> forestGreenLight
-        AppTheme.SLATE -> slateGrayLight
-        AppTheme.AMBER -> amberOrangeLight
+        DYNAMIC -> null
+        OCEAN -> oceanBlueLight
+        PURPLE -> deepPurpleLight
+        FOREST -> forestGreenLight
+        SLATE -> slateGrayLight
+        AMBER -> amberOrangeLight
     }
 
-val AppTheme.darkTheme: ColorScheme?
+val AppTheme.darkScheme: ColorScheme?
     get() = when (this) {
-        AppTheme.DYNAMIC -> null
-        AppTheme.OCEAN -> oceanBlueDark
-        AppTheme.PURPLE -> deepPurpleDark
-        AppTheme.FOREST -> forestGreenDark
-        AppTheme.SLATE -> slateGrayDark
-        AppTheme.AMBER -> amberOrangeDark
+        DYNAMIC -> null
+        OCEAN -> oceanBlueDark
+        PURPLE -> deepPurpleDark
+        FOREST -> forestGreenDark
+        SLATE -> slateGrayDark
+        AMBER -> amberOrangeDark
     }
-
 
 val AppTheme.primaryColor: Color?
     get() = when (this) {
-        AppTheme.DYNAMIC -> null
-        AppTheme.OCEAN -> Color(0xFF2A638A)
-        AppTheme.PURPLE -> Color(0xFF6750A4)
-        AppTheme.FOREST -> Color(0xFF356859)
-        AppTheme.SLATE -> Color(0xFF535E6C)
-        AppTheme.AMBER -> Color(0xFF8B5000)
+        DYNAMIC -> null
+        OCEAN -> Color(0xFF2A638A)
+        PURPLE -> Color(0xFF6750A4)
+        FOREST -> Color(0xFF356859)
+        SLATE -> Color(0xFF535E6C)
+        AMBER -> Color(0xFF8B5000)
     }
 
 val AppTheme.displayName: String
@@ -66,4 +71,3 @@ val AppTheme.displayName: String
             AMBER -> Res.string.theme_amber
         }
     )
-

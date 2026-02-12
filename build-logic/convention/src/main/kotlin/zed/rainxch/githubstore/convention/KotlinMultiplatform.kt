@@ -16,6 +16,7 @@ internal fun Project.configureKotlinMultiplatform() {
     extensions.configure<KotlinMultiplatformExtension> {
         compilerOptions {
             freeCompilerArgs.add("-Xexpect-actual-classes")
+            freeCompilerArgs.add("-Xmulti-dollar-interpolation")
             freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
             freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
         }

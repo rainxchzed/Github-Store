@@ -12,6 +12,8 @@ kotlin {
                 implementation(projects.core.domain)
                 implementation(projects.core.data)
                 implementation(projects.feature.settings.domain)
+
+                implementation(libs.bundles.koin.common)
             }
         }
 

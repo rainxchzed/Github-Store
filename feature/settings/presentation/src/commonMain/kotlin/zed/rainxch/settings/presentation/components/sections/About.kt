@@ -28,16 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import githubstore.composeapp.generated.resources.help_support
-import githubstore.composeapp.generated.resources.section_about
-import githubstore.composeapp.generated.resources.version
 import githubstore.feature.settings.presentation.generated.resources.Res
+import githubstore.feature.settings.presentation.generated.resources.help_support
+import githubstore.feature.settings.presentation.generated.resources.section_about
+import githubstore.feature.settings.presentation.generated.resources.version
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.settings.presentation.SettingsAction
-import zed.rainxch.settings.presentation.utils.getVersionName
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.about(
+    versionName: String,
     onAction: (SettingsAction) -> Unit,
 ) {
     item {
@@ -63,7 +63,7 @@ fun LazyListScope.about(
                 title = stringResource(Res.string.version),
                 actions = {
                     Text(
-                        text = getVersionName(),
+                        text = versionName,
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.outline,
                     )

@@ -10,4 +10,5 @@ data class SettingsState(
     val isUserLoggedIn: Boolean = false,
     val isAmoledThemeEnabled: Boolean = false,
     val isDarkTheme: Boolean? = null,
+    val versionName: String = ""
 )

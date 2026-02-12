@@ -14,25 +14,25 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import zed.rainxch.core.data.dto.GitHubStarredResponse
+import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.StarredRepoDao
-import zed.rainxch.githubstore.core.data.local.db.dao.InstalledAppDao
-import zed.rainxch.githubstore.core.data.local.db.dao.StarredRepoDao
-import zed.rainxch.githubstore.core.data.local.db.entities.StarredRepo
-import zed.rainxch.githubstore.core.data.model.GitHubStarredResponse
-import zed.rainxch.githubstore.core.domain.Platform
-import zed.rainxch.githubstore.core.domain.model.PlatformType
-import zed.rainxch.githubstore.core.domain.repository.StarredRepository
+import zed.rainxch.core.data.mappers.toDomain
+import zed.rainxch.core.data.mappers.toEntity
+import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.repository.StarredRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 class StarredRepositoryImpl(
-    private val dao: StarredRepoDao,
+    private val starredRepoDao: StarredRepoDao,
     private val installedAppsDao: InstalledAppDao,
     private val platform: Platform,
     private val httpClient: HttpClient
@@ -42,13 +42,15 @@ class StarredRepositoryImpl(
         private const val SYNC_THRESHOLD_MS = 6 * 60 * 60 * 1000L // 6 hours
     }
 
-    override fun getAllStarred(): Flow<List<StarredRepo>> = dao.getAllStarred()
+    override fun getAllStarred(): Flow<List<zed.rainxch.core.domain.model.StarredRepository>> {
+        return starredRepoDao
+            .getAllStarred()
+            .map { it.map { entity -> entity.toDomain() } }
+    }
 
-    override suspend fun isStarred(repoId: Long): Boolean = dao.isStarred(repoId)
+    override suspend fun isStarred(repoId: Long): Boolean = starredRepoDao.isStarred(repoId)
 
-    override suspend fun isStarredSync(repoId: Long): Boolean = dao.isStarredSync(repoId)
-
-    override suspend fun getLastSyncTime(): Long? = dao.getLastSyncTime()
+    override suspend fun getLastSyncTime(): Long? = starredRepoDao.getLastSyncTime()
 
     override suspend fun needsSync(): Boolean {
         val lastSync = getLastSyncTime() ?: return true
@@ -95,7 +97,7 @@ class StarredRepositoryImpl(
                 }
 
                 val now = Clock.System.now().toEpochMilliseconds()
-                val starredRepos = mutableListOf<StarredRepo>()
+                val starredRepos = mutableListOf<zed.rainxch.core.domain.model.StarredRepository>()
 
                 // Process in parallel to avoid sequential N+1 delays
                 coroutineScope {
@@ -103,10 +105,11 @@ class StarredRepositoryImpl(
                     val deferredResults = allRepos.map { repo ->
                         async {
                             semaphore.withPermit {
-                                val hasValidAssets = checkForValidAssets(repo.owner.login, repo.name)
+                                val hasValidAssets =
+                                    checkForValidAssets(repo.owner.login, repo.name)
                                 if (hasValidAssets) {
                                     val installedApp = installedAppsDao.getAppByRepoId(repo.id)
-                                    StarredRepo(
+                                    zed.rainxch.core.domain.model.StarredRepository(
                                         repoId = repo.id,
                                         repoName = repo.name,
                                         repoOwner = repo.owner.login,
@@ -139,7 +142,7 @@ class StarredRepositoryImpl(
                     }
                 }
 
-                dao.replaceAllStarred(starredRepos)
+                starredRepoDao.replaceAllStarred(starredRepos.map { it.toEntity() })
 
                 Result.success(Unit)
             } catch (e: Exception) {
@@ -171,11 +174,13 @@ class StarredRepositoryImpl(
 
             val relevantAssets = stableRelease.assets.filter { asset ->
                 val name = asset.name.lowercase()
-                when (platform.type) {
-                    PlatformType.ANDROID -> name.endsWith(".apk")
-                    PlatformType.WINDOWS -> name.endsWith(".msi") || name.endsWith(".exe")
-                    PlatformType.MACOS -> name.endsWith(".dmg") || name.endsWith(".pkg")
-                    PlatformType.LINUX -> name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(".rpm")
+                when (platform) {
+                    Platform.ANDROID -> name.endsWith(".apk")
+                    Platform.WINDOWS -> name.endsWith(".msi") || name.endsWith(".exe")
+                    Platform.MACOS -> name.endsWith(".dmg") || name.endsWith(".pkg")
+                    Platform.LINUX -> name.endsWith(".appimage") || name.endsWith(".deb") || name.endsWith(
+                        ".rpm"
+                    )
                 }
             }
 
@@ -198,12 +203,4 @@ class StarredRepositoryImpl(
     private data class AssetNetworkModel(
         val name: String
     )
-
-    override suspend fun updateStarredInstallStatus(
-        repoId: Long,
-        installed: Boolean,
-        packageName: String?
-    ) {
-        dao.updateInstallStatus(repoId, installed, packageName)
-    }
 }

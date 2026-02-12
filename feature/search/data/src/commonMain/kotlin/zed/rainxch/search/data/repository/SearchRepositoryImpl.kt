@@ -29,8 +29,8 @@ import zed.rainxch.core.domain.model.PaginatedDiscoveryRepositories
 import zed.rainxch.domain.model.ProgrammingLanguage
 import zed.rainxch.domain.model.SearchPlatform
 import zed.rainxch.domain.repository.SearchRepository
-import zed.rainxch.search.data.repository.dto.GithubReleaseNetworkModel
-import zed.rainxch.search.data.repository.utils.LruCache
+import zed.rainxch.search.data.dto.GithubReleaseNetworkModel
+import zed.rainxch.search.data.utils.LruCache
 
 class SearchRepositoryImpl(
     private val httpClient: HttpClient,

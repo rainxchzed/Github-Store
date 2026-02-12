@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.compose.Markdown
 import githubstore.feature.details.presentation.generated.resources.Res
+import githubstore.feature.details.presentation.generated.resources.no_release_notes
+import githubstore.feature.details.presentation.generated.resources.whats_new
 import io.github.fletchmckee.liquid.liquefiable
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.jetbrains.compose.resources.stringResource

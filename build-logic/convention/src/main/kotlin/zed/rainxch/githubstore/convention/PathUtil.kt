@@ -9,7 +9,7 @@ fun Project.pathToPackageName(): String {
         .replace("-", "_")
         .lowercase()
 
-    return "zed.rainxch${relativePackageName  }"
+    return "zed.rainxch${relativePackageName}"
 }
 
 fun Project.pathToResourcePrefix(): String {
