@@ -34,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import io.github.fletchmckee.liquid.LiquidState
 import io.github.fletchmckee.liquid.liquefiable
 import io.github.fletchmckee.liquid.rememberLiquidState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -57,7 +59,7 @@ import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.RepositoryCard
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
-import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.home.presentation.components.HomeFilterChips
 import zed.rainxch.home.domain.model.HomeCategory
 
@@ -71,6 +73,18 @@ fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val listState = rememberLazyStaggeredGridState()
+    val scope = rememberCoroutineScope()
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            HomeEvent.OnScrollToListTop -> {
+                scope.launch {
+                    listState.animateScrollToItem(0)
+                }
+            }
+        }
+    }
 
     HomeScreen(
         state = state,
@@ -100,7 +114,8 @@ fun HomeRoot(
                     viewModel.onAction(action)
                 }
             }
-        }
+        },
+        listState = listState
     )
 }
 
@@ -109,8 +124,8 @@ fun HomeRoot(
 fun HomeScreen(
     state: HomeState,
     onAction: (HomeAction) -> Unit,
+    listState: LazyStaggeredGridState,
 ) {
-    val listState = rememberLazyStaggeredGridState()
     val liquidState = LocalBottomNavigationLiquid.current
 
     val shouldLoadMore by remember {
@@ -371,7 +386,8 @@ private fun Preview() {
         ) {
             HomeScreen(
                 state = HomeState(),
-                onAction = {}
+                onAction = {},
+                listState = rememberLazyStaggeredGridState()
             )
         }
     }

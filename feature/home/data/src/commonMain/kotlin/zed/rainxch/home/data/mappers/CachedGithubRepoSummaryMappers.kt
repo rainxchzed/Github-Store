@@ -4,7 +4,6 @@ import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.domain.model.GithubUser
 import zed.rainxch.home.data.dto.CachedGithubRepoSummary
 
-
 fun CachedGithubRepoSummary.toGithubRepoSummary(): GithubRepoSummary {
     return GithubRepoSummary(
         id = id,
@@ -24,6 +23,7 @@ fun CachedGithubRepoSummary.toGithubRepoSummary(): GithubRepoSummary {
         language = language,
         topics = topics,
         releasesUrl = releasesUrl,
-        updatedAt = updatedAt
+        updatedAt = latestReleaseDate ?: updatedAt,
+        trendingScore = trendingScore
     )
 }
