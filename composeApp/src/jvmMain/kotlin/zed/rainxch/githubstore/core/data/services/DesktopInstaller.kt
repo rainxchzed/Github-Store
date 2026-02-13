@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import zed.rainxch.githubstore.core.domain.model.Architecture
+import zed.rainxch.githubstore.core.domain.model.AssetArchitectureMatcher
 import zed.rainxch.githubstore.core.domain.model.GithubAsset
 import zed.rainxch.githubstore.core.domain.model.PlatformType
 import zed.rainxch.githubstore.feature.details.data.model.LinuxPackageType
@@ -264,48 +265,11 @@ class DesktopInstaller(
             }
         }
 
-        val hasArchInName = listOf(
-            "x86_64", "amd64", "x64",
-            "aarch64", "arm64",
-            "i386", "i686", "x86",
-            "armv7", "arm"
-        ).any { name.contains(it) }
-
-        if (!hasArchInName) return true
-
-        return when (systemArch) {
-            Architecture.X86_64 -> {
-                name.contains("x86_64") || name.contains("amd64") || name.contains("x64")
-            }
-
-            Architecture.AARCH64 -> {
-                name.contains("aarch64") || name.contains("arm64")
-            }
-
-            Architecture.X86 -> {
-                name.contains("i386") || name.contains("i686") || name.contains("x86")
-            }
-
-            Architecture.ARM -> {
-                name.contains("armv7") || name.contains("arm")
-            }
-
-            Architecture.UNKNOWN -> true
-        }
+        return AssetArchitectureMatcher.isCompatible(name, systemArch)
     }
 
     private fun isExactArchitectureMatch(assetName: String, systemArch: Architecture): Boolean {
-        val name = assetName.lowercase()
-        return when (systemArch) {
-            Architecture.X86_64 -> name.contains("x86_64") || name.contains("amd64") || name.contains(
-                "x64"
-            )
-
-            Architecture.AARCH64 -> name.contains("aarch64") || name.contains("arm64")
-            Architecture.X86 -> name.contains("i386") || name.contains("i686")
-            Architecture.ARM -> name.contains("armv7") || name.contains("arm")
-            Architecture.UNKNOWN -> false
-        }
+        return AssetArchitectureMatcher.isExactMatch(assetName, systemArch)
     }
 
     override suspend fun isSupported(extOrMime: String): Boolean {

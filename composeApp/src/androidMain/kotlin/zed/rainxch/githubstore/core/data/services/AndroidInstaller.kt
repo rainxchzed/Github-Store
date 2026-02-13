@@ -11,6 +11,7 @@ import java.io.File
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import zed.rainxch.githubstore.core.domain.model.Architecture
+import zed.rainxch.githubstore.core.domain.model.AssetArchitectureMatcher
 import zed.rainxch.githubstore.core.domain.model.GithubAsset
 
 class AndroidInstaller(
@@ -40,31 +41,7 @@ class AndroidInstaller(
     }
 
     private fun isArchitectureCompatible(assetName: String, systemArch: Architecture): Boolean {
-        val name = assetName.lowercase()
-        val hasArchInName = listOf(
-            "x86_64", "amd64", "x64",
-            "aarch64", "arm64",
-            "i386", "i686", "x86",
-            "armv7", "armeabi", "arm"
-        ).any { name.contains(it) }
-
-        if (!hasArchInName) return true
-
-        return when (systemArch) {
-            Architecture.X86_64 -> {
-                name.contains("x86_64") || name.contains("amd64") || name.contains("x64")
-            }
-            Architecture.AARCH64 -> {
-                name.contains("aarch64") || name.contains("arm64")
-            }
-            Architecture.X86 -> {
-                name.contains("i386") || name.contains("i686") || name.contains("x86")
-            }
-            Architecture.ARM -> {
-                name.contains("armv7") || name.contains("armeabi") || name.contains("arm")
-            }
-            Architecture.UNKNOWN -> true
-        }
+        return AssetArchitectureMatcher.isCompatible(assetName, systemArch)
     }
 
     override fun choosePrimaryAsset(assets: List<GithubAsset>): GithubAsset? {
@@ -78,16 +55,16 @@ class AndroidInstaller(
             val name = asset.name.lowercase()
             val archBoost = when (systemArch) {
                 Architecture.X86_64 -> {
-                    if (name.contains("x86_64") || name.contains("amd64")) 10000 else 0
+                    if (AssetArchitectureMatcher.isExactMatch(name, Architecture.X86_64)) 10000 else 0
                 }
                 Architecture.AARCH64 -> {
-                    if (name.contains("aarch64") || name.contains("arm64")) 10000 else 0
+                    if (AssetArchitectureMatcher.isExactMatch(name, Architecture.AARCH64)) 10000 else 0
                 }
                 Architecture.X86 -> {
-                    if (name.contains("i386") || name.contains("i686")) 10000 else 0
+                    if (AssetArchitectureMatcher.isExactMatch(name, Architecture.X86)) 10000 else 0
                 }
                 Architecture.ARM -> {
-                    if (name.contains("armv7") || name.contains("armeabi")) 10000 else 0
+                    if (AssetArchitectureMatcher.isExactMatch(name, Architecture.ARM)) 10000 else 0
                 }
                 Architecture.UNKNOWN -> 0
             }
