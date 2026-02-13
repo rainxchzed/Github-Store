@@ -96,7 +96,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "zed.rainxch.githubstore.MainKt"
+        mainClass = "zed.rainxch.githubstore.DesktopAppKt"
         nativeDistributions {
             packageName = "GitHub-Store"
             packageVersion = libs.versions.projectVersionName.get().toString()
