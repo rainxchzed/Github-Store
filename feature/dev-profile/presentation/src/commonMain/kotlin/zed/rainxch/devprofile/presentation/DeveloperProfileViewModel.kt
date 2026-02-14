@@ -135,7 +135,6 @@ class DeveloperProfileViewModel(
             }
 
             filtered = when (currentState.currentFilter) {
-                RepoFilterType.ALL -> filtered
                 RepoFilterType.WITH_RELEASES -> filtered.filter { it.hasInstallableAssets }
                     .toImmutableList()
 

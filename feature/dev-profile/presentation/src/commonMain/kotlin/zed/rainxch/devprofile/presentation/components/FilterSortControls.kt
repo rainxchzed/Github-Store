@@ -231,7 +231,6 @@ private fun SortMenu(
 @Composable
 private fun RepoFilterType.displayName(): String {
     return when (this) {
-        RepoFilterType.ALL -> stringResource(Res.string.filter_all)
         RepoFilterType.WITH_RELEASES -> stringResource(Res.string.filter_with_releases)
         RepoFilterType.INSTALLED -> stringResource(Res.string.filter_installed)
         RepoFilterType.FAVORITES -> stringResource(Res.string.filter_favorites)

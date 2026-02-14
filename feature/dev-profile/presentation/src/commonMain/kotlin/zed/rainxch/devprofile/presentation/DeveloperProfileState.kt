@@ -15,7 +15,7 @@ data class DeveloperProfileState(
     val isLoading: Boolean = false,
     val isLoadingRepos: Boolean = false,
     val errorMessage: String? = null,
-    val currentFilter: RepoFilterType = RepoFilterType.ALL,
+    val currentFilter: RepoFilterType = RepoFilterType.WITH_RELEASES,
     val currentSort: RepoSortType = RepoSortType.UPDATED,
     val searchQuery: String = ""
 )
