@@ -322,4 +322,16 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+
+    <string name="released_just_now">방금 출시됨</string>
+    <string name="released_hours_ago">%1$d시간 전에 출시됨</string>
+    <string name="released_yesterday">어제 출시됨</string>
+    <string name="released_days_ago">%1$d일 전에 출시됨</string>
+    <string name="released_on_date">%1$s에 출시됨</string>
+
+    <string name="bottom_nav_home_title">홈</string>
+    <string name="bottom_nav_search_title">검색</string>
+    <string name="bottom_nav_apps_title">앱</string>
+    <string name="bottom_nav_profile_title">프로필</string>
+
 </resources>

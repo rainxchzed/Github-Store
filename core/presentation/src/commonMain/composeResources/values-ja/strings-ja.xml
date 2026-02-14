@@ -271,4 +271,16 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+
+    <string name="released_just_now">たった今リリース</string>
+    <string name="released_hours_ago">%1$d時間前にリリース</string>
+    <string name="released_yesterday">昨日リリース</string>
+    <string name="released_days_ago">%1$d日前にリリース</string>
+    <string name="released_on_date">%1$sにリリース</string>
+
+    <string name="bottom_nav_home_title">ホーム</string>
+    <string name="bottom_nav_search_title">検索</string>
+    <string name="bottom_nav_apps_title">アプリ</string>
+    <string name="bottom_nav_profile_title">プロフィール</string>
+
 </resources>

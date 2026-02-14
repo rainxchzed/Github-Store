@@ -271,4 +271,16 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+
+    <string name="released_just_now">Publié à l’instant</string>
+    <string name="released_hours_ago">Publié il y a %1$d heure(s)</string>
+    <string name="released_yesterday">Publié hier</string>
+    <string name="released_days_ago">Publié il y a %1$d jour(s)</string>
+    <string name="released_on_date">Publié le %1$s</string>
+
+    <string name="bottom_nav_home_title">Accueil</string>
+    <string name="bottom_nav_search_title">Rechercher</string>
+    <string name="bottom_nav_apps_title">Applications</string>
+    <string name="bottom_nav_profile_title">Profil</string>
+
 </resources>

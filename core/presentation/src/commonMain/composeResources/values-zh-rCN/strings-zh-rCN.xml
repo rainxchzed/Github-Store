@@ -272,4 +272,16 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+
+    <string name="released_just_now">刚刚发布</string>
+    <string name="released_hours_ago">%1$d 小时前发布</string>
+    <string name="released_yesterday">昨天发布</string>
+    <string name="released_days_ago">%1$d 天前发布</string>
+    <string name="released_on_date">发布于 %1$s</string>
+
+    <string name="bottom_nav_home_title">首页</string>
+    <string name="bottom_nav_search_title">搜索</string>
+    <string name="bottom_nav_apps_title">应用</string>
+    <string name="bottom_nav_profile_title">个人资料</string>
+
 </resources>

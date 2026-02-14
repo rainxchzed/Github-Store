@@ -322,4 +322,15 @@
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
 
+    <string name="released_just_now">Az önce yayınlandı</string>
+    <string name="released_hours_ago">%1$d saat önce yayınlandı</string>
+    <string name="released_yesterday">Dün yayınlandı</string>
+    <string name="released_days_ago">%1$d gün önce yayınlandı</string>
+    <string name="released_on_date">%1$s tarihinde yayınlandı</string>
+
+    <string name="bottom_nav_home_title">Ana Sayfa</string>
+    <string name="bottom_nav_search_title">Ara</string>
+    <string name="bottom_nav_apps_title">Uygulamalar</string>
+    <string name="bottom_nav_profile_title">Profil</string>
+
 </resources>

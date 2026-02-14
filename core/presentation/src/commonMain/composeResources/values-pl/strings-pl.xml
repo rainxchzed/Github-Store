@@ -288,4 +288,15 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+    <string name="released_just_now">Wydano przed chwilą</string>
+    <string name="released_hours_ago">Wydano %1$d godzin(y) temu</string>
+    <string name="released_yesterday">Wydano wczoraj</string>
+    <string name="released_days_ago">Wydano %1$d dzień/dni temu</string>
+    <string name="released_on_date">Wydano %1$s</string>
+
+    <string name="bottom_nav_home_title">Strona główna</string>
+    <string name="bottom_nav_search_title">Szukaj</string>
+    <string name="bottom_nav_apps_title">Aplikacje</string>
+    <string name="bottom_nav_profile_title">Profil</string>
+
 </resources>

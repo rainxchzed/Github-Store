@@ -289,4 +289,16 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+
+    <string name="released_just_now">Опубликовано только что</string>
+    <string name="released_hours_ago">Опубликовано %1$d час(ов) назад</string>
+    <string name="released_yesterday">Опубликовано вчера</string>
+    <string name="released_days_ago">Опубликовано %1$d день(дней) назад</string>
+    <string name="released_on_date">Опубликовано %1$s</string>
+
+    <string name="bottom_nav_home_title">Главная</string>
+    <string name="bottom_nav_search_title">Поиск</string>
+    <string name="bottom_nav_apps_title">Приложения</string>
+    <string name="bottom_nav_profile_title">Профиль</string>
+
 </resources>

@@ -320,4 +320,16 @@
     <!-- Developer Profile - Count Formatting -->
     <string name="count_millions">%1$dM</string>
     <string name="count_thousands">%1$dk</string>
+
+    <string name="released_just_now">Pubblicato ora</string>
+    <string name="released_hours_ago">Pubblicato %1$d ora/e fa</string>
+    <string name="released_yesterday">Pubblicato ieri</string>
+    <string name="released_days_ago">Pubblicato %1$d giorno/i fa</string>
+    <string name="released_on_date">Pubblicato il %1$s</string>
+
+    <string name="bottom_nav_home_title">Home</string>
+    <string name="bottom_nav_search_title">Cerca</string>
+    <string name="bottom_nav_apps_title">App</string>
+    <string name="bottom_nav_profile_title">Profilo</string>
+
 </resources>
