@@ -1,244 +1,116 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Properties
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.composeHotReload)
-    alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.kotest)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.androidx.room)
-}
-
-val appVersionName = "1.5.1"
-val appVersionCode = 10
-
-// Load local.properties for secrets like GITHUB_CLIENT_ID
-val localProps = Properties().apply {
-    val file = rootProject.file("local.properties")
-    if (file.exists()) file.inputStream().use { this.load(it) }
-}
-val localGithubClientId =
-    (localProps.getProperty("GITHUB_CLIENT_ID") ?: "Ov23linTY28VFpFjFiI9").trim()
-
-// Generate BuildConfig for JVM (Configuration Cache Compatible)
-val generateJvmBuildConfig = tasks.register("generateJvmBuildConfig") {
-    val outputDir = layout.buildDirectory.dir("generated/buildconfig/jvm")
-    val clientId = localGithubClientId
-    val versionName = appVersionName
-
-    outputs.dir(outputDir)
-
-    doLast {
-        val file = outputDir.get().asFile.resolve("zed/rainxch/githubstore/BuildConfig.kt")
-        file.parentFile.mkdirs()
-        file.writeText(
-            """
-            package zed.rainxch.githubstore
-            
-            object BuildConfig {
-                const val GITHUB_CLIENT_ID = "$clientId"
-                const val VERSION_NAME = "$versionName"
-            }
-        """.trimIndent()
-        )
-    }
+    alias(libs.plugins.convention.cmp.application)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.hot.reload)
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
-    }
-
-    jvm()
-
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            // Koin DI
-            implementation(libs.koin.android)
-            implementation(libs.koin.androidx.compose)
-            // Ktor client for Android
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.serialization.json)
-            // Secure storage (direct coordinate to avoid catalog accessor mismatch)
-            implementation(libs.androidx.security.crypto)
+
             implementation(libs.core.splashscreen)
+
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            implementation(projects.core.data)
+            implementation(projects.core.domain)
+            implementation(projects.core.presentation)
+
+            implementation(projects.feature.apps.domain)
+            implementation(projects.feature.apps.data)
+            implementation(projects.feature.apps.presentation)
+
+            implementation(projects.feature.auth.domain)
+            implementation(projects.feature.auth.data)
+            implementation(projects.feature.auth.presentation)
+
+            implementation(projects.feature.details.domain)
+            implementation(projects.feature.details.data)
+            implementation(projects.feature.details.presentation)
+
+            implementation(projects.feature.devProfile.domain)
+            implementation(projects.feature.devProfile.data)
+            implementation(projects.feature.devProfile.presentation)
+
+            implementation(projects.feature.favourites.domain)
+            implementation(projects.feature.favourites.data)
+            implementation(projects.feature.favourites.presentation)
+
+            implementation(projects.feature.home.domain)
+            implementation(projects.feature.home.data)
+            implementation(projects.feature.home.presentation)
+
+            implementation(projects.feature.search.domain)
+            implementation(projects.feature.search.data)
+            implementation(projects.feature.search.presentation)
+
+            implementation(projects.feature.settings.domain)
+            implementation(projects.feature.settings.data)
+            implementation(projects.feature.settings.presentation)
+
+            implementation(projects.feature.starred.domain)
+            implementation(projects.feature.starred.data)
+            implementation(projects.feature.starred.presentation)
+
+            implementation(libs.jetbrains.compose.navigation)
+            implementation(libs.bundles.koin.common)
+            implementation(libs.liquid)
+            implementation(libs.jetbrains.compose.material.icons.extended)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(libs.material3)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.jetbrains.compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-
-            // Koin DI
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-
-            // HTTP and serialization
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.coroutines.core)
-
-            // Logging
-            implementation(libs.kermit)
-
-            // Image Loading
-            implementation(libs.landscapist.core)
-            implementation(libs.landscapist.image)
-
-            // Date-time
-            implementation(libs.kotlinx.datetime)
-
-            // Navigation 3
-            implementation(libs.navigation.compose)
-            implementation(libs.jetbrains.navigation3.ui)
-            implementation(libs.jetbrains.lifecycle.viewmodel.compose)
-            implementation(libs.jetbrains.lifecycle.viewmodel)
-            implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
-
-            // Markdown
-            implementation(libs.multiplatform.markdown.renderer)
-            implementation(libs.multiplatform.markdown.renderer.coil3)
-
-            // Liquid
-            implementation(libs.liquid)
-
-            // Data store
-            implementation(libs.androidx.datastore)
-            implementation(libs.androidx.datastore.preferences)
-
-            // Room
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.sqlite.bundled)
+            implementation(libs.jetbrains.compose.viewmodel)
+            implementation(libs.jetbrains.lifecycle.compose)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotest.framework.engine)
-            implementation(libs.kotest.assertions.core)
-        }
-        jvmTest.dependencies {
-            implementation(libs.kotest.runner.junit5)
-        }
+
         jvmMain {
-            kotlin.srcDir(layout.buildDirectory.dir("generated/buildconfig/jvm"))
-
             dependencies {
+                implementation(projects.core.presentation)
                 implementation(compose.desktop.currentOs)
-                implementation(libs.kotlinx.coroutinesSwing)
-                // Koin core
-                implementation(libs.koin.core)
-                // Ktor client for JVM Desktop
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.java)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
-                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.kotlin.stdlib)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose.viewmodel)
+
+                implementation(compose.desktop.linux_x64)
+                implementation(compose.desktop.linux_arm64)
+                implementation(compose.desktop.macos_x64)
+                implementation(compose.desktop.macos_arm64)
+                implementation(compose.desktop.windows_x64)
+                implementation(compose.desktop.windows_arm64)
             }
         }
     }
 }
 
-afterEvaluate {
-    tasks.matching { it.name.contains("kspKotlinJvm") || it.name == "compileKotlinJvm" }.configureEach {
-        dependsOn(generateJvmBuildConfig)
-    }
-}
-
-tasks.named("compileKotlinJvm") {
-    dependsOn(generateJvmBuildConfig)
-}
-
-android {
-    namespace = "zed.rainxch.githubstore"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    dependenciesInfo {
-        includeInApk = false
-        includeInBundle = false
-    }
-    defaultConfig {
-        applicationId = "zed.rainxch.githubstore"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = appVersionCode
-        versionName = appVersionName
-
-        buildConfigField("String", "GITHUB_CLIENT_ID", "\"${localGithubClientId}\"")
-        buildConfigField("String", "VERSION_NAME", "\"${appVersionName}\"")
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-    buildFeatures {
-        buildConfig = true
-    }
-}
-
-tasks.named<Test>("jvmTest") {
-    useJUnitPlatform()
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
-
-    ksp(libs.androidx.room.compiler)
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
-}
 
 compose.desktop {
     application {
-        mainClass = "zed.rainxch.githubstore.MainKt"
+        mainClass = "zed.rainxch.githubstore.DesktopAppKt"
         nativeDistributions {
             packageName = "GitHub-Store"
-            packageVersion = appVersionName
+            packageVersion = libs.versions.projectVersionName.get().toString()
             vendor = "rainxchzed"
             includeAllModules = true
+
+            val currentOs = org.gradle.internal.os.OperatingSystem.current()
             targetFormats(
-                TargetFormat.Dmg,
-                TargetFormat.Pkg,
-                TargetFormat.Exe,
-                TargetFormat.Msi,
-                TargetFormat.Deb,
-                TargetFormat.Rpm,
-                TargetFormat.AppImage
+                *when {
+                    currentOs.isWindows -> arrayOf(TargetFormat.Exe, TargetFormat.Msi)
+                    currentOs.isMacOsX -> arrayOf(TargetFormat.Dmg, TargetFormat.Pkg)
+                    currentOs.isLinux  -> arrayOf(TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage)
+                    else -> emptyArray()
+                }
             )
             windows {
                 iconFile.set(project.file("logo/app_icon.ico"))
@@ -252,8 +124,8 @@ compose.desktop {
             }
             linux {
                 iconFile.set(project.file("logo/app_icon.png"))
-                appRelease = appVersionCode.toString()
-                debPackageVersion = appVersionName
+                appRelease = libs.versions.projectVersionName.get().toString()
+                debPackageVersion = libs.versions.projectVersionName.get().toString()
                 menuGroup = "Development"
                 appCategory = "Development"
             }

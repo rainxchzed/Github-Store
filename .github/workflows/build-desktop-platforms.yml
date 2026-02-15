@@ -9,6 +9,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRIBUTION: 'temurin'
+  GRADLE_OPTS: >-
+    -Dorg.gradle.daemon=false
+    -Dorg.gradle.parallel=true
+    -Dorg.gradle.caching=true
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -17,17 +25,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
           cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -57,7 +66,7 @@ jobs:
             done
           }
 
-          retry ./gradlew :composeApp:packageExe :composeApp:packageMsi --no-daemon --parallel
+          retry ./gradlew :composeApp:packageExe :composeApp:packageMsi
         shell: bash
 
       - name: Upload Windows installers
@@ -74,9 +83,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-13
+          - os: macos-15-intel
             arch: x64
-          - os: macos-14
+          - os: macos-latest
             arch: arm64
 
     runs-on: ${{ matrix.os }}
@@ -85,17 +94,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
           cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -124,7 +134,7 @@ jobs:
             done
           }
 
-          retry ./gradlew :composeApp:packageDmg :composeApp:packagePkg --no-daemon --parallel
+          retry ./gradlew :composeApp:packageDmg :composeApp:packagePkg
         shell: bash
 
       - name: Upload macOS installers
@@ -138,23 +148,33 @@ jobs:
           compression-level: 6
 
   build-linux:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: modern
+
+          - os: ubuntu-22.04
+            label: debian12-compat
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
           cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -183,13 +203,13 @@ jobs:
             done
           }
 
-          retry ./gradlew :composeApp:packageDeb :composeApp:packageRpm --no-daemon --parallel
+          retry ./gradlew :composeApp:packageDeb :composeApp:packageRpm
         shell: bash
 
       - name: Upload Linux installers
         uses: actions/upload-artifact@v4
         with:
-          name: linux-installers
+          name: linux-installers-${{ matrix.label }}
           path: |
             composeApp/build/compose/binaries/main/deb/*.deb
             composeApp/build/compose/binaries/main/rpm/*.rpm

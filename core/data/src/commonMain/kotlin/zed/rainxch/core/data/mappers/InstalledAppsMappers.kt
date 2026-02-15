@@ -1,0 +1,74 @@
+package zed.rainxch.core.data.mappers
+
+import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
+import zed.rainxch.core.domain.model.InstalledApp
+
+fun InstalledApp.toEntity(): InstalledAppEntity {
+    return InstalledAppEntity(
+        packageName = packageName,
+        repoId = repoId,
+        repoName = repoName,
+        repoOwner = repoOwner,
+        repoOwnerAvatarUrl = repoOwnerAvatarUrl,
+        repoDescription = repoDescription,
+        primaryLanguage = primaryLanguage,
+        repoUrl = repoUrl,
+        installedVersion = installedVersion,
+        installedAssetName = installedAssetName,
+        installedAssetUrl = installedAssetUrl,
+        latestVersion = latestVersion,
+        latestAssetName = latestAssetName,
+        latestAssetUrl = latestAssetUrl,
+        latestAssetSize = latestAssetSize,
+        appName = appName,
+        installSource = installSource,
+        installedAt = installedAt,
+        lastCheckedAt = lastCheckedAt,
+        lastUpdatedAt = lastUpdatedAt,
+        isUpdateAvailable = isUpdateAvailable,
+        updateCheckEnabled = updateCheckEnabled,
+        releaseNotes = releaseNotes,
+        systemArchitecture = systemArchitecture,
+        fileExtension = fileExtension,
+        isPendingInstall = isPendingInstall,
+        installedVersionName = installedVersionName,
+        installedVersionCode = installedVersionCode,
+        latestVersionName = latestVersionName,
+        latestVersionCode = latestVersionCode
+    )
+}
+
+fun InstalledAppEntity.toDomain(): InstalledApp {
+    return InstalledApp(
+        packageName = packageName,
+        repoId = repoId,
+        repoName = repoName,
+        repoOwner = repoOwner,
+        repoOwnerAvatarUrl = repoOwnerAvatarUrl,
+        repoDescription = repoDescription,
+        primaryLanguage = primaryLanguage,
+        repoUrl = repoUrl,
+        installedVersion = installedVersion,
+        installedAssetName = installedAssetName,
+        installedAssetUrl = installedAssetUrl,
+        latestVersion = latestVersion,
+        latestAssetName = latestAssetName,
+        latestAssetUrl = latestAssetUrl,
+        latestAssetSize = latestAssetSize,
+        appName = appName,
+        installSource = installSource,
+        installedAt = installedAt,
+        lastCheckedAt = lastCheckedAt,
+        lastUpdatedAt = lastUpdatedAt,
+        isUpdateAvailable = isUpdateAvailable,
+        updateCheckEnabled = updateCheckEnabled,
+        releaseNotes = releaseNotes,
+        systemArchitecture = systemArchitecture,
+        fileExtension = fileExtension,
+        isPendingInstall = isPendingInstall,
+        installedVersionName = installedVersionName,
+        installedVersionCode = installedVersionCode,
+        latestVersionName = latestVersionName,
+        latestVersionCode = latestVersionCode
+    )
+}
