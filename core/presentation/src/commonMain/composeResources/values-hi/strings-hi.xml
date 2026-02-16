@@ -1,0 +1,325 @@
+<resources>
+
+    <!-- Apps feature - App -->
+    <string name="app_name">GitHub Store</string>
+
+    <!-- Apps feature - Navigation / Top bar -->
+    <string name="installed_apps">इंस्टॉल किए गए ऐप्स</string>
+    <string name="navigate_back">वापस जाएँ</string>
+    <string name="check_for_updates">अपडेट के लिए जाँच करें</string>
+
+    <!-- Apps feature - Errors / messages -->
+    <string name="cannot_launch">%1$s को लॉन्च नहीं किया जा सकता</string>
+    <string name="failed_to_open">%1$s को खोलने में विफल रहा</string>
+    <string name="failed_to_update">%1$s अपडेट करने में विफल रहा: %2$s</string>
+    <string name="update_all_failed">सभी अपडेट विफल रहे: %1$s</string>
+    <string name="all_apps_updated_successfully">सभी ऐप्स सफलतापूर्वक अपडेट हो गए</string>
+    <string name="no_updates_available">कोई अपडेट उपलब्ध नहीं</string>
+
+    <!-- Apps feature - Search -->
+    <string name="search_your_apps">अपने ऐप्स खोजें</string>
+    <string name="no_apps_found">कोई ऐप नहीं मिला</string>
+
+    <!-- Apps feature - Actions -->
+    <string name="update_all">सभी अपडेट करें</string>
+    <string name="update">अपडेट</string>
+    <string name="open">खोलें</string>
+    <string name="cancel">रद्द करें</string>
+
+    <!-- Apps feature - Update states -->
+    <string name="checking">जाँच हो रही है...</string>
+    <string name="updated_successfully">सफलतापूर्वक अपडेट किया गया</string>
+    <string name="error_with_message">गलती: %1$s</string>
+
+    <!-- Apps feature - Update all progress -->
+    <string name="updating_x_of_y">%2$d में से %1$d अपडेट हो रहा है</string>
+    <string name="currently_updating">वर्तमान में: %1$s</string>
+
+
+    <!-- Auth general -->
+    <string name="waiting_for_authorization">अनुमति की प्रतीक्षा की जा रही है...</string>
+    <string name="signed_in">साइन इन किया गया!</string>
+    <string name="redirecting_message">अब आप ऐप का इस्तेमाल कर सकते हैं। रीडायरेक्ट किया जा रहा है…</string>
+    <string name="try_again">पुनः प्रयास करें</string>
+
+    <!-- Errors -->
+    <string name="auth_error_with_message">गलती: %1$s</string>
+
+    <!-- Device flow -->
+    <string name="enter_code_on_github">यह कोड GitHub पर डालें:</string>
+    <string name="copy_code">कोड कॉपी करें</string>
+    <string name="open_github">GitHub खोलें</string>
+
+    <!-- Logged out -->
+    <string name="unlock_full_experience">पूरा अनुभव अनलॉक\nकरें</string>
+
+    <string name="more_requests">और अनुरोध</string>
+    <string name="more_requests_description">
+        ज़्यादा API रेट लिमिट पाने और रुकावटों से बचने के लिए साइन इन करें।
+    </string>
+
+    <string name="sign_in_with_github">GitHub से साइन इन करें</string>
+
+    <string name="error_cancelled">रद्द किया गया</string>
+    <string name="error_unknown">अज्ञात त्रुटि</string>
+
+    <string name="language_label">भाषा:</string>
+
+    <string name="discover_repositories">रिपॉजिटरीज़ खोजें</string>
+    <string name="search_repositories_hint">रेपो, विवरण खोजें…</string>
+
+    <!-- Filters -->
+    <string name="filter_by_language">भाषा के अनुसार फ़िल्टर करें</string>
+
+    <!-- Results -->
+    <string name="results_found">%1$d परिणाम मिले</string>
+
+
+    <!-- Sorting -->
+    <string name="sort_by">क्रमबद्ध करें</string>
+    <string name="close">बंद</string>
+
+    <string name="sort_most_stars">सबसे अधिक स्टार</string>
+    <string name="sort_most_forks">सबसे अधिक फोर्क्स</string>
+    <string name="sort_best_match">सबसे अच्छा मिलान</string>
+
+    <!-- Programming languages -->
+    <string name="language_all">सभी भाषाएँ</string>
+    <string name="language_kotlin">Kotlin</string>
+    <string name="language_java">Java</string>
+    <string name="language_javascript">JavaScript</string>
+    <string name="language_typescript">TypeScript</string>
+    <string name="language_python">Python</string>
+    <string name="language_swift">Swift</string>
+    <string name="language_rust">Rust</string>
+    <string name="language_go">Go</string>
+    <string name="language_csharp">C#</string>
+    <string name="language_cpp">C++</string>
+    <string name="language_c">C</string>
+    <string name="language_dart">Dart</string>
+    <string name="language_ruby">Ruby</string>
+    <string name="language_php">PHP</string>
+
+    <string name="search_failed">खोज विफल रही</string>
+    <string name="no_repositories_found">कोई रिपॉजिटरी नहीं मिली</string>
+
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+
+    <!-- Sections -->
+    <string name="section_appearance">उपस्थिति</string>
+    <string name="section_about">के बारे में</string>
+
+    <!-- Appearance -->
+    <string name="theme_color">थीम रंग</string>
+    <string name="amoled_black_theme">AMOLED ब्लैक थीम</string>
+    <string name="amoled_black_description">डार्क मोड के लिए गहरा काला बैकग्राउंड</string>
+    <string name="selected_color">चुना हुआ रंग: %1$s</string>
+
+    <!-- About -->
+    <string name="version">संस्करण</string>
+    <string name="help_support">सहायता &amp; समर्थन</string>
+
+    <!-- Account -->
+    <string name="logout">लॉग आउट</string>
+
+    <!-- Snackbar -->
+    <string name="logout_success">सफलतापूर्वक लॉग आउट हो गए, रीडायरेक्ट किया जा रहा है...</string>
+
+    <!-- Dialog -->
+    <string name="warning">चेतावनी!</string>
+    <string name="logout_confirmation">क्या आप लॉग आउट करना चाहते हैं?</string>
+
+    <!-- Theme names -->
+    <string name="theme_dynamic">डायनामिक</string>
+    <string name="theme_ocean">ओशन</string>
+    <string name="theme_purple">पर्पल</string>
+    <string name="theme_forest">फॉरेस्ट</string>
+    <string name="theme_slate">स्लेट</string>
+    <string name="theme_amber">एम्बर</string>
+
+    <!-- Navigation & actions -->
+    <string name="open_repository">रिपॉजिटरी खोलें</string>
+    <string name="open_in_browser">ब्राउज़र में खोलें</string>
+    <string name="cancel_download">डाउनलोड रद्द करें</string>
+    <string name="show_install_options">इंस्टॉल विकल्प दिखाएँ</string>
+
+    <!-- Errors & states -->
+    <string name="error_loading_details">विवरण लोड करने में त्रुटि</string>
+    <string name="retry">पुन: प्रयास करें</string>
+    <string name="no_description">कोई विवरण नहीं दिया गया है।</string>
+    <string name="no_release_notes">कोई रिलीज़ नोट्स नहीं।</string>
+
+    <!-- Headers -->
+    <string name="about_this_app">इस ऐप के बारे में</string>
+    <string name="install_logs">इंस्टॉल लॉग्स</string>
+    <string name="author">लेखक</string>
+    <string name="whats_new">नया क्या है</string>
+
+    <!-- Install status -->
+    <string name="installed">स्थापित</string>
+    <string name="update_available">उपलब्ध अपडेट</string>
+    <string name="not_available">उपलब्ध नहीं है</string>
+    <string name="install_latest">नवीनतम स्थापित करें</string>
+    <string name="reinstall">पुनः इंस्टॉल करें</string>
+    <string name="update_app">ऐप अपडेट करें</string>
+
+    <!-- Download stages -->
+    <string name="downloading">डाउनलोड हो रहा है</string>
+    <string name="updating">अपडेट हो रहा है</string>
+    <string name="verifying">सत्यापन हो रहा है</string>
+    <string name="installing">स्थापित हो रहा है</string>
+
+    <!-- Install helpers -->
+    <string name="open_in_obtainium">ओब्टेनियम में खोलें</string>
+    <string name="obtainium_description">अपडेट को अपने आप मैनेज करें</string>
+    <string name="inspect_with_appmanager">ऐपमैनेजर से जांच करें</string>
+    <string name="appmanager_description">अनुमतियाँ, ट्रैकर्स जाँचें &amp; सुरक्षा</string>
+
+    <!-- Author -->
+    <string name="profile">प्रोफ़ाइल</string>
+
+    <!-- Stats -->
+    <string name="forks">फोर्क्स</string>
+    <string name="stars">स्टार्स</string>
+    <string name="issues">इश्यूज़</string>
+
+    <!-- Misc -->
+    <string name="by_author">द्वारा %1$s</string>
+    <string name="installed_version">• स्थापित: %1$s</string>
+    <string name="architecture_compatible">आर्किटेक्चर संगत</string>
+    <string name="update_to_version">%1$s पर अपडेट करें</string>
+
+    <!-- General -->
+    <string name="error_load_details">विवरण लोड करने में विफल</string>
+    <string name="installer_saved_downloads">इंस्टॉलर को डाउनलोड फ़ोल्डर में सेव कर दिया गया है।</string>
+
+    <!-- Download / install states -->
+    <string name="log_download_started">डाउनलोड शुरू हो गया</string>
+    <string name="log_downloaded">डाउनलोड हुआ</string>
+    <string name="log_update_started">अपडेट शुरू हो गया</string>
+    <string name="log_installed">स्थापित</string>
+    <string name="log_updated">अद्यतन</string>
+    <string name="log_cancelled">रद्द किया गया</string>
+    <string name="log_install_started">इंस्टॉलेशन शुरू हो गया</string>
+    <string name="log_error">गलती</string>
+    <string name="log_error_with_message">गलती: %1$s</string>
+
+    <!-- External tools -->
+    <string name="log_prepare_appmanager">ऐपमैनेजर के लिए तैयारी कर रहा है</string>
+    <string name="log_opened_appmanager">ऐप मैनेजर में खोला गया</string>
+
+    <!-- Errors -->
+    <string name="error_generic">गलती: %1$s</string>
+    <string name="error_asset_not_supported">संपदा प्रकार .%1$s समर्थित नहीं</string>
+    <string name="error_file_not_found">डाउनलोड की गई फ़ाइल नहीं मिली</string>
+
+    <string name="home_category_trending">रुझान</string>
+    <string name="home_category_new">नया</string>
+    <string name="home_category_recently_updated">हाल ही में अपडेट किया गया</string>
+
+    <string name="home_finding_repositories">रिपॉजिटरी ढूंढी जा रही हैं...</string>
+    <string name="home_loading_more">और लोड हो रहा है...</string>
+    <string name="home_no_more_repositories">अब और कोई रिपॉजिटरी नहीं</string>
+    <string name="home_retry">पुन: प्रयास करें</string>
+    <string name="home_failed_to_load_repositories">रिपॉजिटरी लोड करने में विफल रहा</string>
+    <string name="home_view_details">विवरण देखें</string>
+
+    <string name="updated_just_now">अभी-अभी अपडेट किया गया</string>
+    <string name="updated_hours_ago">%1$d घंटे पहले अपडेट किया गया</string>
+    <string name="updated_yesterday">कल अपडेट किया गया</string>
+    <string name="updated_days_ago">%1$d दिन पहले अपडेट किया गया</string>
+    <string name="updated_on_date">%1$s को अपडेट किया गया</string>
+
+    <string name="rate_limit_exceeded">दर सीमा पार हो गई</string>
+    <string name="rate_limit_used_all">आपने सभी %1$d API रिक्वेस्ट का इस्तेमाल कर लिया है।</string>
+    <string name="rate_limit_used_all_free">आपने सभी %1$d फ्री API रिक्वेस्ट इस्तेमाल कर लिए हैं।</string>
+    <string name="rate_limit_resets_in_minutes">%1$d मिनट में रीसेट हो जाएगा</string>
+    <string name="rate_limit_tip_sign_in">💡 60 रिक्वेस्ट प्रति घंटे के बजाय 5,000 रिक्वेस्ट प्रति घंटे पाने के लिए साइन इन करें!</string>
+    <string name="rate_limit_sign_in">साइन इन</string>
+    <string name="rate_limit_ok">ठीक है</string>
+    <string name="rate_limit_close">बंद करें</string>
+
+    <string name="system_font">सिस्टम फ़ॉन्ट</string>
+    <string name="system_font_description">बेहतर पठनीयता के लिए अपने डिवाइस के फ़ॉन्ट से मिलान करें।</string>
+
+    <string name="theme_light">हल्का</string>
+    <string name="theme_dark">डार्क</string>
+    <string name="theme_system">सिस्टम</string>
+
+    <string name="added_to_favourites">रिपॉजिटरी को पसंदीदा में जोड़ा गया</string>
+    <string name="removed_from_favourites">रिपॉजिटरी को पसंदीदा से हटा दिया गया</string>
+    <string name="add_to_favourites">पसंदीदा में जोड़ें</string>
+    <string name="remove_from_favourites">पसंदीदा से निकालें</string>
+    <string name="favourites">पसंदीदा</string>
+
+    <string name="added_just_now">अभी जोड़ा गया</string>
+    <string name="added_hours_ago">%1$d घंटे पहले जोड़ा गया</string>
+    <string name="added_yesterday">कल जोड़ा गया</string>
+    <string name="added_days_ago">%1$d दिन पहले जोड़ा गया</string>
+    <string name="added_on_date">%1$s को जोड़ा गया</string>
+
+    <string name="starred_repositories">तारांकित रिपॉजिटरी</string>
+    <string name="repository_starred">रिपॉजिटरी स्टार की गई</string>
+    <string name="repository_not_starred">रिपॉजिटरी स्टार नहीं की गई</string>
+    <string name="star_from_github">आप GitHub से किसी रिपॉजिटरी को स्टार कर सकते हैं।</string>
+    <string name="unstar_from_github">आप GitHub से किसी रिपॉजिटरी को अनस्टार कर सकते हैं।</string>
+
+    <string name="sign_in_required">साइन इन आवश्यक</string>
+    <string name="sign_in_with_github_for_stars">अपने स्टार किए गए रिपॉजिटरी देखने के लिए GitHub से साइन इन करें</string>
+    <string name="no_starred_repos">कोई तारांकित रिपॉजिटरी नहीं</string>
+    <string name="star_repos_hint">उन्हें यहां देखने के लिए इंस्टॉलेबल रिलीज़ वाले GitHub पर रिपॉजिटरी को स्टार करें।</string>
+    <string name="last_synced">अंतिम सिंक</string>
+    <string name="just_now">अभी-अभी</string>
+    <string name="minutes_ago">%d मिनट पहले</string>
+    <string name="hours_ago">%d घंटे पहले</string>
+    <string name="days_ago">%d दिन पहले</string>
+    <string name="dismiss">हटाएं</string>
+    <string name="sync_starred_failed">तारांकित रिपॉजिटरी को सिंक करने में विफल रहा</string>
+
+    <string name="developer_profile_title">डेवलपर प्रोफ़ाइल</string>
+    <string name="open_developer_profile">डेवलपर प्रोफ़ाइल खोलें</string>
+
+    <string name="failed_to_load_repositories">रिपॉजिटरी लोड करने में विफल रहा</string>
+    <string name="failed_to_load_profile">प्रोफ़ाइल लोड करने में विफल</string>
+
+    <!-- Developer Profile - Stats -->
+    <string name="repositories">रिपॉजिटरी</string>
+    <string name="followers">फ़ॉलोअर्स</string>
+    <string name="following">फ़ॉलो कर रहे हैं</string>
+
+    <!-- Developer Profile - Filter & Sort -->
+    <string name="search_repositories">रिपॉजिटरी खोजें…</string>
+    <string name="clear_search">खोज साफ़ करें</string>
+    <string name="filter_all">सभी</string>
+    <string name="filter_with_releases">रिलीज़ के साथ</string>
+    <string name="filter_installed">स्थापित</string>
+    <string name="filter_favorites">पसंदीदा</string>
+    <string name="sort">क्रम</string>
+    <string name="sort_recently_updated">हाल ही में अपडेट किया गया</string>
+    <string name="sort_name">नाम</string>
+
+    <!-- Developer Profile - Repository Count -->
+    <string name="repository_singular">रिपॉजिटरी</string>
+    <string name="repositories_plural">रिपॉजिटरीज़</string>
+    <string name="showing_x_of_y_repositories">%2$d में से %1$d रिपॉजिटरी दिखाए जा रहे हैं</string>
+
+    <!-- Developer Profile - Empty States -->
+    <string name="no_repos_with_releases">इंस्टॉल करने योग्य रिलीज़ वाली कोई रिपॉजिटरी नहीं</string>
+    <string name="no_installed_repos">कोई रिपॉजिटरी इंस्टॉल नहीं है</string>
+    <string name="no_favorite_repos">कोई पसंदीदा रिपॉजिटरी नहीं</string>
+
+    <!-- Developer Profile - Repository Item -->
+    <string name="updated_x_ago">%1$s पहले अपडेट किया गया</string>
+    <string name="has_release">रिलीज़ हो गया है</string>
+
+    <string name="time_years_ago">%1$d साल पहले</string>
+    <string name="time_months_ago">%1$d महीने पहले</string>
+    <string name="time_days_ago">%1$d दिन पहले</string>
+    <string name="time_hours_ago">%1$d घंटे पहले</string>
+    <string name="time_minutes_ago">%1$d मिनट पहले</string>
+
+    <!-- Developer Profile - Count Formatting -->
+    <string name="count_millions">%1$dM</string>
+    <string name="count_thousands">%1$dk</string>
+</resources>
