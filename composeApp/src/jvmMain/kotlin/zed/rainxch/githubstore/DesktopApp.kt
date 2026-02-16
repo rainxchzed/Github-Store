@@ -1,5 +1,6 @@
 package zed.rainxch.githubstore
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,14 +21,16 @@ fun main(args: Array<String>) {
     }
 
     DesktopDeepLink.registerUriSchemeIfNeeded()
+    initKoin()
 
     application {
-        initKoin()
 
         var deepLinkUri by mutableStateOf(deepLinkArg)
 
-        DesktopDeepLink.startInstanceListener { uri ->
-            deepLinkUri = uri
+        LaunchedEffect(Unit) {
+            DesktopDeepLink.startInstanceListener { uri ->
+                deepLinkUri = uri
+            }
         }
 
         if (Desktop.isDesktopSupported()) {

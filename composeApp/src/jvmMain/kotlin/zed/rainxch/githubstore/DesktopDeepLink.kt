@@ -4,6 +4,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.io.PrintWriter
+import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 
@@ -114,7 +115,7 @@ object DesktopDeepLink {
     fun startInstanceListener(onUri: (String) -> Unit) {
         val thread = Thread({
             try {
-                val server = ServerSocket(SINGLE_INSTANCE_PORT)
+                val server = ServerSocket(SINGLE_INSTANCE_PORT, 50, InetAddress.getLoopbackAddress())
                 while (true) {
                     val client = server.accept()
                     try {

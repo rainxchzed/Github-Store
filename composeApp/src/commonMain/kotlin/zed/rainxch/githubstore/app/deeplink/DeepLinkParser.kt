@@ -167,7 +167,7 @@ object DeepLinkParser {
         val params = queryString.split('&')
 
         for (param in params) {
-            val keyValue = param.split('=')
+            val keyValue = param.split('=', limit = 2)
             if (keyValue.size == 2 && keyValue[0] == key) {
                 return keyValue[1]
             }
