@@ -51,7 +51,6 @@ fun VersionPicker(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        // Category filter chips
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
@@ -75,7 +74,6 @@ fun VersionPicker(
 
         Spacer(Modifier.height(8.dp))
 
-        // Version selector card
         OutlinedCard(
             onClick = { onAction(DetailsAction.ToggleVersionPicker) },
             modifier = Modifier.fillMaxWidth()
@@ -115,7 +113,6 @@ fun VersionPicker(
         }
     }
 
-    // Bottom sheet with version list
     if (isPickerVisible) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
@@ -179,7 +176,10 @@ private fun VersionListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClickLabel = stringResource(Res.string.select_version),
+                onClick = onClick
+            )
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

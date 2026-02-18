@@ -31,7 +31,6 @@ sealed interface DetailsAction {
 
     data class OnMessage(val messageText: StringResource) : DetailsAction
 
-    // Version picker
     data class SelectReleaseCategory(val category: ReleaseCategory) : DetailsAction
     data class SelectRelease(val release: GithubRelease) : DetailsAction
     data object ToggleVersionPicker : DetailsAction

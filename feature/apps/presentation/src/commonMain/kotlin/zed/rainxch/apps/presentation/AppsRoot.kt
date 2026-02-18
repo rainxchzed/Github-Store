@@ -556,7 +556,7 @@ fun AppItemCard(
                     }
 
                     else -> {
-                        if (app.isUpdateAvailable) {
+                        if (app.isUpdateAvailable && !app.isPendingInstall) {
                             Button(
                                 onClick = onUpdateClick,
                                 modifier = Modifier.weight(1f)

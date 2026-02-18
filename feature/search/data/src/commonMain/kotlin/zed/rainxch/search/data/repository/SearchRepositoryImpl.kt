@@ -103,7 +103,6 @@ class SearchRepositoryImpl(
                     return@channelFlow
                 }
 
-                // Entire page yielded 0 verified repos — auto-skip to next page
                 if (!baseHasMore) {
                     send(
                         PaginatedDiscoveryRepositories(
@@ -120,7 +119,6 @@ class SearchRepositoryImpl(
                 pagesSkipped++
             }
 
-            // Exhausted auto-skip budget, tell UI there's more so it can try again
             send(
                 PaginatedDiscoveryRepositories(
                     repos = emptyList(),
@@ -182,7 +180,6 @@ class SearchRepositoryImpl(
         val q = if (clean.isBlank()) {
             "stars:>100"
         } else {
-            // Always quote the query to match it as a phrase for better relevance
             "\"$clean\""
         }
         val scope = " in:name,description"

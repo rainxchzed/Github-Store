@@ -241,7 +241,6 @@ class DetailsViewModel(
                     return@launch
                 }
 
-                // Auto-select latest stable, fall back to first release if no stable exists
                 val selectedRelease = allReleases.firstOrNull { !it.isPrerelease }
                     ?: allReleases.firstOrNull()
 
@@ -560,7 +559,6 @@ class DetailsViewModel(
                 }
             }
 
-            // Version picker actions
             is DetailsAction.SelectReleaseCategory -> {
                 val newCategory = action.category
                 val filtered = when (newCategory) {

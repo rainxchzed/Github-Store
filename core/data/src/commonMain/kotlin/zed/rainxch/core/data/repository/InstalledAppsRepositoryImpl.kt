@@ -175,29 +175,28 @@ class InstalledAppsRepositoryImpl(
 
                         val tempPath = downloader.getDownloadedFilePath(tempAssetName)
                         if (tempPath != null) {
-                            val latestInfo =
+                            val latestInfo = try {
                                 installer.getApkInfoExtractor().extractPackageInfo(tempPath)
-                            File(tempPath).delete()
-
+                            } finally {
+                                File(tempPath).delete()
+                            }
                             if (latestInfo != null) {
                                 latestVersionName = latestInfo.versionName
                                 latestVersionCode = latestInfo.versionCode
                                 isUpdateAvailable = latestVersionCode > app.installedVersionCode
                             } else {
-                                // Couldn't extract APK info, fall back to tag comparison
                                 latestVersionName = latestRelease.tagName
                             }
+
                         } else {
-                            // Download failed, fall back to tag comparison
                             latestVersionName = latestRelease.tagName
                         }
                     } catch (e: Exception) {
                         Logger.w { "Failed to download APK for version check of ${app.packageName}: ${e.message}" }
-                        // Download/extraction failed, fall back to tag comparison
+                        downloader.getDownloadedFilePath(tempAssetName)?.let { File(it).delete() }
                         latestVersionName = latestRelease.tagName
                     }
                 } else {
-                    // No installable asset found, but tags differ so likely an update
                     latestVersionName = latestRelease.tagName
                 }
 

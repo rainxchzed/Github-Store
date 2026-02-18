@@ -270,7 +270,13 @@ class AppsViewModel(
                 markPendingUpdate(app)
 
                 updateAppState(app.packageName, UpdateState.Installing)
-                installer.install(filePath, ext)
+
+                try {
+                    installer.install(filePath, ext)
+                } catch (e: Exception) {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                    throw e
+                }
 
                 installedAppsRepository.updateAppVersion(
                     packageName = app.packageName,
@@ -290,10 +296,20 @@ class AppsViewModel(
             } catch (e: CancellationException) {
                 logger.debug("Update cancelled for ${app.packageName}")
                 cleanupUpdate(app.packageName, app.latestAssetName)
+                try {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                } catch (clearEx: Exception) {
+                    logger.error("Failed to clear pending status on cancellation: ${clearEx.message}")
+                }
                 updateAppState(app.packageName, UpdateState.Idle)
                 throw e
             } catch (_: RateLimitException) {
                 logger.debug("Rate limited during update for ${app.packageName}")
+                try {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                } catch (clearEx: Exception) {
+                    logger.error("Failed to clear pending status on rate limit: ${clearEx.message}")
+                }
                 updateAppState(app.packageName, UpdateState.Idle)
                 _events.send(
                     AppsEvent.ShowError(getString(Res.string.rate_limit_exceeded))
@@ -301,6 +317,11 @@ class AppsViewModel(
             } catch (e: Exception) {
                 logger.error("Update failed for ${app.packageName}: ${e.message}")
                 cleanupUpdate(app.packageName, app.latestAssetName)
+                try {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                } catch (clearEx: Exception) {
+                    logger.error("Failed to clear pending status on error: ${clearEx.message}")
+                }
                 updateAppState(
                     app.packageName,
                     UpdateState.Error(e.message ?: "Update failed")
@@ -470,15 +491,9 @@ class AppsViewModel(
         }
     }
 
-    private suspend fun markPendingUpdate(
-        app: InstalledApp,
-    ) {
-        try {
-            installedAppsRepository.updatePendingStatus(app.packageName, true)
-            logger.debug("Marked ${app.packageName} as pending install")
-        } catch (e: Exception) {
-            logger.error("Failed to mark pending update: ${e.message}")
-        }
+    private suspend fun markPendingUpdate(app: InstalledApp) {
+        installedAppsRepository.updatePendingStatus(app.packageName, true)
+        logger.debug("Marked ${app.packageName} as pending install")
     }
 
     private suspend fun cleanupUpdate(packageName: String, assetName: String?) {

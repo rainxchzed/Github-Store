@@ -15,6 +15,7 @@ import zed.rainxch.core.domain.system.PackageMonitor
  * Responsibilities:
  * 1. Remove apps from DB that are no longer installed on the system
  * 2. Migrate legacy apps missing versionName/versionCode fields
+ * 3. Resolve pending installs once they appear in the system package manager
  * 
  * This should be called before loading or refreshing app data to ensure consistency.
  */
@@ -45,7 +46,6 @@ class SyncInstalledAppsUseCase(
                         if (isOnSystem) {
                             toResolvePending.add(app)
                         }
-                        // Not on system yet but pending — keep in DB, don't delete
                     }
 
                     !isOnSystem -> {
@@ -73,16 +73,16 @@ class SyncInstalledAppsUseCase(
                     try {
                         val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
                         if (systemInfo != null) {
-                            installedAppsRepository.updateApp(
-                                app.copy(
-                                    isPendingInstall = false,
-                                    isUpdateAvailable = false,
-                                    installedVersionName = systemInfo.versionName,
-                                    installedVersionCode = systemInfo.versionCode,
-                                    latestVersionName = systemInfo.versionName,
-                                    latestVersionCode = systemInfo.versionCode
+                            app.latestVersionCode?.let { latestVersionCode ->
+                                installedAppsRepository.updateApp(
+                                    app.copy(
+                                        isPendingInstall = false,
+                                        installedVersionName = systemInfo.versionName,
+                                        installedVersionCode = systemInfo.versionCode,
+                                        isUpdateAvailable = latestVersionCode > systemInfo.versionCode
+                                    )
                                 )
-                            )
+                            }
                             logger.info("Resolved pending install: ${app.packageName} (v${systemInfo.versionName}, code=${systemInfo.versionCode})")
                         } else {
                             installedAppsRepository.updatePendingStatus(app.packageName, false)

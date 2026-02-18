@@ -68,7 +68,6 @@ fun SmartInstallButton(
 
     val isActiveDownload = state.isDownloading || state.downloadStage != DownloadStage.IDLE
 
-    // Determine button color and text based on install status
     val buttonColor = when {
         !enabled && !isActiveDownload -> MaterialTheme.colorScheme.surfaceContainer
         isUpdateAvailable -> MaterialTheme.colorScheme.tertiary
