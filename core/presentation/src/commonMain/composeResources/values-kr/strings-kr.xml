@@ -334,4 +334,14 @@
     <string name="bottom_nav_apps_title">앱</string>
     <string name="bottom_nav_profile_title">프로필</string>
 
+    <string name="forked_repository">포크</string>
+
+    <string name="category_stable">안정 버전</string>
+    <string name="category_pre_release">사전 출시</string>
+    <string name="category_all">전체</string>
+    <string name="select_version">버전 선택</string>
+    <string name="pre_release_badge">사전 출시</string>
+    <string name="no_version_selected">선택된 버전 없음</string>
+    <string name="versions_title">버전</string>
+
 </resources>

@@ -11,11 +11,13 @@ import zed.rainxch.core.domain.system.PackageMonitor
 
 /**
  * Use case for synchronizing installed apps state with the system package manager.
- * 
+ *
  * Responsibilities:
  * 1. Remove apps from DB that are no longer installed on the system
  * 2. Migrate legacy apps missing versionName/versionCode fields
- * 
+ * 3. Resolve pending installs once they appear in the system package manager
+ * 4. Clean up stale pending installs (older than 24 hours)
+ *
  * This should be called before loading or refreshing app data to ensure consistency.
  */
 class SyncInstalledAppsUseCase(
@@ -24,6 +26,9 @@ class SyncInstalledAppsUseCase(
     private val platform: Platform,
     private val logger: GitHubStoreLogger
 ) {
+    companion object {
+        private const val PENDING_TIMEOUT_MS = 24 * 60 * 60 * 1000L // 24 hours
+    }
     /**
      * Executes the sync operation.
      * 
@@ -33,13 +38,25 @@ class SyncInstalledAppsUseCase(
         try {
             val installedPackageNames = packageMonitor.getAllInstalledPackageNames()
             val appsInDb = installedAppsRepository.getAllInstalledApps().first()
+            val now = System.currentTimeMillis()
 
             val toDelete = mutableListOf<String>()
             val toMigrate = mutableListOf<Pair<String, MigrationResult>>()
+            val toResolvePending = mutableListOf<InstalledApp>()
+            val toDeleteStalePending = mutableListOf<String>()
 
             appsInDb.forEach { app ->
+                val isOnSystem = installedPackageNames.contains(app.packageName)
                 when {
-                    !installedPackageNames.contains(app.packageName) -> {
+                    app.isPendingInstall -> {
+                        if (isOnSystem) {
+                            toResolvePending.add(app)
+                        } else if (now - app.installedAt > PENDING_TIMEOUT_MS) {
+                            toDeleteStalePending.add(app.packageName)
+                        }
+                    }
+
+                    !isOnSystem -> {
                         toDelete.add(app.packageName)
                     }
 
@@ -57,6 +74,38 @@ class SyncInstalledAppsUseCase(
                         logger.info("Removed uninstalled app: $packageName")
                     } catch (e: Exception) {
                         logger.error("Failed to delete $packageName: ${e.message}")
+                    }
+                }
+
+                toDeleteStalePending.forEach { packageName ->
+                    try {
+                        installedAppsRepository.deleteInstalledApp(packageName)
+                        logger.info("Removed stale pending install (>24h): $packageName")
+                    } catch (e: Exception) {
+                        logger.error("Failed to delete stale pending $packageName: ${e.message}")
+                    }
+                }
+
+                toResolvePending.forEach { app ->
+                    try {
+                        val systemInfo = packageMonitor.getInstalledPackageInfo(app.packageName)
+                        if (systemInfo != null) {
+                            val latestVersionCode = app.latestVersionCode ?: 0L
+                            installedAppsRepository.updateApp(
+                                app.copy(
+                                    isPendingInstall = false,
+                                    installedVersionName = systemInfo.versionName,
+                                    installedVersionCode = systemInfo.versionCode,
+                                    isUpdateAvailable = latestVersionCode > systemInfo.versionCode
+                                )
+                            )
+                            logger.info("Resolved pending install: ${app.packageName} (v${systemInfo.versionName}, code=${systemInfo.versionCode})")
+                        } else {
+                            installedAppsRepository.updatePendingStatus(app.packageName, false)
+                            logger.info("Resolved pending install (no system info): ${app.packageName}")
+                        }
+                    } catch (e: Exception) {
+                        logger.error("Failed to resolve pending ${app.packageName}: ${e.message}")
                     }
                 }
 
@@ -84,7 +133,8 @@ class SyncInstalledAppsUseCase(
             }
 
             logger.info(
-                "Sync completed: ${toDelete.size} deleted, ${toMigrate.size} migrated"
+                "Sync completed: ${toDelete.size} deleted, ${toDeleteStalePending.size} stale pending removed, " +
+                        "${toResolvePending.size} pending resolved, ${toMigrate.size} migrated"
             )
 
             Result.success(Unit)

@@ -19,5 +19,6 @@ fun ReleaseNetwork.toDomain(): GithubRelease = GithubRelease(
     assets = assets.map { it.toDomain() },
     tarballUrl = tarballUrl,
     zipballUrl = zipballUrl,
-    htmlUrl = htmlUrl
+    htmlUrl = htmlUrl,
+    isPrerelease = prerelease == true
 )

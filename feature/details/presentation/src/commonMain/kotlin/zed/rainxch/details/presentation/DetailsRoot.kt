@@ -196,8 +196,8 @@ fun DetailsScreen(
                         )
                     }
 
-                    state.latestRelease?.let { latestRelease ->
-                        whatsNew(latestRelease)
+                    state.selectedRelease?.let { release ->
+                        whatsNew(release)
                     }
 
                     state.userProfile?.let { userProfile ->

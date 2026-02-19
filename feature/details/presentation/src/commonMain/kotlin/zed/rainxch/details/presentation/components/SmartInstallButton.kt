@@ -59,8 +59,8 @@ fun SmartInstallButton(
     val liquidState = LocalTopbarLiquidState.current
 
     val installedApp = state.installedApp
-    val isInstalled = installedApp != null
-    val isUpdateAvailable = installedApp?.isUpdateAvailable == true
+    val isInstalled = installedApp != null && !installedApp.isPendingInstall
+    val isUpdateAvailable = installedApp?.isUpdateAvailable == true && !installedApp.isPendingInstall
 
     val enabled = remember(primaryAsset, isDownloading, isInstalling) {
         primaryAsset != null && !isDownloading && !isInstalling
@@ -68,7 +68,6 @@ fun SmartInstallButton(
 
     val isActiveDownload = state.isDownloading || state.downloadStage != DownloadStage.IDLE
 
-    // Determine button color and text based on install status
     val buttonColor = when {
         !enabled && !isActiveDownload -> MaterialTheme.colorScheme.surfaceContainer
         isUpdateAvailable -> MaterialTheme.colorScheme.tertiary
@@ -78,7 +77,7 @@ fun SmartInstallButton(
 
     val buttonText = when {
         !enabled && primaryAsset == null -> stringResource(Res.string.not_available)
-        installedApp != null && installedApp.installedVersion != state.latestRelease?.tagName -> stringResource(
+        installedApp != null && installedApp.installedVersion != state.selectedRelease?.tagName -> stringResource(
             Res.string.update_app
         )
 

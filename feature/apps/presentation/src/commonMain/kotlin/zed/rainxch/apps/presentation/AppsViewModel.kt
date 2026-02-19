@@ -38,9 +38,14 @@ class AppsViewModel(
     private val logger: GitHubStoreLogger
 ) : ViewModel() {
 
+    companion object {
+        private const val UPDATE_CHECK_COOLDOWN_MS = 30 * 60 * 1000L // 30 minutes
+    }
+
     private var hasLoadedInitialData = false
     private val activeUpdates = mutableMapOf<String, Job>()
     private var updateAllJob: Job? = null
+    private var lastAutoCheckTimestamp: Long = 0L
 
     private val _state = MutableStateFlow(AppsState())
     val state = _state
@@ -98,18 +103,50 @@ class AppsViewModel(
                     it.copy(isLoading = false)
                 }
             }
+
+            autoCheckForUpdatesIfNeeded()
         }
     }
 
+    private fun autoCheckForUpdatesIfNeeded() {
+        val now = System.currentTimeMillis()
+        if (now - lastAutoCheckTimestamp < UPDATE_CHECK_COOLDOWN_MS) {
+            logger.debug("Skipping auto-check: last check was ${(now - lastAutoCheckTimestamp) / 1000}s ago")
+            return
+        }
+        checkAllForUpdates()
+    }
 
     private fun checkAllForUpdates() {
         viewModelScope.launch {
+            _state.update { it.copy(isCheckingForUpdates = true) }
             try {
                 syncInstalledAppsUseCase()
-
                 installedAppsRepository.checkAllForUpdates()
+                val now = System.currentTimeMillis()
+                lastAutoCheckTimestamp = now
+                _state.update { it.copy(lastCheckedTimestamp = now) }
             } catch (e: Exception) {
                 logger.error("Check all for updates failed: ${e.message}")
+            } finally {
+                _state.update { it.copy(isCheckingForUpdates = false) }
+            }
+        }
+    }
+
+    private fun refresh() {
+        viewModelScope.launch {
+            _state.update { it.copy(isRefreshing = true) }
+            try {
+                syncInstalledAppsUseCase()
+                installedAppsRepository.checkAllForUpdates()
+                val now = System.currentTimeMillis()
+                lastAutoCheckTimestamp = now
+                _state.update { it.copy(lastCheckedTimestamp = now) }
+            } catch (e: Exception) {
+                logger.error("Refresh failed: ${e.message}")
+            } finally {
+                _state.update { it.copy(isRefreshing = false) }
             }
         }
     }
@@ -145,6 +182,10 @@ class AppsViewModel(
 
             AppsAction.OnCheckAllForUpdates -> {
                 checkAllForUpdates()
+            }
+
+            AppsAction.OnRefresh -> {
+                refresh()
             }
 
             is AppsAction.OnNavigateToRepo -> {
@@ -267,17 +308,25 @@ class AppsViewModel(
                 val apkInfo = installer.getApkInfoExtractor().extractPackageInfo(filePath)
                     ?: throw IllegalStateException("Failed to extract APK info")
 
-                updateAppInDatabase(
-                    app = app,
-                    newVersion = latestVersion,
-                    assetName = latestAssetName,
-                    assetUrl = latestAssetUrl,
+                markPendingUpdate(app)
+
+                updateAppState(app.packageName, UpdateState.Installing)
+
+                try {
+                    installer.install(filePath, ext)
+                } catch (e: Exception) {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                    throw e
+                }
+
+                installedAppsRepository.updateAppVersion(
+                    packageName = app.packageName,
+                    newTag = latestVersion,
+                    newAssetName = latestAssetName,
+                    newAssetUrl = latestAssetUrl,
                     newVersionName = apkInfo.versionName,
                     newVersionCode = apkInfo.versionCode
                 )
-
-                updateAppState(app.packageName, UpdateState.Installing)
-                installer.install(filePath, ext)
 
                 updateAppState(app.packageName, UpdateState.Success)
                 delay(2000)
@@ -288,10 +337,20 @@ class AppsViewModel(
             } catch (e: CancellationException) {
                 logger.debug("Update cancelled for ${app.packageName}")
                 cleanupUpdate(app.packageName, app.latestAssetName)
+                try {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                } catch (clearEx: Exception) {
+                    logger.error("Failed to clear pending status on cancellation: ${clearEx.message}")
+                }
                 updateAppState(app.packageName, UpdateState.Idle)
                 throw e
             } catch (_: RateLimitException) {
                 logger.debug("Rate limited during update for ${app.packageName}")
+                try {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                } catch (clearEx: Exception) {
+                    logger.error("Failed to clear pending status on rate limit: ${clearEx.message}")
+                }
                 updateAppState(app.packageName, UpdateState.Idle)
                 _events.send(
                     AppsEvent.ShowError(getString(Res.string.rate_limit_exceeded))
@@ -299,6 +358,11 @@ class AppsViewModel(
             } catch (e: Exception) {
                 logger.error("Update failed for ${app.packageName}: ${e.message}")
                 cleanupUpdate(app.packageName, app.latestAssetName)
+                try {
+                    installedAppsRepository.updatePendingStatus(app.packageName, false)
+                } catch (clearEx: Exception) {
+                    logger.error("Failed to clear pending status on error: ${clearEx.message}")
+                }
                 updateAppState(
                     app.packageName,
                     UpdateState.Error(e.message ?: "Update failed")
@@ -468,30 +532,9 @@ class AppsViewModel(
         }
     }
 
-    private suspend fun updateAppInDatabase(
-        app: InstalledApp,
-        newVersion: String,
-        assetName: String,
-        assetUrl: String,
-        newVersionName: String,
-        newVersionCode: Long
-    ) {
-        try {
-            installedAppsRepository.updateAppVersion(
-                packageName = app.packageName,
-                newTag = newVersion,
-                newAssetName = assetName,
-                newAssetUrl = assetUrl,
-                newVersionName = newVersionName,
-                newVersionCode = newVersionCode
-            )
-
-            installedAppsRepository.updatePendingStatus(app.packageName, true)
-
-            logger.debug("Updated database for ${app.packageName} to tag $newVersion, versionName $newVersionName")
-        } catch (e: Exception) {
-            logger.error("Failed to update database: ${e.message}")
-        }
+    private suspend fun markPendingUpdate(app: InstalledApp) {
+        installedAppsRepository.updatePendingStatus(app.packageName, true)
+        logger.debug("Marked ${app.packageName} as pending install")
     }
 
     private suspend fun cleanupUpdate(packageName: String, assetName: String?) {

@@ -336,4 +336,14 @@
     <string name="bottom_nav_apps_title">অ্যাপস</string>
     <string name="bottom_nav_profile_title">প্রোফাইল</string>
 
+    <string name="forked_repository">ফর্ক</string>
+
+    <string name="category_stable">স্থিতিশীল</string>
+    <string name="category_pre_release">প্রি-রিলিজ</string>
+    <string name="category_all">সব</string>
+    <string name="select_version">ভার্সন নির্বাচন করুন</string>
+    <string name="pre_release_badge">প্রি-রিলিজ</string>
+    <string name="no_version_selected">কোনো ভার্সন নির্বাচিত নয়</string>
+    <string name="versions_title">ভার্সনসমূহ</string>
+
 </resources>

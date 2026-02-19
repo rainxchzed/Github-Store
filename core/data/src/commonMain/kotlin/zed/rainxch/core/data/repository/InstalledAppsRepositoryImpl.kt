@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import zed.rainxch.core.data.dto.ReleaseNetwork
-import zed.rainxch.core.data.dto.RepoByIdNetwork
+
 import zed.rainxch.core.data.local.db.AppDatabase
 import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
@@ -24,16 +24,13 @@ import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.InstalledApp
-import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
-import java.io.File
 
 class InstalledAppsRepositoryImpl(
     private val database: AppDatabase,
     private val installedAppsDao: InstalledAppDao,
     private val historyDao: UpdateHistoryDao,
     private val installer: Installer,
-    private val downloader: Downloader,
     private val httpClient: HttpClient
 ) : InstalledAppsRepository {
 
@@ -79,21 +76,6 @@ class InstalledAppsRepositoryImpl(
         installedAppsDao.deleteByPackageName(packageName)
     }
 
-    private suspend fun fetchDefaultBranch(owner: String, repo: String): String? {
-        return try {
-            val repoInfo = httpClient.executeRequest<RepoByIdNetwork> {
-                get("/repos/$owner/$repo") {
-                    header(HttpHeaders.Accept, "application/vnd.github+json")
-                }
-            }.getOrNull()
-
-            repoInfo?.defaultBranch
-        } catch (e: Exception) {
-            Logger.e { "Failed to fetch default branch for $owner/$repo: ${e.message}" }
-            null
-        }
-    }
-
     private suspend fun fetchLatestPublishedRelease(
         owner: String,
         repo: String
@@ -125,14 +107,6 @@ class InstalledAppsRepositoryImpl(
         val app = installedAppsDao.getAppByPackage(packageName) ?: return false
 
         try {
-            val branch = fetchDefaultBranch(app.repoOwner, app.repoName)
-
-            if (branch == null) {
-                Logger.w { "Could not determine default branch for ${app.repoOwner}/${app.repoName}" }
-                installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
-                return false
-            }
-
             val latestRelease = fetchLatestPublishedRelease(
                 owner = app.repoOwner,
                 repo = app.repoName
@@ -142,63 +116,16 @@ class InstalledAppsRepositoryImpl(
                 val normalizedInstalledTag = normalizeVersion(app.installedVersion)
                 val normalizedLatestTag = normalizeVersion(latestRelease.tagName)
 
-                if (normalizedInstalledTag == normalizedLatestTag) {
-                    installedAppsDao.updateVersionInfo(
-                        packageName = packageName,
-                        available = false,
-                        version = latestRelease.tagName,
-                        assetName = app.latestAssetName,
-                        assetUrl = app.latestAssetUrl,
-                        assetSize = app.latestAssetSize,
-                        releaseNotes = latestRelease.description ?: "",
-                        timestamp = System.currentTimeMillis(),
-                        latestVersionName = app.latestVersionName,
-                        latestVersionCode = app.latestVersionCode
-                    )
-                    return false
-                }
-
                 val installableAssets = latestRelease.assets.filter { asset ->
                     installer.isAssetInstallable(asset.name)
                 }
-
                 val primaryAsset = installer.choosePrimaryAsset(installableAssets)
 
-                var isUpdateAvailable = true
-                var latestVersionName: String? = null
-                var latestVersionCode: Long? = null
-
-                if (primaryAsset != null) {
-                    val tempAssetName = primaryAsset.name + ".tmp"
-                    downloader.download(primaryAsset.downloadUrl, tempAssetName).collect { }
-
-                    val tempPath = downloader.getDownloadedFilePath(tempAssetName)
-                    if (tempPath != null) {
-                        val latestInfo =
-                            installer.getApkInfoExtractor().extractPackageInfo(tempPath)
-                        File(tempPath).delete()
-
-                        if (latestInfo != null) {
-                            latestVersionName = latestInfo.versionName
-                            latestVersionCode = latestInfo.versionCode
-                            isUpdateAvailable = latestVersionCode > app.installedVersionCode
-                        } else {
-                            isUpdateAvailable = false
-                            latestVersionName = latestRelease.tagName
-                        }
-                    } else {
-                        isUpdateAvailable = false
-                        latestVersionName = latestRelease.tagName
-                    }
-                } else {
-                    isUpdateAvailable = false
-                    latestVersionName = latestRelease.tagName
-                }
+                val isUpdateAvailable = normalizedInstalledTag != normalizedLatestTag
 
                 Logger.d {
-                    "Update check for ${app.appName}: currentTag=${app.installedVersion}, latestTag=${latestRelease.tagName}, " +
-                            "currentCode=${app.installedVersionCode}, latestCode=$latestVersionCode, isUpdate=$isUpdateAvailable, " +
-                            "primaryAsset=${primaryAsset?.name}"
+                    "Update check for ${app.appName}: installedTag=${app.installedVersion}, " +
+                            "latestTag=${latestRelease.tagName}, isUpdate=$isUpdateAvailable"
                 }
 
                 installedAppsDao.updateVersionInfo(
@@ -210,11 +137,13 @@ class InstalledAppsRepositoryImpl(
                     assetSize = primaryAsset?.size,
                     releaseNotes = latestRelease.description ?: "",
                     timestamp = System.currentTimeMillis(),
-                    latestVersionName = latestVersionName,
-                    latestVersionCode = latestVersionCode
+                    latestVersionName = latestRelease.tagName,
+                    latestVersionCode = null
                 )
 
                 return isUpdateAvailable
+            } else {
+                installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
             }
         } catch (e: Exception) {
             Logger.e { "Failed to check updates for $packageName: ${e.message}" }

@@ -10,5 +10,6 @@ data class GithubRelease(
     val assets: List<GithubAsset>,
     val tarballUrl: String,
     val zipballUrl: String,
-    val htmlUrl: String
+    val htmlUrl: String,
+    val isPrerelease: Boolean = false
 )

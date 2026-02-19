@@ -22,6 +22,8 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.FavoriteRepo
+import zed.rainxch.core.domain.model.GithubAsset
+import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.InstallSource
 import zed.rainxch.core.domain.model.InstalledApp
 import zed.rainxch.core.domain.model.Platform
@@ -34,6 +36,7 @@ import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.BrowserHelper
+import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.details.presentation.model.InstallLogItem
@@ -81,6 +84,16 @@ class DetailsViewModel(
     val events = _events.receiveAsFlow()
 
     private val rateLimited = AtomicBoolean(false)
+
+    private fun recomputeAssetsForRelease(
+        release: GithubRelease?
+    ): Pair<List<GithubAsset>, GithubAsset?> {
+        val installable = release?.assets?.filter { asset ->
+            installer.isAssetInstallable(asset.name)
+        }.orEmpty()
+        val primary = installer.choosePrimaryAsset(installable)
+        return installable to primary
+    }
 
     @OptIn(ExperimentalTime::class)
     private fun loadInitial() {
@@ -134,17 +147,17 @@ class DetailsViewModel(
                     isStarred = isStarred == true,
                 )
 
-                val latestReleaseDeferred = async {
+                val allReleasesDeferred = async {
                     try {
-                        detailsRepository.getLatestPublishedRelease(
+                        detailsRepository.getAllReleases(
                             owner = owner, repo = name, defaultBranch = repo.defaultBranch
                         )
                     } catch (_: RateLimitException) {
                         rateLimited.set(true)
-                        null
+                        emptyList()
                     } catch (t: Throwable) {
-                        logger.warn("Failed to load latest release: ${t.message}")
-                        null
+                        logger.warn("Failed to load releases: ${t.message}")
+                        emptyList()
                     }
                 }
 
@@ -217,7 +230,7 @@ class DetailsViewModel(
                 val isObtainiumEnabled = platform == Platform.ANDROID
                 val isAppManagerEnabled = platform == Platform.ANDROID
 
-                val latestRelease = latestReleaseDeferred.await()
+                val allReleases = allReleasesDeferred.await()
                 val stats = statsDeferred.await()
                 val readme = readmeDeferred.await()
                 val userProfile = userProfileDeferred.await()
@@ -228,11 +241,10 @@ class DetailsViewModel(
                     return@launch
                 }
 
-                val installable = latestRelease?.assets?.filter { asset ->
-                    installer.isAssetInstallable(asset.name)
-                }.orEmpty()
+                val selectedRelease = allReleases.firstOrNull { !it.isPrerelease }
+                    ?: allReleases.firstOrNull()
 
-                val primary = installer.choosePrimaryAsset(installable)
+                val (installable, primary) = recomputeAssetsForRelease(selectedRelease)
 
                 val isObtainiumAvailable = installer.isObtainiumInstalled()
                 val isAppManagerAvailable = installer.isAppManagerInstalled()
@@ -243,7 +255,9 @@ class DetailsViewModel(
                     isLoading = false,
                     errorMessage = null,
                     repository = repo,
-                    latestRelease = latestRelease,
+                    allReleases = allReleases,
+                    selectedRelease = selectedRelease,
+                    selectedReleaseCategory = ReleaseCategory.STABLE,
                     stats = stats,
                     readmeMarkdown = readme?.first,
                     readmeLanguage = readme?.second,
@@ -283,7 +297,7 @@ class DetailsViewModel(
 
             DetailsAction.InstallPrimary -> {
                 val primary = _state.value.primaryAsset
-                val release = _state.value.latestRelease
+                val release = _state.value.selectedRelease
                 if (primary != null && release != null) {
                     installAsset(
                         downloadUrl = primary.downloadUrl,
@@ -295,7 +309,7 @@ class DetailsViewModel(
             }
 
             is DetailsAction.DownloadAsset -> {
-                val release = _state.value.latestRelease
+                val release = _state.value.selectedRelease
                 downloadAsset(
                     downloadUrl = action.downloadUrl,
                     assetName = action.assetName,
@@ -318,7 +332,7 @@ class DetailsViewModel(
                             appendLog(
                                 assetName = assetName,
                                 size = 0L,
-                                tag = _state.value.latestRelease?.tagName ?: "",
+                                tag = _state.value.selectedRelease?.tagName ?: "",
                                 result = LogResult.Cancelled
                             )
                         } catch (t: Throwable) {
@@ -339,7 +353,7 @@ class DetailsViewModel(
                 viewModelScope.launch {
                     try {
                         val repo = _state.value.repository ?: return@launch
-                        val latestRelease = _state.value.latestRelease
+                        val selectedRelease = _state.value.selectedRelease
 
                         val favoriteRepo = FavoriteRepo(
                             repoId = repo.id,
@@ -349,8 +363,8 @@ class DetailsViewModel(
                             repoDescription = repo.description,
                             primaryLanguage = repo.language,
                             repoUrl = repo.htmlUrl,
-                            latestVersion = latestRelease?.tagName,
-                            latestReleaseUrl = latestRelease?.htmlUrl,
+                            latestVersion = selectedRelease?.tagName,
+                            latestReleaseUrl = selectedRelease?.htmlUrl,
                             addedAt = System.now().toEpochMilliseconds(),
                             lastSyncedAt = System.now().toEpochMilliseconds()
                         )
@@ -400,9 +414,9 @@ class DetailsViewModel(
 
             DetailsAction.UpdateApp -> {
                 val installedApp = _state.value.installedApp
-                val latestRelease = _state.value.latestRelease
+                val selectedRelease = _state.value.selectedRelease
 
-                if (installedApp != null && latestRelease != null && installedApp.isUpdateAvailable) {
+                if (installedApp != null && selectedRelease != null && installedApp.isUpdateAvailable) {
                     val latestAsset = _state.value.installableAssets.firstOrNull {
                         it.name == installedApp.latestAssetName
                     } ?: _state.value.primaryAsset
@@ -412,7 +426,7 @@ class DetailsViewModel(
                             downloadUrl = latestAsset.downloadUrl,
                             assetName = latestAsset.name,
                             sizeBytes = latestAsset.size,
-                            releaseTag = latestRelease.tagName,
+                            releaseTag = selectedRelease.tagName,
                             isUpdate = true
                         )
                     }
@@ -455,7 +469,7 @@ class DetailsViewModel(
                 viewModelScope.launch {
                     try {
                         val primary = _state.value.primaryAsset
-                        val release = _state.value.latestRelease
+                        val release = _state.value.selectedRelease
 
                         if (primary != null && release != null) {
                             currentAssetName = primary.name
@@ -523,7 +537,7 @@ class DetailsViewModel(
                         currentAssetName = null
 
                         _state.value.primaryAsset?.let { asset ->
-                            _state.value.latestRelease?.let { release ->
+                            _state.value.selectedRelease?.let { release ->
                                 appendLog(
                                     assetName = asset.name,
                                     size = asset.size,
@@ -542,6 +556,46 @@ class DetailsViewModel(
             DetailsAction.OnToggleInstallDropdown -> {
                 _state.update {
                     it.copy(isInstallDropdownExpanded = !it.isInstallDropdownExpanded)
+                }
+            }
+
+            is DetailsAction.SelectReleaseCategory -> {
+                val newCategory = action.category
+                val filtered = when (newCategory) {
+                    ReleaseCategory.STABLE -> _state.value.allReleases.filter { !it.isPrerelease }
+                    ReleaseCategory.PRE_RELEASE -> _state.value.allReleases.filter { it.isPrerelease }
+                    ReleaseCategory.ALL -> _state.value.allReleases
+                }
+                val newSelected = filtered.firstOrNull()
+                val (installable, primary) = recomputeAssetsForRelease(newSelected)
+
+                _state.update {
+                    it.copy(
+                        selectedReleaseCategory = newCategory,
+                        selectedRelease = newSelected,
+                        installableAssets = installable,
+                        primaryAsset = primary
+                    )
+                }
+            }
+
+            is DetailsAction.SelectRelease -> {
+                val release = action.release
+                val (installable, primary) = recomputeAssetsForRelease(release)
+
+                _state.update {
+                    it.copy(
+                        selectedRelease = release,
+                        installableAssets = installable,
+                        primaryAsset = primary,
+                        isVersionPickerVisible = false
+                    )
+                }
+            }
+
+            DetailsAction.ToggleVersionPicker -> {
+                _state.update {
+                    it.copy(isVersionPickerVisible = !it.isVersionPickerVisible)
                 }
             }
 

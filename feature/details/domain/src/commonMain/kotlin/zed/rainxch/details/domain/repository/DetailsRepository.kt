@@ -20,6 +20,12 @@ interface DetailsRepository {
         defaultBranch: String
     ): GithubRelease?
 
+    suspend fun getAllReleases(
+        owner: String,
+        repo: String,
+        defaultBranch: String
+    ): List<GithubRelease>
+
     suspend fun getReadme(
         owner: String,
         repo: String,

@@ -6,6 +6,7 @@ import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.GithubAsset
 import zed.rainxch.core.domain.model.GithubUserProfile
 import zed.rainxch.core.domain.model.InstalledApp
+import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.details.presentation.model.InstallLogItem
@@ -15,10 +16,14 @@ data class DetailsState(
     val errorMessage: String? = null,
 
     val repository: GithubRepoSummary? = null,
-    val latestRelease: GithubRelease? = null,
+    val selectedRelease: GithubRelease? = null,
     val installableAssets: List<GithubAsset> = emptyList(),
     val primaryAsset: GithubAsset? = null,
     val userProfile: GithubUserProfile? = null,
+
+    val allReleases: List<GithubRelease> = emptyList(),
+    val selectedReleaseCategory: ReleaseCategory = ReleaseCategory.STABLE,
+    val isVersionPickerVisible: Boolean = false,
 
     val stats: RepoStats? = null,
     val readmeMarkdown: String? = null,
@@ -46,4 +51,11 @@ data class DetailsState(
     val installedApp: InstalledApp? = null,
     val isFavourite: Boolean = false,
     val isStarred: Boolean = false,
-)
+) {
+    val filteredReleases: List<GithubRelease>
+        get() = when (selectedReleaseCategory) {
+            ReleaseCategory.STABLE -> allReleases.filter { !it.isPrerelease }
+            ReleaseCategory.PRE_RELEASE -> allReleases.filter { it.isPrerelease }
+            ReleaseCategory.ALL -> allReleases
+        }
+}

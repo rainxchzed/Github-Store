@@ -333,4 +333,14 @@
     <string name="bottom_nav_search_title">खोज</string>
     <string name="bottom_nav_apps_title">ऐप्स</string>
     <string name="bottom_nav_profile_title">प्रोफ़ाइल</string>
+
+    <string name="forked_repository">फोर्क</string>
+
+    <string name="category_stable">स्थिर</string>
+    <string name="category_pre_release">प्री-रिलीज़</string>
+    <string name="category_all">सभी</string>
+    <string name="select_version">संस्करण चुनें</string>
+    <string name="pre_release_badge">प्री-रिलीज़</string>
+    <string name="no_version_selected">कोई संस्करण चयनित नहीं</string>
+    <string name="versions_title">संस्करण</string>
 </resources>

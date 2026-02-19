@@ -299,4 +299,14 @@
     <string name="bottom_nav_apps_title">Aplikacje</string>
     <string name="bottom_nav_profile_title">Profil</string>
 
+    <string name="forked_repository">Fork</string>
+
+    <string name="category_stable">Stabilna</string>
+    <string name="category_pre_release">Wersja przedpremierowa</string>
+    <string name="category_all">Wszystkie</string>
+    <string name="select_version">Wybierz wersję</string>
+    <string name="pre_release_badge">Przedpremierowa</string>
+    <string name="no_version_selected">Nie wybrano wersji</string>
+    <string name="versions_title">Wersje</string>
+
 </resources>

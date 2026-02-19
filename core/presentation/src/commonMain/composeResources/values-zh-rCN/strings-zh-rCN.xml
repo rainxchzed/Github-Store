@@ -284,4 +284,14 @@
     <string name="bottom_nav_apps_title">应用</string>
     <string name="bottom_nav_profile_title">个人资料</string>
 
+    <string name="forked_repository">分叉</string>
+
+    <string name="category_stable">稳定版</string>
+    <string name="category_pre_release">预发布</string>
+    <string name="category_all">全部</string>
+    <string name="select_version">选择版本</string>
+    <string name="pre_release_badge">预发布</string>
+    <string name="no_version_selected">未选择版本</string>
+    <string name="versions_title">版本</string>
+
 </resources>

@@ -1,6 +1,8 @@
 package zed.rainxch.details.presentation
 
 import org.jetbrains.compose.resources.StringResource
+import zed.rainxch.core.domain.model.GithubRelease
+import zed.rainxch.details.domain.model.ReleaseCategory
 
 sealed interface DetailsAction {
     data object Retry : DetailsAction
@@ -28,4 +30,8 @@ sealed interface DetailsAction {
     data object UpdateApp : DetailsAction
 
     data class OnMessage(val messageText: StringResource) : DetailsAction
+
+    data class SelectReleaseCategory(val category: ReleaseCategory) : DetailsAction
+    data class SelectRelease(val release: GithubRelease) : DetailsAction
+    data object ToggleVersionPicker : DetailsAction
 }

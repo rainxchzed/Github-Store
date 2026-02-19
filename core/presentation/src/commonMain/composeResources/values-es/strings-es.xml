@@ -283,4 +283,14 @@
     <string name="bottom_nav_apps_title">Aplicaciones</string>
     <string name="bottom_nav_profile_title">Perfil</string>
 
+    <string name="forked_repository">Bifurcar</string>
+
+    <string name="category_stable">Estable</string>
+    <string name="category_pre_release">Prelanzamiento</string>
+    <string name="category_all">Todos</string>
+    <string name="select_version">Seleccionar versión</string>
+    <string name="pre_release_badge">Prelanzamiento</string>
+    <string name="no_version_selected">Ninguna versión seleccionada</string>
+    <string name="versions_title">Versiones</string>
+
 </resources>

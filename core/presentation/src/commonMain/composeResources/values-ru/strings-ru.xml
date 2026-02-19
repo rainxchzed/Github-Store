@@ -301,4 +301,14 @@
     <string name="bottom_nav_apps_title">Приложения</string>
     <string name="bottom_nav_profile_title">Профиль</string>
 
+    <string name="forked_repository">Форк</string>
+
+    <string name="category_stable">Стабильная</string>
+    <string name="category_pre_release">Предварительный релиз</string>
+    <string name="category_all">Все</string>
+    <string name="select_version">Выбрать версию</string>
+    <string name="pre_release_badge">Предрелиз</string>
+    <string name="no_version_selected">Версия не выбрана</string>
+    <string name="versions_title">Версии</string>
+
 </resources>

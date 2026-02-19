@@ -91,21 +91,50 @@ class DetailsRepositoryImpl(
             .maxByOrNull { it.publishedAt ?: it.createdAt ?: "" }
             ?: return null
 
-        val processedLatestRelease = latest.copy(
-            body = latest.body?.replace("<details>", "")
-                ?.replace("</details>", "")
-                ?.replace("<summary>", "")
-                ?.replace("</summary>", "")
-                ?.replace("\r\n", "\n")
-                ?.let { rawMarkdown ->
-                    preprocessMarkdown(
-                        markdown = rawMarkdown,
-                        baseUrl = "https://raw.githubusercontent.com/$owner/$repo/${defaultBranch}/"
-                    )
-                }
-        )
+        return latest.copy(
+            body = processReleaseBody(latest.body, owner, repo, defaultBranch)
+        ).toDomain()
+    }
 
-        return processedLatestRelease.toDomain()
+    override suspend fun getAllReleases(
+        owner: String,
+        repo: String,
+        defaultBranch: String
+    ): List<GithubRelease> {
+        val releases = httpClient.executeRequest<List<ReleaseNetwork>> {
+            get("/repos/$owner/$repo/releases") {
+                header(HttpHeaders.Accept, "application/vnd.github+json")
+                parameter("per_page", 30)
+            }
+        }.getOrNull() ?: return emptyList()
+
+        return releases
+            .filter { it.draft != true }
+            .map { release ->
+                release.copy(
+                    body = processReleaseBody(release.body, owner, repo, defaultBranch)
+                ).toDomain()
+            }
+            .sortedByDescending { it.publishedAt }
+    }
+
+    private fun processReleaseBody(
+        body: String?,
+        owner: String,
+        repo: String,
+        defaultBranch: String
+    ): String? {
+        return body?.replace("<details>", "")
+            ?.replace("</details>", "")
+            ?.replace("<summary>", "")
+            ?.replace("</summary>", "")
+            ?.replace("\r\n", "\n")
+            ?.let { rawMarkdown ->
+                preprocessMarkdown(
+                    markdown = rawMarkdown,
+                    baseUrl = "https://raw.githubusercontent.com/$owner/$repo/${defaultBranch}/"
+                )
+            }
     }
 
 

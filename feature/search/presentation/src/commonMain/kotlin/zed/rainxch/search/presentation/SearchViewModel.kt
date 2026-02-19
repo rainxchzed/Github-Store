@@ -303,7 +303,6 @@ class SearchViewModel(
                         )
                     }
                 } else if (action.query.trim().length < MIN_QUERY_LENGTH) {
-                    // Don't search yet — query too short, clear previous results
                     currentSearchJob?.cancel()
                     _state.update {
                         it.copy(

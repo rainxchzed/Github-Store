@@ -333,4 +333,14 @@
     <string name="bottom_nav_apps_title">Uygulamalar</string>
     <string name="bottom_nav_profile_title">Profil</string>
 
+    <string name="forked_repository">Çatalla</string>
+
+    <string name="category_stable">Kararlı</string>
+    <string name="category_pre_release">Ön sürüm</string>
+    <string name="category_all">Tümü</string>
+    <string name="select_version">Sürüm seç</string>
+    <string name="pre_release_badge">Ön sürüm</string>
+    <string name="no_version_selected">Sürüm seçilmedi</string>
+    <string name="versions_title">Sürümler</string>
+
 </resources>

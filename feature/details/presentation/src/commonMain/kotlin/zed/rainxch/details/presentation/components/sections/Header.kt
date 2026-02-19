@@ -25,6 +25,7 @@ import zed.rainxch.details.presentation.DetailsAction
 import zed.rainxch.details.presentation.DetailsState
 import zed.rainxch.details.presentation.components.AppHeader
 import zed.rainxch.details.presentation.components.SmartInstallButton
+import zed.rainxch.details.presentation.components.VersionPicker
 import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
 
 fun LazyListScope.header(
@@ -37,12 +38,24 @@ fun LazyListScope.header(
         if (state.repository != null) {
             AppHeader(
                 author = state.userProfile,
-                release = state.latestRelease,
+                release = state.selectedRelease,
                 repository = state.repository,
                 installedApp = state.installedApp,
                 downloadStage = state.downloadStage,
                 downloadProgress = state.downloadProgressPercent,
                 modifier = Modifier.liquefiable(liquidState)
+            )
+        }
+    }
+
+    if (state.allReleases.isNotEmpty()) {
+        item {
+            VersionPicker(
+                selectedRelease = state.selectedRelease,
+                selectedCategory = state.selectedReleaseCategory,
+                filteredReleases = state.filteredReleases,
+                isPickerVisible = state.isVersionPickerVisible,
+                onAction = onAction
             )
         }
     }

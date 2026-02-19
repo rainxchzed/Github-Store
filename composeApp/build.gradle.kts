@@ -122,7 +122,6 @@ compose.desktop {
                 iconFile.set(project.file("logo/app_icon.icns"))
                 bundleID = "zed.rainxch.githubstore"
 
-                // Register githubstore:// URI scheme so macOS opens the app for deep links
                 infoPlist {
                     extraKeysRawXml = """
                         <key>CFBundleURLTypes</key>

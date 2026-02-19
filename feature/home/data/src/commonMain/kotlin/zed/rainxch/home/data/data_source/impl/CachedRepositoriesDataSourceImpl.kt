@@ -65,7 +65,6 @@ class CachedRepositoriesDataSourceImpl(
     private suspend fun fetchCachedReposForCategory(
         category: HomeCategory
     ): CachedRepoResponse? {
-        // Check in-memory cache first
         val cached = cacheMutex.withLock { memoryCache[category] }
         if (cached != null) {
             val age = Clock.System.now() - cached.fetchedAt
@@ -106,7 +105,6 @@ class CachedRepositoriesDataSourceImpl(
                         val responseText = response.bodyAsText()
                         val parsed = json.decodeFromString<CachedRepoResponse>(responseText)
 
-                        // Store in memory cache
                         cacheMutex.withLock {
                             memoryCache[category] = CacheEntry(
                                 data = parsed,

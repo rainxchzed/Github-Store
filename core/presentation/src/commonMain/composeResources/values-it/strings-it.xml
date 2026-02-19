@@ -332,4 +332,14 @@
     <string name="bottom_nav_apps_title">App</string>
     <string name="bottom_nav_profile_title">Profilo</string>
 
+    <string name="forked_repository">Fork</string>
+
+    <string name="category_stable">Stabile</string>
+    <string name="category_pre_release">Pre-release</string>
+    <string name="category_all">Tutte</string>
+    <string name="select_version">Seleziona versione</string>
+    <string name="pre_release_badge">Pre-release</string>
+    <string name="no_version_selected">Nessuna versione selezionata</string>
+    <string name="versions_title">Versioni</string>
+
 </resources>

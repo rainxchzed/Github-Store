@@ -169,6 +169,7 @@
     <string name="updating">Updating</string>
     <string name="verifying">Verifying</string>
     <string name="installing">Installing</string>
+    <string name="pending_install">Pending install</string>
 
     <!-- Install helpers -->
     <string name="open_in_obtainium">Open in Obtainium</string>
@@ -329,10 +330,28 @@
     <string name="released_days_ago">Released %1$d day(s) ago</string>
     <string name="released_on_date">Released on %1$s</string>
 
-    <string name="forked_repository">Fork</string>
-
     <string name="bottom_nav_home_title">Home</string>
     <string name="bottom_nav_search_title">Search</string>
     <string name="bottom_nav_apps_title">Apps</string>
     <string name="bottom_nav_profile_title">Profile</string>
+
+    <string name="forked_repository">Fork</string>
+
+    <!-- Version picker -->
+    <string name="category_stable">Stable</string>
+    <string name="category_pre_release">Pre-release</string>
+    <string name="category_all">All</string>
+    <string name="select_version">Select version</string>
+    <string name="pre_release_badge">Pre-release</string>
+    <string name="latest_badge">Latest</string>
+    <string name="no_version_selected">No version</string>
+    <string name="versions_title">Versions</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Last checked: %1$s</string>
+    <string name="last_checked_never">Never checked</string>
+    <string name="last_checked_just_now">just now</string>
+    <string name="last_checked_minutes_ago">%1$d min ago</string>
+    <string name="last_checked_hours_ago">%1$d h ago</string>
+    <string name="checking_for_updates">Checking for updates…</string>
 </resources>

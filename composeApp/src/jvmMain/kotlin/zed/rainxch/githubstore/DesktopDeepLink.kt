@@ -8,18 +8,6 @@ import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 
-/**
- * Handles desktop deep link registration and single-instance forwarding.
- *
- * - **Windows**: Registers `githubstore://` in HKCU registry on first launch.
- *   URI is received as a CLI argument (`args[0]`).
- * - **macOS**: URI scheme is registered via Info.plist in the packaged .app.
- *   URI is received via `Desktop.setOpenURIHandler`.
- * - **Linux**: Registers `githubstore://` via a `.desktop` file + `xdg-mime` on first launch.
- *   URI is received as a CLI argument (`args[0]`).
- * - **Single-instance**: Uses a local TCP socket to forward URIs from
- *   a second instance to the already-running primary instance.
- */
 object DesktopDeepLink {
 
     private const val SINGLE_INSTANCE_PORT = 47632
@@ -69,7 +57,6 @@ object DesktopDeepLink {
         val appsDir = File(System.getProperty("user.home"), ".local/share/applications")
         val desktopFile = File(appsDir, "$DESKTOP_FILE_NAME.desktop")
 
-        // Already registered
         if (desktopFile.exists()) return
 
         val exePath = resolveExePath() ?: return
@@ -88,7 +75,6 @@ object DesktopDeepLink {
             """.trimIndent()
         )
 
-        // Register as the default handler for githubstore:// URIs
         runCommand("xdg-mime", "default", "$DESKTOP_FILE_NAME.desktop", "x-scheme-handler/$SCHEME")
     }
 

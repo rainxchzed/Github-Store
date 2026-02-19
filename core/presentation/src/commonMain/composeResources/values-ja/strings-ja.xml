@@ -283,4 +283,14 @@
     <string name="bottom_nav_apps_title">アプリ</string>
     <string name="bottom_nav_profile_title">プロフィール</string>
 
+    <string name="forked_repository">フォーク</string>
+
+    <string name="category_stable">安定版</string>
+    <string name="category_pre_release">プレリリース</string>
+    <string name="category_all">すべて</string>
+    <string name="select_version">バージョンを選択</string>
+    <string name="pre_release_badge">プレリリース</string>
+    <string name="no_version_selected">バージョン未選択</string>
+    <string name="versions_title">バージョン</string>
+
 </resources>

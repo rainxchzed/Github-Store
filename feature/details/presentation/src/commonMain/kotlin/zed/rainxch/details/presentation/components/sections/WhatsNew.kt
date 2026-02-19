@@ -29,7 +29,7 @@ import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
 import zed.rainxch.details.presentation.utils.rememberMarkdownTypography
 
-fun LazyListScope.whatsNew(latestRelease: GithubRelease) {
+fun LazyListScope.whatsNew(release: GithubRelease) {
     item {
         val liquidState = LocalTopbarLiquidState.current
 
@@ -66,14 +66,14 @@ fun LazyListScope.whatsNew(latestRelease: GithubRelease) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        latestRelease.tagName,
+                        release.tagName,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.liquefiable(liquidState)
                     )
 
                     Text(
-                        latestRelease.publishedAt.take(10),
+                        release.publishedAt.take(10),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.liquefiable(liquidState)
@@ -87,7 +87,7 @@ fun LazyListScope.whatsNew(latestRelease: GithubRelease) {
                 val flavour = remember { GFMFlavourDescriptor() }
 
                 Markdown(
-                    content = latestRelease.description ?: stringResource(Res.string.no_release_notes),
+                    content = release.description ?: stringResource(Res.string.no_release_notes),
                     colors = colors,
                     typography = typography,
                     flavour = flavour,
