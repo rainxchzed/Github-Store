@@ -2,6 +2,7 @@
 
 package zed.rainxch.apps.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -382,14 +383,15 @@ fun AppItemCard(
     val app = appItem.installedApp
 
     Card(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onRepoClick
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onRepoClick() },
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CoilImage(

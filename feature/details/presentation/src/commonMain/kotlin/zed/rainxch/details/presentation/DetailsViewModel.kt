@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -271,6 +272,8 @@ class DetailsViewModel(
                     isAppManagerEnabled = isAppManagerEnabled,
                     installedApp = installedApp,
                 )
+
+                observeInstalledApp(repo.id)
             } catch (e: RateLimitException) {
                 logger.error("Rate limited: ${e.message}")
                 _state.value = _state.value.copy(
@@ -284,6 +287,16 @@ class DetailsViewModel(
                     errorMessage = t.message ?: "Failed to load details"
                 )
             }
+        }
+    }
+
+    private fun observeInstalledApp(repoId: Long) {
+        viewModelScope.launch {
+            installedAppsRepository.getAppByRepoIdAsFlow(repoId)
+                .distinctUntilChanged()
+                .collect { app ->
+                    _state.update { it.copy(installedApp = app) }
+                }
         }
     }
 

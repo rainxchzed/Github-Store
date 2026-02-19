@@ -65,6 +65,9 @@ class InstalledAppsRepositoryImpl(
     override suspend fun getAppByRepoId(repoId: Long): InstalledApp? =
         installedAppsDao.getAppByRepoId(repoId)?.toDomain()
 
+    override fun getAppByRepoIdAsFlow(repoId: Long): Flow<InstalledApp?> =
+        installedAppsDao.getAppByRepoIdAsFlow(repoId).map { it?.toDomain() }
+
     override suspend fun isAppInstalled(repoId: Long): Boolean =
         installedAppsDao.getAppByRepoId(repoId) != null
 

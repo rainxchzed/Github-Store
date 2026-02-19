@@ -50,7 +50,6 @@ class AndroidDownloader(
         val request = DownloadManager.Request(url.toUri()).apply {
             setTitle(safeName)
             setDescription("Downloading asset")
-            setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN)
 
             setDestinationInExternalFilesDir(context, null, "ghs_downloads/$safeName")
 
