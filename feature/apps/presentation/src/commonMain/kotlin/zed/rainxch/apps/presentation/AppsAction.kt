@@ -11,5 +11,6 @@ sealed interface AppsAction {
     data object OnUpdateAll : AppsAction
     data object OnCancelUpdateAll : AppsAction
     data object OnCheckAllForUpdates : AppsAction
+    data object OnRefresh : AppsAction
     data class OnNavigateToRepo(val repoId: Long) : AppsAction
 }

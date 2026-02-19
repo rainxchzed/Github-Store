@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -162,111 +163,147 @@ fun AppsScreen(
         },
         modifier = Modifier.liquefiable(liquidState)
     ) { innerPadding ->
-        Column(
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onAction(AppsAction.OnRefresh) },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            TextField(
-                value = state.searchQuery,
-                onValueChange = { onAction(AppsAction.OnSearchChange(it)) },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
-                },
-                placeholder = { Text(stringResource(Res.string.search_your_apps)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = CircleShape,
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                )
-            )
-
-            val hasUpdates = state.apps.any { it.installedApp.isUpdateAvailable }
-            if (hasUpdates && !state.isUpdatingAll) {
-                Button(
-                    onClick = { onAction(AppsAction.OnUpdateAll) },
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TextField(
+                    value = state.searchQuery,
+                    onValueChange = { onAction(AppsAction.OnSearchChange(it)) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null)
+                    },
+                    placeholder = { Text(stringResource(Res.string.search_your_apps)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    enabled = state.updateAllButtonEnabled
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Update,
-                        contentDescription = null
+                    shape = CircleShape,
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     )
-
-                    Spacer(Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(Res.string.update_all)
-                    )
-                }
-            }
-
-            if (state.isUpdatingAll && state.updateAllProgress != null) {
-                UpdateAllProgressCard(
-                    progress = state.updateAllProgress,
-                    onCancel = { onAction(AppsAction.OnCancelUpdateAll) }
                 )
-            }
 
-            val filteredApps = remember(state.apps, state.searchQuery) {
-                if (state.searchQuery.isBlank()) {
-                    state.apps
-                } else {
-                    state.apps.filter { appItem ->
-                        appItem.installedApp.appName.contains(
-                            state.searchQuery,
-                            ignoreCase = true
-                        ) ||
-                                appItem.installedApp.repoOwner.contains(
-                                    state.searchQuery,
-                                    ignoreCase = true
+                if (state.isCheckingForUpdates) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(14.dp),
+                            strokeWidth = 2.dp
+                        )
+                        Text(
+                            text = stringResource(Res.string.checking_for_updates),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else if (state.lastCheckedTimestamp != null) {
+                    Text(
+                        text = stringResource(
+                            Res.string.last_checked,
+                            formatLastChecked(state.lastCheckedTimestamp)
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                }
+
+                val hasUpdates = state.apps.any { it.installedApp.isUpdateAvailable }
+                if (hasUpdates && !state.isUpdatingAll) {
+                    Button(
+                        onClick = { onAction(AppsAction.OnUpdateAll) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        enabled = state.updateAllButtonEnabled
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Update,
+                            contentDescription = null
+                        )
+
+                        Spacer(Modifier.width(8.dp))
+
+                        Text(
+                            text = stringResource(Res.string.update_all)
+                        )
+                    }
+                }
+
+                if (state.isUpdatingAll && state.updateAllProgress != null) {
+                    UpdateAllProgressCard(
+                        progress = state.updateAllProgress,
+                        onCancel = { onAction(AppsAction.OnCancelUpdateAll) }
+                    )
+                }
+
+                val filteredApps = remember(state.apps, state.searchQuery) {
+                    if (state.searchQuery.isBlank()) {
+                        state.apps
+                    } else {
+                        state.apps.filter { appItem ->
+                            appItem.installedApp.appName.contains(
+                                state.searchQuery,
+                                ignoreCase = true
+                            ) ||
+                                    appItem.installedApp.repoOwner.contains(
+                                        state.searchQuery,
+                                        ignoreCase = true
+                                    )
+                        }
+                    }
+                }
+
+                when {
+                    state.isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    filteredApps.isEmpty() -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(stringResource(Res.string.no_apps_found))
+                        }
+                    }
+
+                    else -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(
+                                items = filteredApps,
+                                key = { it.installedApp.packageName }
+                            ) { appItem ->
+                                AppItemCard(
+                                    appItem = appItem,
+                                    onOpenClick = { onAction(AppsAction.OnOpenApp(appItem.installedApp)) },
+                                    onUpdateClick = { onAction(AppsAction.OnUpdateApp(appItem.installedApp)) },
+                                    onCancelClick = { onAction(AppsAction.OnCancelUpdate(appItem.installedApp.packageName)) },
+                                    onRepoClick = { onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId)) },
+                                    modifier = Modifier.liquefiable(liquidState)
                                 )
-                    }
-                }
-            }
-
-            when {
-                state.isLoading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                filteredApps.isEmpty() -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(stringResource(Res.string.no_apps_found))
-                    }
-                }
-
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = filteredApps,
-                            key = { it.installedApp.packageName }
-                        ) { appItem ->
-                            AppItemCard(
-                                appItem = appItem,
-                                onOpenClick = { onAction(AppsAction.OnOpenApp(appItem.installedApp)) },
-                                onUpdateClick = { onAction(AppsAction.OnUpdateApp(appItem.installedApp)) },
-                                onCancelClick = { onAction(AppsAction.OnCancelUpdate(appItem.installedApp.packageName)) },
-                                onRepoClick = { onAction(AppsAction.OnNavigateToRepo(appItem.installedApp.repoId)) },
-                                modifier = Modifier.liquefiable(liquidState)
-                            )
+                            }
                         }
                     }
                 }
@@ -576,6 +613,20 @@ fun AppItemCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun formatLastChecked(timestamp: Long): String {
+    val now = System.currentTimeMillis()
+    val diff = now - timestamp
+    val minutes = diff / (60 * 1000)
+    val hours = diff / (60 * 60 * 1000)
+
+    return when {
+        minutes < 1 -> stringResource(Res.string.last_checked_just_now)
+        minutes < 60 -> stringResource(Res.string.last_checked_minutes_ago, minutes.toInt())
+        else -> stringResource(Res.string.last_checked_hours_ago, hours.toInt())
     }
 }
 

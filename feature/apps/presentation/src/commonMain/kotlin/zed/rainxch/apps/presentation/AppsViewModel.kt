@@ -38,9 +38,14 @@ class AppsViewModel(
     private val logger: GitHubStoreLogger
 ) : ViewModel() {
 
+    companion object {
+        private const val UPDATE_CHECK_COOLDOWN_MS = 30 * 60 * 1000L // 30 minutes
+    }
+
     private var hasLoadedInitialData = false
     private val activeUpdates = mutableMapOf<String, Job>()
     private var updateAllJob: Job? = null
+    private var lastAutoCheckTimestamp: Long = 0L
 
     private val _state = MutableStateFlow(AppsState())
     val state = _state
@@ -98,18 +103,50 @@ class AppsViewModel(
                     it.copy(isLoading = false)
                 }
             }
+
+            autoCheckForUpdatesIfNeeded()
         }
     }
 
+    private fun autoCheckForUpdatesIfNeeded() {
+        val now = System.currentTimeMillis()
+        if (now - lastAutoCheckTimestamp < UPDATE_CHECK_COOLDOWN_MS) {
+            logger.debug("Skipping auto-check: last check was ${(now - lastAutoCheckTimestamp) / 1000}s ago")
+            return
+        }
+        checkAllForUpdates()
+    }
 
     private fun checkAllForUpdates() {
         viewModelScope.launch {
+            _state.update { it.copy(isCheckingForUpdates = true) }
             try {
                 syncInstalledAppsUseCase()
-
                 installedAppsRepository.checkAllForUpdates()
+                val now = System.currentTimeMillis()
+                lastAutoCheckTimestamp = now
+                _state.update { it.copy(lastCheckedTimestamp = now) }
             } catch (e: Exception) {
                 logger.error("Check all for updates failed: ${e.message}")
+            } finally {
+                _state.update { it.copy(isCheckingForUpdates = false) }
+            }
+        }
+    }
+
+    private fun refresh() {
+        viewModelScope.launch {
+            _state.update { it.copy(isRefreshing = true) }
+            try {
+                syncInstalledAppsUseCase()
+                installedAppsRepository.checkAllForUpdates()
+                val now = System.currentTimeMillis()
+                lastAutoCheckTimestamp = now
+                _state.update { it.copy(lastCheckedTimestamp = now) }
+            } catch (e: Exception) {
+                logger.error("Refresh failed: ${e.message}")
+            } finally {
+                _state.update { it.copy(isRefreshing = false) }
             }
         }
     }
@@ -145,6 +182,10 @@ class AppsViewModel(
 
             AppsAction.OnCheckAllForUpdates -> {
                 checkAllForUpdates()
+            }
+
+            AppsAction.OnRefresh -> {
+                refresh()
             }
 
             is AppsAction.OnNavigateToRepo -> {

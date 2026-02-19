@@ -63,7 +63,6 @@ val coreModule = module {
             installedAppsDao = get(),
             historyDao = get(),
             installer = get(),
-            downloader = get(),
             httpClient = get()
         )
     }

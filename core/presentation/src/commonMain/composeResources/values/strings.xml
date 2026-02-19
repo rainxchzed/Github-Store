@@ -346,4 +346,12 @@
     <string name="latest_badge">Latest</string>
     <string name="no_version_selected">No version</string>
     <string name="versions_title">Versions</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Last checked: %1$s</string>
+    <string name="last_checked_never">Never checked</string>
+    <string name="last_checked_just_now">just now</string>
+    <string name="last_checked_minutes_ago">%1$d min ago</string>
+    <string name="last_checked_hours_ago">%1$d h ago</string>
+    <string name="checking_for_updates">Checking for updates…</string>
 </resources>

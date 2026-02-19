@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
@@ -164,9 +165,12 @@ fun AppHeader(
                 Spacer(Modifier.height(8.dp))
 
                 if (installedApp != null) {
-                    InstallStatusBadge(
-                        isUpdateAvailable = installedApp.isUpdateAvailable,
-                    )
+                    when {
+                        installedApp.isPendingInstall -> PendingInstallBadge()
+                        else -> InstallStatusBadge(
+                            isUpdateAvailable = installedApp.isUpdateAvailable,
+                        )
+                    }
                 }
 
                 Spacer(Modifier.height(8.dp))
@@ -288,6 +292,36 @@ fun InstallStatusBadge(
                 text = text,
                 style = MaterialTheme.typography.labelSmall,
                 color = textColor,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+fun PendingInstallBadge(
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Schedule,
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Text(
+                text = stringResource(Res.string.pending_install),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontWeight = FontWeight.SemiBold
             )
         }

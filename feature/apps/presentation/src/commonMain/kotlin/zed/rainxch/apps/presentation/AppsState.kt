@@ -9,5 +9,8 @@ data class AppsState(
     val isLoading: Boolean = false,
     val isUpdatingAll: Boolean = false,
     val updateAllProgress: UpdateAllProgress? = null,
-    val updateAllButtonEnabled: Boolean = true
+    val updateAllButtonEnabled: Boolean = true,
+    val isCheckingForUpdates: Boolean = false,
+    val lastCheckedTimestamp: Long? = null,
+    val isRefreshing: Boolean = false
 )

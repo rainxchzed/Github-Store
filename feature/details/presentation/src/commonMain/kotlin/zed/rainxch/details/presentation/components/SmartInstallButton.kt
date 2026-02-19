@@ -59,8 +59,8 @@ fun SmartInstallButton(
     val liquidState = LocalTopbarLiquidState.current
 
     val installedApp = state.installedApp
-    val isInstalled = installedApp != null
-    val isUpdateAvailable = installedApp?.isUpdateAvailable == true
+    val isInstalled = installedApp != null && !installedApp.isPendingInstall
+    val isUpdateAvailable = installedApp?.isUpdateAvailable == true && !installedApp.isPendingInstall
 
     val enabled = remember(primaryAsset, isDownloading, isInstalling) {
         primaryAsset != null && !isDownloading && !isInstalling
