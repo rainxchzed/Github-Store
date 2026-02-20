@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.util.Consumer
+import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
 
 class MainActivity : ComponentActivity() {
 
@@ -20,19 +21,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-
         enableEdgeToEdge()
 
         super.onCreate(savedInstanceState)
 
-        deepLinkUri = intent?.data?.toString()
+        handleIncomingIntent(intent)
 
         setContent {
             DisposableEffect(Unit) {
                 val listener = Consumer<Intent> { newIntent ->
-                    newIntent.data?.toString()?.let {
-                        deepLinkUri = it
-                    }
+                    handleIncomingIntent(newIntent)
                 }
                 addOnNewIntentListener(listener)
                 onDispose {
@@ -42,6 +40,23 @@ class MainActivity : ComponentActivity() {
 
             App(deepLinkUri = deepLinkUri)
         }
+    }
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        if (intent == null) return
+
+        val uriString = when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data?.toString()
+
+            Intent.ACTION_SEND -> {
+                val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+                sharedText?.let { DeepLinkParser.extractSupportedUrl(it) }
+            }
+
+            else -> null
+        }
+
+        uriString?.let { deepLinkUri = it }
     }
 }
 

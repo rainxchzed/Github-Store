@@ -38,7 +38,8 @@ fun App(deepLinkUri: String? = null) {
                     )
                 }
 
-                DeepLinkDestination.None -> { /* ignore unrecognized deep links */
+                DeepLinkDestination.None -> {
+                    /* ignore unrecognized deep links */
                 }
             }
         }
