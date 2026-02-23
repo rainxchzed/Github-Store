@@ -309,4 +309,28 @@
     <string name="no_version_selected">Nie wybrano wersji</string>
     <string name="versions_title">Wersje</string>
 
+    <!-- Install status -->
+    <string name="pending_install">Oczekuje na instalację</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Odinstaluj</string>
+    <string name="open_app">Otwórz</string>
+    <string name="downgrade_requires_uninstall">Obniżenie wersji wymaga odinstalowania</string>
+    <string name="downgrade_warning_message">Instalacja wersji %1$s wymaga odinstalowania bieżącej wersji (%2$s). Dane aplikacji zostaną utracone.</string>
+    <string name="uninstall_first">Najpierw odinstaluj</string>
+    <string name="install_version">Zainstaluj %1$s</string>
+    <string name="failed_to_open_app">Nie udało się otworzyć %1$s</string>
+    <string name="failed_to_uninstall">Nie udało się odinstalować %1$s</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">Najnowsza</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Ostatnio sprawdzono: %1$s</string>
+    <string name="last_checked_never">Nigdy nie sprawdzano</string>
+    <string name="last_checked_just_now">właśnie teraz</string>
+    <string name="last_checked_minutes_ago">%1$d min temu</string>
+    <string name="last_checked_hours_ago">%1$d godz. temu</string>
+    <string name="checking_for_updates">Sprawdzanie aktualizacji…</string>
+
 </resources>

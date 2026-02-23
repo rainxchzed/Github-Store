@@ -344,4 +344,28 @@
     <string name="no_version_selected">선택된 버전 없음</string>
     <string name="versions_title">버전</string>
 
+    <!-- Install status -->
+    <string name="pending_install">설치 대기 중</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">제거</string>
+    <string name="open_app">열기</string>
+    <string name="downgrade_requires_uninstall">다운그레이드를 위해 제거가 필요합니다</string>
+    <string name="downgrade_warning_message">버전 %1$s을(를) 설치하려면 현재 버전(%2$s)을 먼저 제거해야 합니다. 앱 데이터가 삭제됩니다.</string>
+    <string name="uninstall_first">먼저 제거</string>
+    <string name="install_version">%1$s 설치</string>
+    <string name="failed_to_open_app">%1$s 열기 실패</string>
+    <string name="failed_to_uninstall">%1$s 제거 실패</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">최신</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">마지막 확인: %1$s</string>
+    <string name="last_checked_never">확인한 적 없음</string>
+    <string name="last_checked_just_now">방금</string>
+    <string name="last_checked_minutes_ago">%1$d분 전</string>
+    <string name="last_checked_hours_ago">%1$d시간 전</string>
+    <string name="checking_for_updates">업데이트 확인 중…</string>
+
 </resources>

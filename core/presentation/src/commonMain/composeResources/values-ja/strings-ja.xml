@@ -293,4 +293,46 @@
     <string name="no_version_selected">バージョン未選択</string>
     <string name="versions_title">バージョン</string>
 
+    <!-- Navigation & actions -->
+    <string name="open_repository">リポジトリを開く</string>
+    <string name="open_in_browser">ブラウザで開く</string>
+    <string name="cancel_download">ダウンロードをキャンセル</string>
+    <string name="show_install_options">インストールオプションを表示</string>
+
+    <!-- Errors & states -->
+    <string name="no_description">説明はありません。</string>
+    <string name="no_release_notes">リリースノートはありません。</string>
+
+    <!-- Install status -->
+    <string name="not_available">利用不可</string>
+    <string name="update_app">アプリを更新</string>
+    <string name="pending_install">インストール待ち</string>
+
+    <!-- Install helpers -->
+    <string name="open_in_obtainium">Obtainiumで開く</string>
+    <string name="obtainium_description">自動的にアップデートを管理</string>
+    <string name="inspect_with_appmanager">AppManagerで検査</string>
+    <string name="appmanager_description">権限、トラッカー、セキュリティを確認</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">アンインストール</string>
+    <string name="open_app">開く</string>
+    <string name="downgrade_requires_uninstall">ダウングレードにはアンインストールが必要</string>
+    <string name="downgrade_warning_message">バージョン%1$sのインストールには、現在のバージョン（%2$s）のアンインストールが必要です。アプリデータは失われます。</string>
+    <string name="uninstall_first">先にアンインストール</string>
+    <string name="install_version">%1$sをインストール</string>
+    <string name="failed_to_open_app">%1$sを開けませんでした</string>
+    <string name="failed_to_uninstall">%1$sのアンインストールに失敗しました</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">最新</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">最終確認: %1$s</string>
+    <string name="last_checked_never">未確認</string>
+    <string name="last_checked_just_now">たった今</string>
+    <string name="last_checked_minutes_ago">%1$d分前</string>
+    <string name="last_checked_hours_ago">%1$d時間前</string>
+    <string name="checking_for_updates">アップデートを確認中…</string>
+
 </resources>

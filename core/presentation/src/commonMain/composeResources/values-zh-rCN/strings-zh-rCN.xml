@@ -294,4 +294,46 @@
     <string name="no_version_selected">未选择版本</string>
     <string name="versions_title">版本</string>
 
+    <!-- Navigation & actions -->
+    <string name="open_repository">打开仓库</string>
+    <string name="open_in_browser">在浏览器中打开</string>
+    <string name="cancel_download">取消下载</string>
+    <string name="show_install_options">显示安装选项</string>
+
+    <!-- Errors & states -->
+    <string name="no_description">暂无描述。</string>
+    <string name="no_release_notes">暂无发行说明。</string>
+
+    <!-- Install status -->
+    <string name="not_available">不可用</string>
+    <string name="update_app">更新应用</string>
+    <string name="pending_install">等待安装</string>
+
+    <!-- Install helpers -->
+    <string name="open_in_obtainium">在 Obtainium 中打开</string>
+    <string name="obtainium_description">自动管理更新</string>
+    <string name="inspect_with_appmanager">使用 AppManager 检查</string>
+    <string name="appmanager_description">检查权限、追踪器和安全性</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">卸载</string>
+    <string name="open_app">打开</string>
+    <string name="downgrade_requires_uninstall">降级需要先卸载</string>
+    <string name="downgrade_warning_message">安装版本 %1$s 需要先卸载当前版本（%2$s）。应用数据将丢失。</string>
+    <string name="uninstall_first">先卸载</string>
+    <string name="install_version">安装 %1$s</string>
+    <string name="failed_to_open_app">无法打开 %1$s</string>
+    <string name="failed_to_uninstall">无法卸载 %1$s</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">最新</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">上次检查：%1$s</string>
+    <string name="last_checked_never">从未检查</string>
+    <string name="last_checked_just_now">刚刚</string>
+    <string name="last_checked_minutes_ago">%1$d 分钟前</string>
+    <string name="last_checked_hours_ago">%1$d 小时前</string>
+    <string name="checking_for_updates">正在检查更新…</string>
+
 </resources>

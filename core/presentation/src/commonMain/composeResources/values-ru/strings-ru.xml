@@ -311,4 +311,28 @@
     <string name="no_version_selected">Версия не выбрана</string>
     <string name="versions_title">Версии</string>
 
+    <!-- Install status -->
+    <string name="pending_install">Ожидает установки</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Удалить</string>
+    <string name="open_app">Открыть</string>
+    <string name="downgrade_requires_uninstall">Для понижения версии требуется удаление</string>
+    <string name="downgrade_warning_message">Для установки версии %1$s необходимо сначала удалить текущую версию (%2$s). Данные приложения будут потеряны.</string>
+    <string name="uninstall_first">Сначала удалить</string>
+    <string name="install_version">Установить %1$s</string>
+    <string name="failed_to_open_app">Не удалось открыть %1$s</string>
+    <string name="failed_to_uninstall">Не удалось удалить %1$s</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">Последняя</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Последняя проверка: %1$s</string>
+    <string name="last_checked_never">Не проверялось</string>
+    <string name="last_checked_just_now">только что</string>
+    <string name="last_checked_minutes_ago">%1$d мин назад</string>
+    <string name="last_checked_hours_ago">%1$d ч назад</string>
+    <string name="checking_for_updates">Проверка обновлений…</string>
+
 </resources>

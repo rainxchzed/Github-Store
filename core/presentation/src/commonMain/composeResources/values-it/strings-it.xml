@@ -342,4 +342,33 @@
     <string name="no_version_selected">Nessuna versione selezionata</string>
     <string name="versions_title">Versioni</string>
 
+    <!-- Install status -->
+    <string name="pending_install">Installazione in sospeso</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Disinstalla</string>
+    <string name="open_app">Apri</string>
+    <string name="downgrade_requires_uninstall">Il downgrade richiede la disinstallazione</string>
+    <string name="downgrade_warning_message">L\'installazione della versione %1$s richiede la disinstallazione della versione corrente (%2$s). I dati dell\'app verranno persi.</string>
+    <string name="uninstall_first">Disinstalla prima</string>
+    <string name="install_version">Installa %1$s</string>
+    <string name="failed_to_open_app">Impossibile aprire %1$s</string>
+    <string name="failed_to_uninstall">Impossibile disinstallare %1$s</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">Ultima</string>
+
+    <!-- Appearance -->
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="theme_system">Sistema</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Ultimo controllo: %1$s</string>
+    <string name="last_checked_never">Mai controllato</string>
+    <string name="last_checked_just_now">proprio ora</string>
+    <string name="last_checked_minutes_ago">%1$d min fa</string>
+    <string name="last_checked_hours_ago">%1$d h fa</string>
+    <string name="checking_for_updates">Controllo aggiornamenti…</string>
+
 </resources>

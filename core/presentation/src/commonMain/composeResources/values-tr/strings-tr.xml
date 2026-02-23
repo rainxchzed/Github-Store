@@ -232,9 +232,9 @@
 
     <string name="rate_limit_exceeded">Hız Sınırı Aşıldı</string>
     <string name="rate_limit_used_all">Tüm %1$d API isteklerini kullandınız.</string>
-    <string name="rate_limit_used_all_free">Tüm %1$s ücretsiz API isteğinizi kullandınız.</string>
+    <string name="rate_limit_used_all_free">Tüm %1$d ücretsiz API isteğinizi kullandınız.</string>
     <string name="rate_limit_resets_in_minutes">%1$d dakika içinde yenilenir</string>
-    <string name="rate_limit_tip_sign_in">Saat başı 60 yerine 5,000 istek için giriş yapın!</string>
+    <string name="rate_limit_tip_sign_in">💡 Saat başı 60 yerine 5.000 istek için giriş yapın!</string>
     <string name="rate_limit_sign_in">Giriş Yap</string>
     <string name="rate_limit_ok">Tamam</string>
     <string name="rate_limit_close">Kapat</string>
@@ -342,5 +342,29 @@
     <string name="pre_release_badge">Ön sürüm</string>
     <string name="no_version_selected">Sürüm seçilmedi</string>
     <string name="versions_title">Sürümler</string>
+
+    <!-- Install status -->
+    <string name="pending_install">Kurulum bekleniyor</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Kaldır</string>
+    <string name="open_app">Aç</string>
+    <string name="downgrade_requires_uninstall">Sürüm düşürme kaldırma gerektirir</string>
+    <string name="downgrade_warning_message">%1$s sürümünü yüklemek için önce mevcut sürümü (%2$s) kaldırmanız gerekir. Uygulama verileri kaybolacaktır.</string>
+    <string name="uninstall_first">Önce kaldır</string>
+    <string name="install_version">%1$s yükle</string>
+    <string name="failed_to_open_app">%1$s açılamadı</string>
+    <string name="failed_to_uninstall">%1$s kaldırılamadı</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">En son</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Son kontrol: %1$s</string>
+    <string name="last_checked_never">Hiç kontrol edilmedi</string>
+    <string name="last_checked_just_now">az önce</string>
+    <string name="last_checked_minutes_ago">%1$d dk önce</string>
+    <string name="last_checked_hours_ago">%1$d sa önce</string>
+    <string name="checking_for_updates">Güncellemeler kontrol ediliyor…</string>
 
 </resources>

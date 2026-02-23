@@ -293,4 +293,46 @@
     <string name="no_version_selected">Ninguna versión seleccionada</string>
     <string name="versions_title">Versiones</string>
 
+    <!-- Navigation & actions -->
+    <string name="open_repository">Abrir repositorio</string>
+    <string name="open_in_browser">Abrir en navegador</string>
+    <string name="cancel_download">Cancelar descarga</string>
+    <string name="show_install_options">Mostrar opciones de instalación</string>
+
+    <!-- Errors & states -->
+    <string name="no_description">Sin descripción proporcionada.</string>
+    <string name="no_release_notes">Sin notas de versión.</string>
+
+    <!-- Install status -->
+    <string name="not_available">No disponible</string>
+    <string name="update_app">Actualizar app</string>
+    <string name="pending_install">Instalación pendiente</string>
+
+    <!-- Install helpers -->
+    <string name="open_in_obtainium">Abrir en Obtainium</string>
+    <string name="obtainium_description">Gestionar actualizaciones automáticamente</string>
+    <string name="inspect_with_appmanager">Inspeccionar con AppManager</string>
+    <string name="appmanager_description">Verificar permisos, rastreadores y seguridad</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Desinstalar</string>
+    <string name="open_app">Abrir</string>
+    <string name="downgrade_requires_uninstall">La degradación requiere desinstalar</string>
+    <string name="downgrade_warning_message">Instalar la versión %1$s requiere desinstalar la versión actual (%2$s) primero. Los datos de la app se perderán.</string>
+    <string name="uninstall_first">Desinstalar primero</string>
+    <string name="install_version">Instalar %1$s</string>
+    <string name="failed_to_open_app">Error al abrir %1$s</string>
+    <string name="failed_to_uninstall">Error al desinstalar %1$s</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">Última</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Última comprobación: %1$s</string>
+    <string name="last_checked_never">Nunca comprobado</string>
+    <string name="last_checked_just_now">justo ahora</string>
+    <string name="last_checked_minutes_ago">hace %1$d min</string>
+    <string name="last_checked_hours_ago">hace %1$d h</string>
+    <string name="checking_for_updates">Comprobando actualizaciones…</string>
+
 </resources>

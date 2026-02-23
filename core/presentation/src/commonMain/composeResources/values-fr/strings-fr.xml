@@ -293,4 +293,46 @@
     <string name="no_version_selected">Aucune version sélectionnée</string>
     <string name="versions_title">Versions</string>
 
+    <!-- Navigation & actions -->
+    <string name="open_repository">Ouvrir le dépôt</string>
+    <string name="open_in_browser">Ouvrir dans le navigateur</string>
+    <string name="cancel_download">Annuler le téléchargement</string>
+    <string name="show_install_options">Afficher les options d\'installation</string>
+
+    <!-- Errors & states -->
+    <string name="no_description">Aucune description fournie.</string>
+    <string name="no_release_notes">Aucune note de version.</string>
+
+    <!-- Install status -->
+    <string name="not_available">Non disponible</string>
+    <string name="update_app">Mettre à jour</string>
+    <string name="pending_install">Installation en attente</string>
+
+    <!-- Install helpers -->
+    <string name="open_in_obtainium">Ouvrir dans Obtainium</string>
+    <string name="obtainium_description">Gérer les mises à jour automatiquement</string>
+    <string name="inspect_with_appmanager">Inspecter avec AppManager</string>
+    <string name="appmanager_description">Vérifier les permissions, trackers et sécurité</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Désinstaller</string>
+    <string name="open_app">Ouvrir</string>
+    <string name="downgrade_requires_uninstall">La rétrogradation nécessite la désinstallation</string>
+    <string name="downgrade_warning_message">L\'installation de la version %1$s nécessite la désinstallation de la version actuelle (%2$s). Les données de l\'application seront perdues.</string>
+    <string name="uninstall_first">Désinstaller d\'abord</string>
+    <string name="install_version">Installer %1$s</string>
+    <string name="failed_to_open_app">Impossible d\'ouvrir %1$s</string>
+    <string name="failed_to_uninstall">Impossible de désinstaller %1$s</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">Dernière</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">Dernière vérification : %1$s</string>
+    <string name="last_checked_never">Jamais vérifié</string>
+    <string name="last_checked_just_now">à l\'instant</string>
+    <string name="last_checked_minutes_ago">il y a %1$d min</string>
+    <string name="last_checked_hours_ago">il y a %1$d h</string>
+    <string name="checking_for_updates">Vérification des mises à jour…</string>
+
 </resources>

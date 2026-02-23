@@ -215,8 +215,6 @@
     <string name="error_file_not_found">डाउनलोड की गई फ़ाइल नहीं मिली</string>
 
     <string name="home_category_trending">रुझान</string>
-    <string name="home_category_new">नया</string>
-    <string name="home_category_recently_updated">हाल ही में अपडेट किया गया</string>
 
     <string name="home_finding_repositories">रिपॉजिटरी ढूंढी जा रही हैं...</string>
     <string name="home_loading_more">और लोड हो रहा है...</string>
@@ -343,4 +341,32 @@
     <string name="pre_release_badge">प्री-रिलीज़</string>
     <string name="no_version_selected">कोई संस्करण चयनित नहीं</string>
     <string name="versions_title">संस्करण</string>
+
+    <!-- Home categories -->
+    <string name="home_category_hot_release">हॉट रिलीज़</string>
+    <string name="home_category_most_popular">सबसे लोकप्रिय</string>
+
+    <!-- Install status -->
+    <string name="pending_install">इंस्टॉल लंबित</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">अनइंस्टॉल</string>
+    <string name="open_app">खोलें</string>
+    <string name="downgrade_requires_uninstall">डाउनग्रेड के लिए अनइंस्टॉल आवश्यक</string>
+    <string name="downgrade_warning_message">संस्करण %1$s इंस्टॉल करने के लिए पहले वर्तमान संस्करण (%2$s) को अनइंस्टॉल करना होगा। ऐप डेटा खो जाएगा।</string>
+    <string name="uninstall_first">पहले अनइंस्टॉल करें</string>
+    <string name="install_version">%1$s इंस्टॉल करें</string>
+    <string name="failed_to_open_app">%1$s खोलने में विफल</string>
+    <string name="failed_to_uninstall">%1$s अनइंस्टॉल करने में विफल</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">नवीनतम</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">अंतिम जाँच: %1$s</string>
+    <string name="last_checked_never">कभी जाँच नहीं की</string>
+    <string name="last_checked_just_now">अभी</string>
+    <string name="last_checked_minutes_ago">%1$d मिनट पहले</string>
+    <string name="last_checked_hours_ago">%1$d घंटे पहले</string>
+    <string name="checking_for_updates">अपडेट की जाँच हो रही है…</string>
 </resources>

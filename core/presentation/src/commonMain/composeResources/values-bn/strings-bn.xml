@@ -346,4 +346,28 @@
     <string name="no_version_selected">কোনো ভার্সন নির্বাচিত নয়</string>
     <string name="versions_title">ভার্সনসমূহ</string>
 
+    <!-- Install status -->
+    <string name="pending_install">ইনস্টল মুলতুবি</string>
+
+    <!-- Uninstall / Open -->
+    <string name="uninstall">আনইনস্টল</string>
+    <string name="open_app">খুলুন</string>
+    <string name="downgrade_requires_uninstall">ডাউনগ্রেডের জন্য আনইনস্টল প্রয়োজন</string>
+    <string name="downgrade_warning_message">সংস্করণ %1$s ইনস্টল করতে বর্তমান সংস্করণ (%2$s) প্রথমে আনইনস্টল করতে হবে। অ্যাপের ডেটা মুছে যাবে।</string>
+    <string name="uninstall_first">প্রথমে আনইনস্টল করুন</string>
+    <string name="install_version">%1$s ইনস্টল করুন</string>
+    <string name="failed_to_open_app">%1$s খুলতে ব্যর্থ</string>
+    <string name="failed_to_uninstall">%1$s আনইনস্টল করতে ব্যর্থ</string>
+
+    <!-- Version picker -->
+    <string name="latest_badge">সর্বশেষ</string>
+
+    <!-- Apps feature - Last checked -->
+    <string name="last_checked">সর্বশেষ পরীক্ষা: %1$s</string>
+    <string name="last_checked_never">কখনো পরীক্ষা করা হয়নি</string>
+    <string name="last_checked_just_now">এইমাত্র</string>
+    <string name="last_checked_minutes_ago">%1$d মিনিট আগে</string>
+    <string name="last_checked_hours_ago">%1$d ঘন্টা আগে</string>
+    <string name="checking_for_updates">আপডেট পরীক্ষা করা হচ্ছে…</string>
+
 </resources>
