@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.convention.kmp.library)
-    alias(libs.plugins.convention.buildkonfig)
+    alias(libs.plugins.convention.cmp.feature)
 }
 
 kotlin {
@@ -10,10 +9,13 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
 
                 implementation(projects.core.domain)
-                implementation(projects.core.data)
-                implementation(projects.feature.settings.domain)
+                implementation(projects.core.presentation)
+                implementation(projects.feature.profile.domain)
 
-                implementation(libs.bundles.koin.common)
+                implementation(compose.components.uiToolingPreview)
+                implementation(compose.components.resources)
+
+                implementation(libs.liquid)
             }
         }
 

@@ -49,9 +49,9 @@ kotlin {
             implementation(projects.feature.search.data)
             implementation(projects.feature.search.presentation)
 
-            implementation(projects.feature.settings.domain)
-            implementation(projects.feature.settings.data)
-            implementation(projects.feature.settings.presentation)
+            implementation(projects.feature.profile.domain)
+            implementation(projects.feature.profile.data)
+            implementation(projects.feature.profile.presentation)
 
             implementation(projects.feature.starred.domain)
             implementation(projects.feature.starred.data)

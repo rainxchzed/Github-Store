@@ -8,8 +8,8 @@ import zed.rainxch.details.presentation.DetailsViewModel
 import zed.rainxch.devprofile.presentation.DeveloperProfileViewModel
 import zed.rainxch.favourites.presentation.FavouritesViewModel
 import zed.rainxch.home.presentation.HomeViewModel
+import zed.rainxch.profile.presentation.ProfileViewModel
 import zed.rainxch.search.presentation.SearchViewModel
-import zed.rainxch.settings.presentation.SettingsViewModel
 import zed.rainxch.starred.presentation.StarredReposViewModel
 
 val viewModelsModule = module {
@@ -20,6 +20,6 @@ val viewModelsModule = module {
     viewModelOf(::FavouritesViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::SearchViewModel)
-    viewModelOf(::SettingsViewModel)
+    viewModelOf(::ProfileViewModel)
     viewModelOf(::StarredReposViewModel)
 }

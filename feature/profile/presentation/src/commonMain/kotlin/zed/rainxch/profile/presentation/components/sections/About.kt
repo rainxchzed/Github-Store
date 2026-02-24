@@ -30,12 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import zed.rainxch.githubstore.core.presentation.res.*
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.settings.presentation.SettingsAction
+import zed.rainxch.profile.presentation.ProfileAction
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.about(
     versionName: String,
-    onAction: (SettingsAction) -> Unit,
+    onAction: (ProfileAction) -> Unit,
 ) {
     item {
         Text(
@@ -76,7 +76,7 @@ fun LazyListScope.about(
                     IconButton(
                         shape = IconButtonDefaults.shapes().shape,
                         onClick = {
-                            onAction(SettingsAction.OnHelpClick)
+                            onAction(ProfileAction.OnHelpClick)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onSurface

@@ -28,11 +28,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import zed.rainxch.githubstore.core.presentation.res.*
 import org.jetbrains.compose.resources.stringResource
-import zed.rainxch.settings.presentation.SettingsAction
+import zed.rainxch.profile.presentation.ProfileAction
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.logout(
-    onAction: (SettingsAction) -> Unit,
+    onAction: (ProfileAction) -> Unit,
 ) {
     item {
         Spacer(Modifier.height(8.dp))
@@ -44,7 +44,7 @@ fun LazyListScope.logout(
             ),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-                onAction(SettingsAction.OnLogoutClick)
+                onAction(ProfileAction.OnLogoutClick)
             }
         ) {
             AccountItem(
@@ -54,7 +54,7 @@ fun LazyListScope.logout(
                     IconButton(
                         shapes = IconButtonDefaults.shapes(),
                         onClick = {
-                            onAction(SettingsAction.OnLogoutClick)
+                            onAction(ProfileAction.OnLogoutClick)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onSurface

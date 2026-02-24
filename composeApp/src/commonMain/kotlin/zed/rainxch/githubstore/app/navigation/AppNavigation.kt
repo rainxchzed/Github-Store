@@ -27,7 +27,7 @@ import zed.rainxch.devprofile.presentation.DeveloperProfileRoot
 import zed.rainxch.favourites.presentation.FavouritesRoot
 import zed.rainxch.home.presentation.HomeRoot
 import zed.rainxch.search.presentation.SearchRoot
-import zed.rainxch.settings.presentation.SettingsRoot
+import zed.rainxch.profile.presentation.ProfileRoot
 import zed.rainxch.starred.presentation.StarredReposRoot
 
 @Composable
@@ -53,7 +53,7 @@ fun AppNavigation(
                             navController.navigate(GithubStoreGraph.SearchScreen)
                         },
                         onNavigateToSettings = {
-                            navController.navigate(GithubStoreGraph.SettingsScreen)
+                            navController.navigate(GithubStoreGraph.ProfileScreen)
                         },
                         onNavigateToApps = {
                             navController.navigate(GithubStoreGraph.AppsScreen)
@@ -199,8 +199,8 @@ fun AppNavigation(
                     )
                 }
 
-                composable<GithubStoreGraph.SettingsScreen> {
-                    SettingsRoot(
+                composable<GithubStoreGraph.ProfileScreen> {
+                    ProfileRoot(
                         onNavigateBack = {
                             navController.navigateUp()
                         }

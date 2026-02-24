@@ -1,4 +1,4 @@
-package zed.rainxch.settings.presentation
+package zed.rainxch.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,7 @@ import zed.rainxch.core.domain.repository.ThemesRepository
 import zed.rainxch.core.domain.utils.BrowserHelper
 import zed.rainxch.settings.domain.repository.SettingsRepository
 
-class SettingsViewModel(
+class ProfileViewModel(
     private val browserHelper: BrowserHelper,
     private val themesRepository: ThemesRepository,
     private val settingsRepository: SettingsRepository
@@ -22,7 +22,7 @@ class SettingsViewModel(
 
     private var hasLoadedInitialData = false
 
-    private val _state = MutableStateFlow(SettingsState())
+    private val _state = MutableStateFlow(ProfileState())
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
@@ -36,17 +36,19 @@ class SettingsViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = SettingsState()
+            initialValue = ProfileState()
         )
 
-    private val _events = Channel<SettingsEvent>()
+    private val _events = Channel<ProfileEvent>()
     val events = _events.receiveAsFlow()
 
     private fun loadVersionName() {
         viewModelScope.launch {
-            _state.update { it.copy(
-                versionName = settingsRepository.getVersionName()
-            ) }
+            _state.update {
+                it.copy(
+                    versionName = settingsRepository.getVersionName()
+                )
+            }
         }
     }
 
@@ -93,27 +95,27 @@ class SettingsViewModel(
         }
     }
 
-    fun onAction(action: SettingsAction) {
+    fun onAction(action: ProfileAction) {
         when (action) {
-            SettingsAction.OnHelpClick -> {
+            ProfileAction.OnHelpClick -> {
                 browserHelper.openUrl(
                     url = "https://github.com/rainxchzed/Github-Store/issues"
                 )
             }
 
-            is SettingsAction.OnThemeColorSelected -> {
+            is ProfileAction.OnThemeColorSelected -> {
                 viewModelScope.launch {
                     themesRepository.setThemeColor(action.themeColor)
                 }
             }
 
-            is SettingsAction.OnAmoledThemeToggled -> {
+            is ProfileAction.OnAmoledThemeToggled -> {
                 viewModelScope.launch {
                     themesRepository.setAmoledTheme(action.enabled)
                 }
             }
 
-            SettingsAction.OnLogoutClick -> {
+            ProfileAction.OnLogoutClick -> {
                 _state.update {
                     it.copy(
                         isLogoutDialogVisible = true
@@ -121,23 +123,23 @@ class SettingsViewModel(
                 }
             }
 
-            SettingsAction.OnLogoutConfirmClick -> {
+            ProfileAction.OnLogoutConfirmClick -> {
                 viewModelScope.launch {
                     runCatching {
                         settingsRepository.logout()
                     }.onSuccess {
                         _state.update { it.copy(isLogoutDialogVisible = false) }
-                        _events.send(SettingsEvent.OnLogoutSuccessful)
+                        _events.send(ProfileEvent.OnLogoutSuccessful)
                     }.onFailure { error ->
                         _state.update { it.copy(isLogoutDialogVisible = false) }
                         error.message?.let {
-                            _events.send(SettingsEvent.OnLogoutError(it))
+                            _events.send(ProfileEvent.OnLogoutError(it))
                         }
                     }
                 }
             }
 
-            SettingsAction.OnLogoutDismiss -> {
+            ProfileAction.OnLogoutDismiss -> {
                 _state.update {
                     it.copy(
                         isLogoutDialogVisible = false
@@ -145,17 +147,17 @@ class SettingsViewModel(
                 }
             }
 
-            SettingsAction.OnNavigateBackClick -> {
+            ProfileAction.OnNavigateBackClick -> {
                 /* Handed in composable */
             }
 
-            is SettingsAction.OnFontThemeSelected -> {
+            is ProfileAction.OnFontThemeSelected -> {
                 viewModelScope.launch {
                     themesRepository.setFontTheme(action.fontTheme)
                 }
             }
 
-            is SettingsAction.OnDarkThemeChange -> {
+            is ProfileAction.OnDarkThemeChange -> {
                 viewModelScope.launch {
                     themesRepository.setDarkTheme(action.isDarkTheme)
                 }

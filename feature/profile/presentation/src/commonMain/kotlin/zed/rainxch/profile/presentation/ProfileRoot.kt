@@ -1,4 +1,4 @@
-package zed.rainxch.settings.presentation
+package zed.rainxch.profile.presentation
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,9 +44,9 @@ import zed.rainxch.settings.presentation.components.sections.appearance
 import zed.rainxch.settings.presentation.components.sections.logout
 
 @Composable
-fun SettingsRoot(
+fun ProfileRoot(
     onNavigateBack: () -> Unit,
-    viewModel: SettingsViewModel = koinViewModel()
+    viewModel: ProfileViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarState = remember { SnackbarHostState() }
@@ -54,7 +54,7 @@ fun SettingsRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            SettingsEvent.OnLogoutSuccessful -> {
+            ProfileEvent.OnLogoutSuccessful -> {
                 coroutineScope.launch {
                     snackbarState.showSnackbar(getString(Res.string.logout_success))
 
@@ -62,7 +62,7 @@ fun SettingsRoot(
                 }
             }
 
-            is SettingsEvent.OnLogoutError -> {
+            is ProfileEvent.OnLogoutError -> {
                 coroutineScope.launch {
                     snackbarState.showSnackbar(event.message)
                 }
@@ -70,11 +70,11 @@ fun SettingsRoot(
         }
     }
 
-    SettingsScreen(
+    ProfileScreen(
         state = state,
         onAction = { action ->
             when (action) {
-                SettingsAction.OnNavigateBackClick -> {
+                ProfileAction.OnNavigateBackClick -> {
                     onNavigateBack()
                 }
 
@@ -89,10 +89,10 @@ fun SettingsRoot(
     if (state.isLogoutDialogVisible) {
         LogoutDialog(
             onDismissRequest = {
-                viewModel.onAction(SettingsAction.OnLogoutDismiss)
+                viewModel.onAction(ProfileAction.OnLogoutDismiss)
             },
             onLogout = {
-                viewModel.onAction(SettingsAction.OnLogoutConfirmClick)
+                viewModel.onAction(ProfileAction.OnLogoutConfirmClick)
             }
         )
     }
@@ -100,9 +100,9 @@ fun SettingsRoot(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SettingsScreen(
-    state: SettingsState,
-    onAction: (SettingsAction) -> Unit,
+fun ProfileScreen(
+    state: ProfileState,
+    onAction: (ProfileAction) -> Unit,
     snackbarState: SnackbarHostState
 ) {
     val liquidState = LocalBottomNavigationLiquid.current
@@ -125,20 +125,20 @@ fun SettingsScreen(
             appearance(
                 selectedThemeColor = state.selectedThemeColor,
                 onThemeColorSelected = { theme ->
-                    onAction(SettingsAction.OnThemeColorSelected(theme))
+                    onAction(ProfileAction.OnThemeColorSelected(theme))
                 },
                 isAmoledThemeEnabled = state.isAmoledThemeEnabled,
                 onAmoledThemeToggled = { enabled ->
-                    onAction(SettingsAction.OnAmoledThemeToggled(enabled))
+                    onAction(ProfileAction.OnAmoledThemeToggled(enabled))
                 },
                 isDarkTheme = state.isDarkTheme,
                 onDarkThemeChange = { isDarkTheme ->
-                    onAction(SettingsAction.OnDarkThemeChange(isDarkTheme))
+                    onAction(ProfileAction.OnDarkThemeChange(isDarkTheme))
                 },
                 isUsingSystemFont = state.selectedFontTheme == FontTheme.SYSTEM,
                 onUseSystemFontToggled = { enabled ->
                     onAction(
-                        SettingsAction.OnFontThemeSelected(
+                        ProfileAction.OnFontThemeSelected(
                             if (enabled) {
                                 FontTheme.SYSTEM
                             } else FontTheme.CUSTOM
@@ -171,13 +171,13 @@ fun SettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun TopAppBar(onAction: (SettingsAction) -> Unit) {
+private fun TopAppBar(onAction: (ProfileAction) -> Unit) {
     TopAppBar(
         navigationIcon = {
             IconButton(
                 shapes = IconButtonDefaults.shapes(),
                 onClick = {
-                    onAction(SettingsAction.OnNavigateBackClick)
+                    onAction(ProfileAction.OnNavigateBackClick)
                 }
             ) {
                 Icon(
@@ -202,8 +202,8 @@ private fun TopAppBar(onAction: (SettingsAction) -> Unit) {
 @Composable
 private fun Preview() {
     GithubStoreTheme {
-        SettingsScreen(
-            state = SettingsState(),
+        ProfileScreen(
+            state = ProfileState(),
             onAction = {},
             snackbarState = SnackbarHostState()
         )
