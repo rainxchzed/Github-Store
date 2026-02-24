@@ -103,8 +103,8 @@
     <string name="search_failed">Search failed</string>
     <string name="no_repositories_found">No repositories found</string>
 
-    <!-- Settings -->
-    <string name="settings_title">Settings</string>
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
 
     <!-- Sections -->
     <string name="section_appearance">APPEARANCE</string>

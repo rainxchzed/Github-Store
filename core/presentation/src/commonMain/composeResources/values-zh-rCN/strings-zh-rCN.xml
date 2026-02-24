@@ -89,7 +89,7 @@
     <string name="search_failed">搜索失败</string>
     <string name="no_repositories_found">未找到仓库</string>
 
-    <string name="settings_title">设置</string>
+    <string name="profile_title">个人资料</string>
 
     <string name="section_appearance">外观</string>
     <string name="section_about">关于</string>

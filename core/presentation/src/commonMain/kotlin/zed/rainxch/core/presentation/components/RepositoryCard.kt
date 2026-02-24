@@ -106,30 +106,20 @@ fun RepositoryCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Row (
+                    Row(
                         modifier = Modifier.clickable(onClick = {
-                            onDeveloperClick(discoveryRepository.repository.owner.login )
+                            onDeveloperClick(discoveryRepository.repository.owner.login)
                         }),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        CoilImage(
+                        GitHubStoreImage(
                             imageModel = { discoveryRepository.repository.owner.avatarUrl },
                             modifier = Modifier
                                 .size(32.dp)
-                                .clip(CircleShape),
-                            loading = {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularWavyProgressIndicator()
-                                }
-                            },
-                            component = rememberImageComponent {
-                                CrossfadePlugin()
-                            }
+                                .clip(CircleShape)
                         )
+
 
                         Text(
                             text = discoveryRepository.repository.owner.login,

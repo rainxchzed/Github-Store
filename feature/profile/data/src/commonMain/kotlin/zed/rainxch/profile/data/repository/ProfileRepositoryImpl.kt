@@ -1,4 +1,4 @@
-package zed.rainxch.settings.data.repository
+package zed.rainxch.profile.data.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -6,12 +6,12 @@ import kotlinx.coroutines.flow.flowOn
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.feature.profile.data.BuildKonfig
-import zed.rainxch.settings.domain.repository.SettingsRepository
+import zed.rainxch.profile.domain.repository.ProfileRepository
 
-class SettingsRepositoryImpl(
+class ProfileRepositoryImpl(
     private val authenticationState: AuthenticationState,
     private val tokenStore: TokenStore
-) : SettingsRepository {
+) : ProfileRepository {
     override val isUserLoggedIn: Flow<Boolean>
         get() = authenticationState
             .isUserLoggedIn()

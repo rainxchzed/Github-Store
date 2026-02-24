@@ -87,7 +87,7 @@
     <string name="search_failed">La recherche a échoué</string>
     <string name="no_repositories_found">Aucun dépôt trouvé</string>
 
-    <string name="settings_title">Paramètres</string>
+    <string name="profile_title">Profil</string>
 
     <string name="section_appearance">APPARENCE</string>
     <string name="section_about">À PROPOS</string>

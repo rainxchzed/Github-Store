@@ -1,4 +1,4 @@
-package zed.rainxch.settings.presentation.components.sections
+package zed.rainxch.profile.presentation.components.sections
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -54,49 +54,55 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import zed.rainxch.githubstore.core.presentation.res.*
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.AppTheme
+import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.presentation.theme.isDynamicColorAvailable
 import zed.rainxch.core.presentation.utils.displayName
 import zed.rainxch.core.presentation.utils.primaryColor
+import zed.rainxch.githubstore.core.presentation.res.*
+import zed.rainxch.profile.presentation.ProfileAction
+import zed.rainxch.profile.presentation.ProfileState
+import zed.rainxch.profile.presentation.components.SectionHeader
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun LazyListScope.appearance(
-    selectedThemeColor: AppTheme,
-    isAmoledThemeEnabled: Boolean,
-    onAmoledThemeToggled: (Boolean) -> Unit,
-    isDarkTheme: Boolean?,
-    onDarkThemeChange: (Boolean?) -> Unit,
-    onThemeColorSelected: (AppTheme) -> Unit,
-    isUsingSystemFont: Boolean,
-    onUseSystemFontToggled: (Boolean) -> Unit,
+fun LazyListScope.appearanceSection(
+    state: ProfileState,
+    onAction: (ProfileAction) -> Unit,
 ) {
     item {
-        SectionHeader(stringResource(Res.string.section_appearance))
+        SectionHeader(
+            text = stringResource(Res.string.section_appearance)
+        )
 
         VerticalSpacer(8.dp)
 
         ThemeSelectionCard(
-            isDarkTheme = isDarkTheme,
-            onDarkThemeChange = onDarkThemeChange
+            isDarkTheme = state.isDarkTheme,
+            onDarkThemeChange = { isDarkTheme ->
+                onAction(ProfileAction.OnDarkThemeChange(isDarkTheme))
+            }
         )
 
         VerticalSpacer(16.dp)
 
         ThemeColorCard(
-            selectedThemeColor = selectedThemeColor,
-            onThemeColorSelected = onThemeColorSelected
+            selectedThemeColor = state.selectedThemeColor,
+            onThemeColorSelected = { theme ->
+                onAction(ProfileAction.OnThemeColorSelected(theme))
+            }
         )
 
         VerticalSpacer(16.dp)
 
-        if (isDarkTheme == true || (isDarkTheme == null && isSystemInDarkTheme())) {
+        if (state.isDarkTheme == true || (state.isDarkTheme == null && isSystemInDarkTheme())) {
             ToggleSettingCard(
                 title = stringResource(Res.string.amoled_black_theme),
                 description = stringResource(Res.string.amoled_black_description),
-                checked = isAmoledThemeEnabled,
-                onCheckedChange = onAmoledThemeToggled
+                checked = state.isAmoledThemeEnabled,
+                onCheckedChange = { enabled ->
+                    onAction(ProfileAction.OnAmoledThemeToggled(enabled))
+                }
             )
 
             VerticalSpacer(16.dp)
@@ -105,22 +111,20 @@ fun LazyListScope.appearance(
         ToggleSettingCard(
             title = stringResource(Res.string.system_font),
             description = stringResource(Res.string.system_font_description),
-            checked = isUsingSystemFont,
-            onCheckedChange = onUseSystemFontToggled
+            checked = state.selectedFontTheme == FontTheme.SYSTEM,
+            onCheckedChange = { enabled ->
+                onAction(
+                    ProfileAction.OnFontThemeSelected(
+                        if (enabled) {
+                            FontTheme.SYSTEM
+                        } else FontTheme.CUSTOM
+                    )
+                )
+            }
         )
     }
 }
 
-@Composable
-private fun SectionHeader(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 8.dp)
-    )
-}
 
 @Composable
 private fun VerticalSpacer(height: Dp) {

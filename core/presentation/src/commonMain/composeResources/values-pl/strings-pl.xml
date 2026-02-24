@@ -88,7 +88,7 @@
     <string name="search_failed">Wyszukiwanie nie powiodło się</string>
     <string name="no_repositories_found">Nie znaleziono repozytoriów</string>
 
-    <string name="settings_title">Ustawienia</string>
+    <string name="profile_title">Profil</string>
 
     <string name="section_appearance">WYGLĄD</string>
     <string name="section_about">O APLIKACJI</string>

@@ -12,7 +12,7 @@ import zed.rainxch.details.data.di.detailsModule
 import zed.rainxch.devprofile.data.di.devProfileModule
 import zed.rainxch.home.data.di.homeModule
 import zed.rainxch.search.data.di.searchModule
-import zed.rainxch.settings.data.di.settingsModule
+import zed.rainxch.profile.data.di.settingsModule
 
 fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {

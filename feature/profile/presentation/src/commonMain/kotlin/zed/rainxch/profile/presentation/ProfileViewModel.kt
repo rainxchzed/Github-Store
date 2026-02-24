@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import zed.rainxch.core.domain.repository.ThemesRepository
 import zed.rainxch.core.domain.utils.BrowserHelper
-import zed.rainxch.settings.domain.repository.SettingsRepository
+import zed.rainxch.profile.domain.repository.ProfileRepository
 
 class ProfileViewModel(
     private val browserHelper: BrowserHelper,
     private val themesRepository: ThemesRepository,
-    private val settingsRepository: SettingsRepository
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -46,7 +46,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    versionName = settingsRepository.getVersionName()
+                    versionName = profileRepository.getVersionName()
                 )
             }
         }
@@ -54,7 +54,7 @@ class ProfileViewModel(
 
     private fun collectIsUserLoggedIn() {
         viewModelScope.launch {
-            settingsRepository.isUserLoggedIn
+            profileRepository.isUserLoggedIn
                 .collect { isLoggedIn ->
                     _state.update { it.copy(isUserLoggedIn = isLoggedIn) }
                 }
@@ -126,7 +126,7 @@ class ProfileViewModel(
             ProfileAction.OnLogoutConfirmClick -> {
                 viewModelScope.launch {
                     runCatching {
-                        settingsRepository.logout()
+                        profileRepository.logout()
                     }.onSuccess {
                         _state.update { it.copy(isLogoutDialogVisible = false) }
                         _events.send(ProfileEvent.OnLogoutSuccessful)

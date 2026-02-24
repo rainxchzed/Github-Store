@@ -34,14 +34,14 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import zed.rainxch.core.domain.model.FontTheme
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.settings.presentation.components.LogoutDialog
-import zed.rainxch.settings.presentation.components.sections.about
-import zed.rainxch.settings.presentation.components.sections.appearance
-import zed.rainxch.settings.presentation.components.sections.logout
+import zed.rainxch.profile.presentation.components.LogoutDialog
+import zed.rainxch.profile.presentation.components.sections.about
+import zed.rainxch.profile.presentation.components.sections.logout
+import zed.rainxch.profile.presentation.components.sections.profile
+import zed.rainxch.profile.presentation.components.sections.settings
 
 @Composable
 fun ProfileRoot(
@@ -122,29 +122,18 @@ fun ProfileScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            appearance(
-                selectedThemeColor = state.selectedThemeColor,
-                onThemeColorSelected = { theme ->
-                    onAction(ProfileAction.OnThemeColorSelected(theme))
-                },
-                isAmoledThemeEnabled = state.isAmoledThemeEnabled,
-                onAmoledThemeToggled = { enabled ->
-                    onAction(ProfileAction.OnAmoledThemeToggled(enabled))
-                },
-                isDarkTheme = state.isDarkTheme,
-                onDarkThemeChange = { isDarkTheme ->
-                    onAction(ProfileAction.OnDarkThemeChange(isDarkTheme))
-                },
-                isUsingSystemFont = state.selectedFontTheme == FontTheme.SYSTEM,
-                onUseSystemFontToggled = { enabled ->
-                    onAction(
-                        ProfileAction.OnFontThemeSelected(
-                            if (enabled) {
-                                FontTheme.SYSTEM
-                            } else FontTheme.CUSTOM
-                        )
-                    )
-                }
+            profile(
+                state = state,
+                onAction = onAction
+            )
+
+            item {
+                Spacer(Modifier.height(24.dp))
+            }
+
+            settings(
+                state = state,
+                onAction = onAction
             )
 
             item {
@@ -164,6 +153,10 @@ fun ProfileScreen(
                 logout(
                     onAction = onAction
                 )
+            }
+
+            item {
+                Spacer(Modifier.height(64.dp))
             }
         }
     }
@@ -189,7 +182,7 @@ private fun TopAppBar(onAction: (ProfileAction) -> Unit) {
         },
         title = {
             Text(
-                text = stringResource(Res.string.settings_title),
+                text = stringResource(Res.string.profile_title),
                 style = MaterialTheme.typography.titleMediumEmphasized,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface

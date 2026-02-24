@@ -87,7 +87,7 @@
     <string name="search_failed">検索に失敗しました</string>
     <string name="no_repositories_found">リポジトリが見つかりませんでした</string>
 
-    <string name="settings_title">設定</string>
+    <string name="profile_title">プロフィール</string>
 
     <string name="section_appearance">外観</string>
     <string name="section_about">情報</string>

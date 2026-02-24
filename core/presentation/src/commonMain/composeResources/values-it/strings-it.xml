@@ -104,7 +104,7 @@
     <string name="no_repositories_found">Nessuna repository trovata</string>
 
     <!-- Settings -->
-    <string name="settings_title">Impostazioni</string>
+    <string name="profile_title">Profilo</string>
 
     <!-- Sections -->
     <string name="section_appearance">ASPETTO</string>

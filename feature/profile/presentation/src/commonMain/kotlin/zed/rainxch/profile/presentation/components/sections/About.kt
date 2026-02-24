@@ -1,4 +1,4 @@
-package zed.rainxch.settings.presentation.components.sections
+package zed.rainxch.profile.presentation.components.sections
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

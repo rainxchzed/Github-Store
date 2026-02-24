@@ -103,7 +103,7 @@
     <string name="no_repositories_found">Repo bulunamadı</string>
 
     <!-- Settings -->
-    <string name="settings_title">Ayarlar</string>
+    <string name="profile_title">Profil</string>
 
     <!-- Sections -->
     <string name="section_appearance">GÖRÜNÜM</string>

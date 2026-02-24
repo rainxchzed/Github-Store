@@ -87,7 +87,7 @@
     <string name="search_failed">Поиск не удался</string>
     <string name="no_repositories_found">Репозитории не найдены</string>
 
-    <string name="settings_title">Настройки</string>
+    <string name="profile_title">Профиль</string>
 
     <string name="section_appearance">ВНЕШНИЙ ВИД</string>
     <string name="section_about">О ПРИЛОЖЕНИИ</string>
