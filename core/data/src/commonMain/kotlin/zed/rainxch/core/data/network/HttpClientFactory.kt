@@ -9,24 +9,30 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.network.UnresolvedAddressException
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.network.interceptor.RateLimitInterceptor
+import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
+expect fun createPlatformHttpClient(proxyConfig: ProxyConfig? = null): HttpClient
+
 fun createGitHubHttpClient(
     tokenStore: TokenStore,
-    rateLimitRepository: RateLimitRepository
+    rateLimitRepository: RateLimitRepository,
+    proxyConfig: ProxyConfig? = null
 ): HttpClient {
     val json = Json {
         ignoreUnknownKeys = true
         isLenient = true
     }
 
-    return HttpClient {
+    return createPlatformHttpClient(proxyConfig).config {
+
         install(RateLimitInterceptor) {
             this.rateLimitRepository = rateLimitRepository
         }
@@ -45,23 +51,17 @@ fun createGitHubHttpClient(
             maxRetries = 3
             retryIf { _, response ->
                 val code = response.status.value
-
                 if (code == 403) {
                     val remaining = response.headers["X-RateLimit-Remaining"]?.toIntOrNull()
-                    if (remaining == 0) {
-                        return@retryIf false
-                    }
+                    if (remaining == 0) return@retryIf false
                 }
-
                 code in 500..<600
             }
-
             retryOnExceptionIf { _, cause ->
                 cause is HttpRequestTimeoutException ||
                         cause is UnresolvedAddressException ||
                         cause is IOException
             }
-
             exponentialDelay()
         }
 

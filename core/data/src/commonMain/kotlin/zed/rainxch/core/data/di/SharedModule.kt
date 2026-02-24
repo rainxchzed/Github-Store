@@ -13,6 +13,8 @@ import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.StarredRepoDao
 import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
 import zed.rainxch.core.data.logging.KermitLogger
+import zed.rainxch.core.data.network.GitHubClientProvider
+import zed.rainxch.core.data.network.ProxyManager
 import zed.rainxch.core.data.network.createGitHubHttpClient
 import zed.rainxch.core.data.repository.AuthenticationStateImpl
 import zed.rainxch.core.data.repository.FavouritesRepositoryImpl
@@ -93,6 +95,14 @@ val coreModule = module {
 }
 
 val networkModule = module {
+    single<GitHubClientProvider> {
+        GitHubClientProvider(
+            tokenStore = get(),
+            rateLimitRepository = get(),
+            proxyConfigFlow = ProxyManager.currentProxyConfig
+        )
+    }
+
     single<HttpClient> {
         createGitHubHttpClient(
             tokenStore = get(),
