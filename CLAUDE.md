@@ -30,36 +30,45 @@ Package: `zed.rainxch.githubstore`
 ## Project Structure
 
 ```
-composeApp/                          # Main app module
+composeApp/                          # Main app module (entry points, navigation, DI wiring)
   src/commonMain/                    # Shared UI & app wiring
   src/androidMain/                   # Android entry point (MainActivity)
   src/jvmMain/                       # Desktop entry point (DesktopApp.kt)
 core/
-  domain/                            # Shared interfaces, models, utils
-  data/                              # Shared repos, networking, database, DI
-  presentation/                      # Shared theming & UI utilities
+  domain/                            # Shared interfaces, models, use cases (no framework deps)
+  data/                              # Shared repos, networking (Ktor), database (Room), DI
+  presentation/                      # Shared theming (Material 3) & reusable UI components
 feature/
-  {apps,auth,details,dev-profile,    # Each feature has 3 sub-modules:
-   favourites,home,search,             domain/ - interfaces & models
-   settings,starred}/                  data/   - implementations & DI
-                                       presentation/ - screens & ViewModels
+  apps/                              # Installed applications management
+  auth/                              # GitHub OAuth device flow authentication
+  details/                           # Repository details, releases, readme, downloads
+  dev-profile/                       # Developer/user profile display
+  favourites/                        # Saved favorite repositories (presentation-only)
+  home/                              # Main discovery screen (trending, hot, popular)
+  search/                            # Repository search with filters
+  settings/                          # App settings (theme, account, appearance)
+  starred/                           # Starred repositories (presentation-only)
 build-logic/convention/              # Custom Gradle convention plugins
 ```
+
+Each feature has up to 3 sub-modules: `domain/` (interfaces & models), `data/` (implementations & DI), `presentation/` (screens & ViewModels). Some features (favourites, starred) are presentation-only and use core repositories directly.
 
 ## Architecture
 
 **Clean Architecture + MVVM** with strict layer separation per feature module:
 
 - **Domain** - Repository interfaces, models, use cases (no framework dependencies)
-- **Data** - Repository implementations, Ktor API clients, Room DAOs, DTOs
+- **Data** - Repository implementations, Ktor API clients, Room DAOs, DTOs, mappers
 - **Presentation** - ViewModels with `StateFlow`/`Channel`, Compose screens
 
 ### State Management Pattern
 
+Every screen follows the same State/Action/Event pattern:
+
 ```kotlin
 class XViewModel : ViewModel() {
     private val _state = MutableStateFlow(XState())
-    val state = _state.asStateFlow()
+    val state = _state.asStateFlow()  // or .stateIn() with WhileSubscribed
 
     private val _events = Channel<XEvent>()
     val events = _events.receiveAsFlow()
@@ -68,15 +77,34 @@ class XViewModel : ViewModel() {
 }
 ```
 
-Each screen uses a `State` data class, sealed `Action` class for user input, and sealed `Event` class for one-off effects.
+- `State` - data class holding all UI state
+- `Action` - sealed interface for user input (clicks, refreshes, etc.)
+- `Event` - sealed interface for one-off effects (navigation, toasts, scroll)
 
 ### Navigation
 
-Type-safe navigation using `@Serializable` sealed interface `GithubStoreGraph` in `composeApp/src/commonMain/.../app/navigation/`.
+Type-safe navigation using `@Serializable` sealed interface `GithubStoreGraph`:
+
+```
+HomeScreen, SearchScreen, AuthenticationScreen, SettingsScreen,
+FavouritesScreen, StarredReposScreen, AppsScreen
+DetailsScreen(repositoryId, owner, repo)
+DeveloperProfileScreen(username)
+```
+
+Routes defined in `composeApp/.../app/navigation/GithubStoreGraph.kt`, wired in `AppNavigation.kt`.
 
 ### Dependency Injection
 
-**Koin** - modules defined in each feature's `data/di/` directory, registered in `composeApp/.../app/di/initKoin.kt`. ViewModels injected via `koinViewModel()`.
+**Koin** - modules defined in each feature's `data/di/SharedModule.kt`, registered in `composeApp/.../app/di/initKoin.kt`. ViewModels injected via `koinViewModel()`.
+
+### Core Modules
+
+| Module | Purpose | Key Contents |
+|--------|---------|--------------|
+| `core/domain` | Shared contracts | Repository interfaces (`FavouritesRepository`, `StarredRepository`, `InstalledAppsRepository`, `ThemesRepository`), models (`GithubRepoSummary`, `GithubRelease`, `InstalledApp`, `ProxyConfig`), system interfaces (`Downloader`, `Installer`, `PackageMonitor`) |
+| `core/data` | Shared implementations | `HttpClientFactory` (Ktor + interceptors), `AppDatabase` (Room), `ProxyManager`, `TokenStore`, `LocalizationManager`, platform-specific clients (OkHttp for Android, CIO for Desktop) |
+| `core/presentation` | Shared UI | `GithubStoreTheme` (Material 3), reusable components (`RepositoryCard`, `GithubStoreButton`), formatting utils |
 
 ## Tech Stack
 
@@ -103,12 +131,12 @@ Custom Gradle plugins in `build-logic/convention/` standardize module setup:
 
 | Plugin | Use For |
 |--------|---------|
-| `convention.kmp.library` | KMP shared library modules |
-| `convention.cmp.library` | Compose Multiplatform library modules |
-| `convention.cmp.feature` | Feature presentation modules |
+| `convention.kmp.library` | KMP shared library modules (domain, data) |
+| `convention.cmp.library` | Compose Multiplatform library modules (core/presentation) |
+| `convention.cmp.feature` | Feature presentation modules (auto-adds Compose + Koin + core:presentation) |
 | `convention.cmp.application` | Main app module |
 | `convention.room` | Room database modules |
-| `convention.buildkonfig` | Build-time config (API keys) |
+| `convention.buildkonfig` | Build-time config (API keys from local.properties) |
 
 ## Adding a New Feature
 
@@ -116,7 +144,7 @@ Custom Gradle plugins in `build-logic/convention/` standardize module setup:
 2. Add `build.gradle.kts` in each using the appropriate convention plugin
 3. Add `include` entries in `settings.gradle.kts`
 4. Define domain interfaces/models in `domain/`
-5. Implement repository + Koin DI module in `data/di/`
+5. Implement repository + Koin DI module in `data/di/SharedModule.kt`
 6. Create ViewModel (State/Action/Event pattern) and Screen in `presentation/`
 7. Add navigation route to `GithubStoreGraph.kt` and wire in `AppNavigation.kt`
 8. Register the Koin module in `initKoin.kt`
@@ -131,7 +159,8 @@ Custom Gradle plugins in `build-logic/convention/` standardize module setup:
 
 - Packages follow `zed.rainxch.{module}.{layer}` pattern
 - Private state properties use underscore prefix: `_state`
-- Sealed classes for type-safe navigation routes, actions, events
+- Sealed classes/interfaces for type-safe navigation routes, actions, events
 - Repository pattern: interface in `domain/`, implementation in `data/`
 - Composition over inheritance via Koin DI
 - Source sets: `commonMain` for shared, `androidMain` for Android, `jvmMain` for Desktop
+- Feature CLAUDE.md files exist in each `feature/` directory for module-specific guidance
