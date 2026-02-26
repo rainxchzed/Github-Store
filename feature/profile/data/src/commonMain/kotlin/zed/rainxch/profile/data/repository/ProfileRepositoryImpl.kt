@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import zed.rainxch.core.data.cache.CacheManager
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.USER_PROFILE
 import zed.rainxch.core.data.cache.CacheTtl
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.dto.UserProfileNetwork
@@ -60,7 +61,7 @@ class ProfileRepositoryImpl(
             }.getOrThrow()
 
             val userProfile = networkProfile.toUserProfile()
-            cacheManager.put(CACHE_KEY, userProfile, CacheTtl.USER_PROFILE)
+            cacheManager.put(CACHE_KEY, userProfile, USER_PROFILE)
             logger.debug("Fetched and cached user profile: ${userProfile.username}")
             emit(userProfile)
         } catch (e: Exception) {

@@ -7,16 +7,6 @@ import zed.rainxch.core.data.local.db.entities.CacheEntryEntity
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
-object CacheTtl {
-    val HOME_REPOS = 3.hours.inWholeMilliseconds
-    val REPO_DETAILS = 6.hours.inWholeMilliseconds
-    val RELEASES = 6.hours.inWholeMilliseconds
-    val README = 12.hours.inWholeMilliseconds
-    val USER_PROFILE = 6.hours.inWholeMilliseconds
-    val SEARCH_RESULTS = 1.hours.inWholeMilliseconds
-    val REPO_STATS = 6.hours.inWholeMilliseconds
-}
-
 class CacheManager(
     val cacheDao: CacheDao
 ) {
@@ -90,13 +80,27 @@ class CacheManager(
     }
 
     suspend fun invalidateByPrefix(prefix: String) {
-        memoryCache.keys.removeAll { it.startsWith(prefix) }
+        val keysToRemove = memoryCache.keys.filter { it.startsWith(prefix) }
+        keysToRemove.forEach { memoryCache.remove(it) }
         cacheDao.deleteByPrefix(prefix)
     }
 
     suspend fun cleanupExpired() {
         val currentTime = now()
-        memoryCache.entries.removeAll { it.value.first <= currentTime }
+        val expiredKeys = memoryCache.entries
+            .filter { it.value.first <= currentTime }
+            .map { it.key }
+        expiredKeys.forEach { memoryCache.remove(it) }
         cacheDao.deleteExpired(currentTime)
+    }
+
+    companion object CacheTtl {
+        val HOME_REPOS = 12.hours.inWholeMilliseconds
+        val REPO_DETAILS = 6.hours.inWholeMilliseconds
+        val RELEASES = 6.hours.inWholeMilliseconds
+        val README = 12.hours.inWholeMilliseconds
+        val USER_PROFILE = 6.hours.inWholeMilliseconds
+        val SEARCH_RESULTS = 1.hours.inWholeMilliseconds
+        val REPO_STATS = 6.hours.inWholeMilliseconds
     }
 }

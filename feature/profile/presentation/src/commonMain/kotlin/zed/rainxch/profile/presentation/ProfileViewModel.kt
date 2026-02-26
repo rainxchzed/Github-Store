@@ -2,6 +2,7 @@ package zed.rainxch.profile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,6 +29,8 @@ class ProfileViewModel(
     private val profileRepository: ProfileRepository,
     private val proxyRepository: ProxyRepository
 ) : ViewModel() {
+
+    private var userProfileJob: Job? = null
 
     private var hasLoadedInitialData = false
 
@@ -78,7 +81,9 @@ class ProfileViewModel(
     }
 
     private fun loadUserProfile() {
-        viewModelScope.launch {
+        userProfileJob?.cancel()
+
+        userProfileJob = viewModelScope.launch {
             profileRepository.getUser().collect { profile ->
                 _state.update { it.copy(userProfile = profile) }
             }

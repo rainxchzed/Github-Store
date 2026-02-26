@@ -24,7 +24,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import zed.rainxch.core.data.cache.CacheManager
-import zed.rainxch.core.data.cache.CacheTtl
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.HOME_REPOS
 import zed.rainxch.core.data.dto.GithubRepoNetworkModel
 import zed.rainxch.core.data.dto.GithubRepoSearchResponse
 import zed.rainxch.core.data.mappers.toSummary
@@ -69,7 +69,7 @@ class HomeRepositoryImpl(
                     hasMore = false,
                     nextPageIndex = 2
                 )
-                cacheManager.put(cacheKey("trending", page), result, CacheTtl.HOME_REPOS)
+                cacheManager.put(cacheKey("trending", page), result, CacheManager.CacheTtl.HOME_REPOS)
                 emit(result)
                 return@flow
             } else {
@@ -117,7 +117,7 @@ class HomeRepositoryImpl(
                     hasMore = false,
                     nextPageIndex = 2
                 )
-                cacheManager.put(cacheKey("hot_release", page), result, CacheTtl.HOME_REPOS)
+                cacheManager.put(cacheKey("hot_release", page), result, CacheManager.HOME_REPOS)
                 emit(result)
                 return@flow
             } else {
@@ -165,7 +165,7 @@ class HomeRepositoryImpl(
                     hasMore = false,
                     nextPageIndex = 2
                 )
-                cacheManager.put(cacheKey("most_popular", page), result, CacheTtl.HOME_REPOS)
+                cacheManager.put(cacheKey("most_popular", page), result, HOME_REPOS)
                 emit(result)
                 return@flow
             } else {
@@ -302,7 +302,7 @@ class HomeRepositoryImpl(
                 currentApiPage++
                 pagesFetchedCount++
 
-            } catch (e: RateLimitException) {
+            } catch (_: RateLimitException) {
                 logger.error("Rate limited during search")
                 break
             } catch (e: CancellationException) {
@@ -341,7 +341,7 @@ class HomeRepositoryImpl(
                 hasMore = pagesFetchedCount < maxPagesToFetch && results.size >= desiredCount,
                 nextPageIndex = currentApiPage + 1
             )
-            cacheManager.put(cacheKey(category, startPage), allResults, CacheTtl.HOME_REPOS)
+            cacheManager.put(cacheKey(category, startPage), allResults, HOME_REPOS)
             logger.debug("Cached ${results.size} repos for $category page $startPage")
         }
     }.flowOn(Dispatchers.IO)
@@ -424,7 +424,7 @@ class HomeRepositoryImpl(
             } else {
                 null
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

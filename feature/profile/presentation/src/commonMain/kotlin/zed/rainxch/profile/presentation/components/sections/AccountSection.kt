@@ -76,9 +76,11 @@ fun LazyListScope.accountSection(
                 Spacer(Modifier.height(8.dp))
             }
 
-            if (state.userProfile?.name != null) {
+            if (state.userProfile != null) {
+                val displayName = state.userProfile.name.takeIf { it.isNotBlank() }
+                    ?: state.userProfile.username
                 Text(
-                    text = state.userProfile.name,
+                    text = displayName,
                     style = MaterialTheme.typography.titleLargeEmphasized,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
@@ -129,19 +131,19 @@ fun LazyListScope.accountSection(
                 ) {
                     StatCard(
                         label = "Repos",
-                        value = "24",
+                        value = state.userProfile.repositoryCount.toString(),
                         modifier = Modifier.weight(1f)
                     )
 
                     StatCard(
                         label = "Followers",
-                        value = "1.2K",
+                        value = state.userProfile.followers.toString(),
                         modifier = Modifier.weight(1f)
                     )
 
                     StatCard(
                         label = "Following",
-                        value = "56",
+                        value = state.userProfile.following.toString(),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -156,7 +158,7 @@ fun LazyListScope.accountSection(
                         onAction(ProfileAction.OnLoginClick)
                     },
                     modifier = Modifier
-                        .width(480.dp)
+                        .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                 )
             }

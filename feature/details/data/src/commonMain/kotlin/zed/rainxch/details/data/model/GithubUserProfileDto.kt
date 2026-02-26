@@ -1,6 +1,9 @@
-package zed.rainxch.core.domain.model
+package zed.rainxch.details.data.model
 
-data class GithubUserProfile(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class GithubUserProfileDto(
     val id: Long,
     val login: String,
     val name: String?,

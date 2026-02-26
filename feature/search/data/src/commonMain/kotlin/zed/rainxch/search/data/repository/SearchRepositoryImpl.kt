@@ -19,7 +19,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withTimeoutOrNull
 import zed.rainxch.core.data.cache.CacheManager
-import zed.rainxch.core.data.cache.CacheTtl
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.SEARCH_RESULTS
 import zed.rainxch.core.data.dto.GithubRepoNetworkModel
 import zed.rainxch.core.data.dto.GithubRepoSearchResponse
 import zed.rainxch.core.data.mappers.toSummary
@@ -69,7 +69,7 @@ class SearchRepositoryImpl(
         val cacheKey = searchCacheKey(query, searchPlatform, language, sortBy, page)
 
         val cached = cacheManager.get<PaginatedDiscoveryRepositories>(cacheKey)
-        if (cached != null && cached.repos.isNotEmpty()) {
+        if (cached != null) {
             send(cached)
             return@channelFlow
         }
@@ -120,7 +120,7 @@ class SearchRepositoryImpl(
                         nextPageIndex = currentPage + 1,
                         totalCount = total
                     )
-                    cacheManager.put(cacheKey, result, CacheTtl.SEARCH_RESULTS)
+                    cacheManager.put(cacheKey, result, SEARCH_RESULTS)
                     send(result)
                     return@channelFlow
                 }

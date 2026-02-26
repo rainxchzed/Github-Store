@@ -11,19 +11,25 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import zed.rainxch.core.data.cache.CacheManager
-import zed.rainxch.core.data.cache.CacheTtl
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.README
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.RELEASES
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.REPO_DETAILS
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.REPO_STATS
+import zed.rainxch.core.data.cache.CacheManager.CacheTtl.USER_PROFILE
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.model.GithubRelease
 import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.domain.model.GithubUser
-import zed.rainxch.core.domain.model.GithubUserProfile
 import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.data.dto.RepoByIdNetwork
 import zed.rainxch.core.data.dto.RepoInfoNetwork
 import zed.rainxch.core.data.dto.UserProfileNetwork
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.data.mappers.toDomain
+import zed.rainxch.core.domain.model.GithubUserProfile
+import zed.rainxch.details.data.mappers.toDomain
+import zed.rainxch.details.data.model.GithubUserProfileDto
 import zed.rainxch.details.data.utils.ReadmeLocalizationHelper
 import zed.rainxch.details.data.utils.preprocessMarkdown
 import zed.rainxch.details.domain.model.RepoStats
@@ -76,17 +82,28 @@ class DetailsRepositoryImpl(
             return cached
         }
 
-        val result = httpClient.executeRequest<RepoByIdNetwork> {
-            get("/repositories/$id") {
-                header(HttpHeaders.Accept, "application/vnd.github+json")
+        return try {
+            val result = httpClient.executeRequest<RepoByIdNetwork> {
+                get("/repositories/$id") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                }
+            }.getOrThrow().toGithubRepoSummary()
+            cacheManager.put(cacheKey, result, REPO_DETAILS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { stale ->
+                logger.debug("Network error, using stale cache for repo id=$id")
+                return stale
             }
-        }.getOrThrow().toGithubRepoSummary()
+            throw e
+        }
 
-        cacheManager.put(cacheKey, result, CacheTtl.REPO_DETAILS)
-        return result
     }
 
-    override suspend fun getRepositoryByOwnerAndName(owner: String, name: String): GithubRepoSummary {
+    override suspend fun getRepositoryByOwnerAndName(
+        owner: String,
+        name: String
+    ): GithubRepoSummary {
         val cacheKey = "details:repo:$owner/$name"
 
         cacheManager.get<GithubRepoSummary>(cacheKey)?.let { cached ->
@@ -101,7 +118,7 @@ class DetailsRepositoryImpl(
                 }
             }.getOrThrow().toGithubRepoSummary()
 
-            cacheManager.put(cacheKey, result, CacheTtl.REPO_DETAILS)
+            cacheManager.put(cacheKey, result, REPO_DETAILS)
             result
         } catch (e: Exception) {
             cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { stale ->
@@ -142,7 +159,7 @@ class DetailsRepositoryImpl(
                 body = processReleaseBody(latest.body, owner, repo, defaultBranch)
             ).toDomain()
 
-            cacheManager.put(cacheKey, result, CacheTtl.RELEASES)
+            cacheManager.put(cacheKey, result, RELEASES)
             result
         } catch (e: Exception) {
             cacheManager.getStale<GithubRelease>(cacheKey)?.let { stale ->
@@ -185,7 +202,7 @@ class DetailsRepositoryImpl(
                 .sortedByDescending { it.publishedAt }
 
             if (result.isNotEmpty()) {
-                cacheManager.put(cacheKey, result, CacheTtl.RELEASES)
+                cacheManager.put(cacheKey, result, RELEASES)
             }
             result
         } catch (e: Exception) {
@@ -237,7 +254,7 @@ class DetailsRepositoryImpl(
                 languageCode = result.second,
                 path = result.third
             )
-            cacheManager.put(cacheKey, cachedReadme, CacheTtl.README)
+            cacheManager.put(cacheKey, cachedReadme, README)
         }
 
         return result
@@ -388,7 +405,7 @@ class DetailsRepositoryImpl(
                 openIssues = info.openIssues,
             )
 
-            cacheManager.put(cacheKey, result, CacheTtl.REPO_STATS)
+            cacheManager.put(cacheKey, result, REPO_STATS)
             result
         } catch (e: Exception) {
             cacheManager.getStale<RepoStats>(cacheKey)?.let { stale ->
@@ -402,9 +419,9 @@ class DetailsRepositoryImpl(
     override suspend fun getUserProfile(username: String): GithubUserProfile {
         val cacheKey = "details:profile:$username"
 
-        cacheManager.get<GithubUserProfile>(cacheKey)?.let { cached ->
+        cacheManager.get<GithubUserProfileDto>(cacheKey)?.let { cached ->
             logger.debug("Cache hit for user profile $username")
-            return cached
+            return cached.toDomain()
         }
 
         return try {
@@ -414,7 +431,7 @@ class DetailsRepositoryImpl(
                 }
             }.getOrThrow()
 
-            val result = GithubUserProfile(
+            val result = GithubUserProfileDto(
                 id = user.id,
                 login = user.login,
                 name = user.name,
@@ -428,14 +445,14 @@ class DetailsRepositoryImpl(
                 company = user.company,
                 blog = user.blog,
                 twitterUsername = user.twitterUsername
-            )
+            ).toDomain()
 
-            cacheManager.put(cacheKey, result, CacheTtl.USER_PROFILE)
+            cacheManager.put(cacheKey, result, USER_PROFILE)
             result
         } catch (e: Exception) {
-            cacheManager.getStale<GithubUserProfile>(cacheKey)?.let { stale ->
+            cacheManager.getStale<GithubUserProfileDto>(cacheKey)?.let { stale ->
                 logger.debug("Network error, using stale cache for profile $username")
-                return stale
+                return stale.toDomain()
             }
             throw e
         }
