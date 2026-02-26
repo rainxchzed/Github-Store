@@ -91,6 +91,7 @@
 
     <string name="section_appearance">APARIENCIA</string>
     <string name="section_about">ACERCA DE</string>
+    <string name="section_network">RED</string>
 
     <string name="theme_color">Color del tema</string>
     <string name="amoled_black_theme">Tema negro AMOLED</string>
@@ -314,15 +315,11 @@
     <string name="inspect_with_appmanager">Inspeccionar con AppManager</string>
     <string name="appmanager_description">Verificar permisos, rastreadores y seguridad</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">Desinstalar</string>
+    <!-- Open -->
     <string name="open_app">Abrir</string>
-    <string name="downgrade_requires_uninstall">La degradación requiere desinstalar</string>
-    <string name="downgrade_warning_message">Instalar la versión %1$s requiere desinstalar la versión actual (%2$s) primero. Los datos de la app se perderán.</string>
-    <string name="uninstall_first">Desinstalar primero</string>
+    <string name="downgrade_warning_message">No se puede instalar la versión %1$s porque ya hay una versión más reciente (%2$s) instalada. Por favor, desinstala la versión actual manualmente primero.</string>
     <string name="install_version">Instalar %1$s</string>
     <string name="failed_to_open_app">Error al abrir %1$s</string>
-    <string name="failed_to_uninstall">Error al desinstalar %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Última</string>
@@ -334,5 +331,26 @@
     <string name="last_checked_minutes_ago">hace %1$d min</string>
     <string name="last_checked_hours_ago">hace %1$d h</string>
     <string name="checking_for_updates">Comprobando actualizaciones…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">Tipo de proxy</string>
+    <string name="proxy_none">Ninguno</string>
+    <string name="proxy_system">Sistema</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">Host</string>
+    <string name="proxy_port">Puerto</string>
+    <string name="proxy_username">Nombre de usuario (opcional)</string>
+    <string name="proxy_password">Contraseña (opcional)</string>
+    <string name="proxy_save">Guardar proxy</string>
+    <string name="proxy_saved">Configuración de proxy guardada</string>
+    <string name="proxy_system_description">Usa la configuración de proxy del dispositivo</string>
+    <string name="proxy_port_error">El puerto debe ser 1–65535</string>
+    <string name="proxy_none_description">Conexión directa, sin proxy</string>
+    <string name="failed_to_save_proxy_settings">No se pudieron guardar los ajustes del proxy</string>
+    <string name="proxy_host_required">Se requiere el host del proxy</string>
+    <string name="invalid_proxy_port">Puerto de proxy no válido</string>
+    <string name="proxy_show_password">Mostrar contraseña</string>
+    <string name="proxy_hide_password">Ocultar contraseña</string>
 
 </resources>

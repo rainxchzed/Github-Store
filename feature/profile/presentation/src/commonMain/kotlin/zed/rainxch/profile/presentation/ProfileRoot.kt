@@ -2,6 +2,7 @@ package zed.rainxch.profile.presentation
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,12 +35,14 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.profile.presentation.components.LogoutDialog
 import zed.rainxch.profile.presentation.components.sections.about
 import zed.rainxch.profile.presentation.components.sections.logout
+import zed.rainxch.profile.presentation.components.sections.networkSection
 import zed.rainxch.profile.presentation.components.sections.profile
 import zed.rainxch.profile.presentation.components.sections.settings
 
@@ -63,6 +66,18 @@ fun ProfileRoot(
             }
 
             is ProfileEvent.OnLogoutError -> {
+                coroutineScope.launch {
+                    snackbarState.showSnackbar(event.message)
+                }
+            }
+
+            ProfileEvent.OnProxySaved -> {
+                coroutineScope.launch {
+                    snackbarState.showSnackbar(getString(Res.string.proxy_saved))
+                }
+            }
+
+            is ProfileEvent.OnProxySaveError -> {
                 coroutineScope.launch {
                     snackbarState.showSnackbar(event.message)
                 }
@@ -106,9 +121,13 @@ fun ProfileScreen(
     snackbarState: SnackbarHostState
 ) {
     val liquidState = LocalBottomNavigationLiquid.current
+    val bottomNavHeight = LocalBottomNavigationHeight.current
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarState)
+            SnackbarHost(
+                hostState = snackbarState,
+                modifier = Modifier.padding(bottom = bottomNavHeight)
+            )
         },
         topBar = {
             TopAppBar(onAction)
@@ -132,6 +151,15 @@ fun ProfileScreen(
             }
 
             settings(
+                state = state,
+                onAction = onAction
+            )
+
+            item {
+                Spacer(Modifier.height(16.dp))
+            }
+
+            networkSection(
                 state = state,
                 onAction = onAction
             )

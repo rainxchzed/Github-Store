@@ -108,6 +108,7 @@
     <!-- Sections -->
     <string name="section_appearance">GÖRÜNÜM</string>
     <string name="section_about">HAKKINDA</string>
+    <string name="section_network">AĞ</string>
 
     <!-- Appearance -->
     <string name="theme_color">Tema Rengi</string>
@@ -346,15 +347,11 @@
     <!-- Install status -->
     <string name="pending_install">Kurulum bekleniyor</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">Kaldır</string>
+    <!-- Open -->
     <string name="open_app">Aç</string>
-    <string name="downgrade_requires_uninstall">Sürüm düşürme kaldırma gerektirir</string>
-    <string name="downgrade_warning_message">%1$s sürümünü yüklemek için önce mevcut sürümü (%2$s) kaldırmanız gerekir. Uygulama verileri kaybolacaktır.</string>
-    <string name="uninstall_first">Önce kaldır</string>
+    <string name="downgrade_warning_message">Daha yeni bir sürüm (%2$s) zaten yüklü olduğu için %1$s sürümü yüklenemiyor. Lütfen önce mevcut sürümü manuel olarak kaldırın.</string>
     <string name="install_version">%1$s yükle</string>
     <string name="failed_to_open_app">%1$s açılamadı</string>
-    <string name="failed_to_uninstall">%1$s kaldırılamadı</string>
 
     <!-- Version picker -->
     <string name="latest_badge">En son</string>
@@ -366,5 +363,26 @@
     <string name="last_checked_minutes_ago">%1$d dk önce</string>
     <string name="last_checked_hours_ago">%1$d sa önce</string>
     <string name="checking_for_updates">Güncellemeler kontrol ediliyor…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">Proxy Türü</string>
+    <string name="proxy_none">Yok</string>
+    <string name="proxy_system">Sistem</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">Ana Bilgisayar</string>
+    <string name="proxy_port">Port</string>
+    <string name="proxy_username">Kullanıcı adı (isteğe bağlı)</string>
+    <string name="proxy_password">Şifre (isteğe bağlı)</string>
+    <string name="proxy_save">Proxy'yi Kaydet</string>
+    <string name="proxy_saved">Proxy ayarları kaydedildi</string>
+    <string name="proxy_system_description">Cihazınızın proxy ayarlarını kullanır</string>
+    <string name="proxy_port_error">Port 1–65535 arası olmalı</string>
+    <string name="proxy_none_description">Doğrudan bağlantı, proxy yok</string>
+    <string name="failed_to_save_proxy_settings">Proxy ayarları kaydedilemedi</string>
+    <string name="proxy_host_required">Proxy ana bilgisayarı gerekli</string>
+    <string name="invalid_proxy_port">Geçersiz proxy portu</string>
+    <string name="proxy_show_password">Şifreyi göster</string>
+    <string name="proxy_hide_password">Şifreyi gizle</string>
 
 </resources>

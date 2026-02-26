@@ -109,6 +109,7 @@
     <!-- Sections -->
     <string name="section_appearance">চেহারা</string>
     <string name="section_about">সম্পর্কে</string>
+    <string name="section_network">নেটওয়ার্ক</string>
 
     <!-- Appearance -->
     <string name="theme_color">থিমের রঙ</string>
@@ -349,15 +350,11 @@
     <!-- Install status -->
     <string name="pending_install">ইনস্টল মুলতুবি</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">আনইনস্টল</string>
+    <!-- Open -->
     <string name="open_app">খুলুন</string>
-    <string name="downgrade_requires_uninstall">ডাউনগ্রেডের জন্য আনইনস্টল প্রয়োজন</string>
-    <string name="downgrade_warning_message">সংস্করণ %1$s ইনস্টল করতে বর্তমান সংস্করণ (%2$s) প্রথমে আনইনস্টল করতে হবে। অ্যাপের ডেটা মুছে যাবে।</string>
-    <string name="uninstall_first">প্রথমে আনইনস্টল করুন</string>
+    <string name="downgrade_warning_message">সংস্করণ %1$s ইনস্টল করা যাচ্ছে না কারণ একটি নতুন সংস্করণ (%2$s) ইতিমধ্যে ইনস্টল করা আছে। অনুগ্রহ করে প্রথমে বর্তমান সংস্করণটি ম্যানুয়ালি আনইনস্টল করুন।</string>
     <string name="install_version">%1$s ইনস্টল করুন</string>
     <string name="failed_to_open_app">%1$s খুলতে ব্যর্থ</string>
-    <string name="failed_to_uninstall">%1$s আনইনস্টল করতে ব্যর্থ</string>
 
     <!-- Version picker -->
     <string name="latest_badge">সর্বশেষ</string>
@@ -369,5 +366,26 @@
     <string name="last_checked_minutes_ago">%1$d মিনিট আগে</string>
     <string name="last_checked_hours_ago">%1$d ঘণ্টা আগে</string>
     <string name="checking_for_updates">আপডেট পরীক্ষা করা হচ্ছে…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">প্রক্সি ধরন</string>
+    <string name="proxy_none">নেই</string>
+    <string name="proxy_system">সিস্টেম</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">হোস্ট</string>
+    <string name="proxy_port">পোর্ট</string>
+    <string name="proxy_username">ব্যবহারকারীর নাম (ঐচ্ছিক)</string>
+    <string name="proxy_password">পাসওয়ার্ড (ঐচ্ছিক)</string>
+    <string name="proxy_save">প্রক্সি সংরক্ষণ</string>
+    <string name="proxy_saved">প্রক্সি সেটিংস সংরক্ষিত হয়েছে</string>
+    <string name="proxy_system_description">আপনার ডিভাইসের প্রক্সি সেটিংস ব্যবহার করে</string>
+    <string name="proxy_port_error">পোর্ট ১–৬৫৫৩৫ এর মধ্যে হতে হবে</string>
+    <string name="proxy_none_description">সরাসরি সংযোগ, কোনো প্রক্সি নেই</string>
+    <string name="failed_to_save_proxy_settings">প্রক্সি সেটিংস সংরক্ষণ করতে ব্যর্থ হয়েছে</string>
+    <string name="proxy_host_required">প্রক্সি হোস্ট প্রয়োজন</string>
+    <string name="invalid_proxy_port">অবৈধ প্রক্সি পোর্ট</string>
+    <string name="proxy_show_password">পাসওয়ার্ড দেখান</string>
+    <string name="proxy_hide_password">পাসওয়ার্ড লুকান</string>
 
 </resources>

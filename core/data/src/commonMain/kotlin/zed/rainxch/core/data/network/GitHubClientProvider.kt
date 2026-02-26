@@ -5,13 +5,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.data.data_source.TokenStore
@@ -24,37 +22,36 @@ class GitHubClientProvider(
     proxyConfigFlow: StateFlow<ProxyConfig>
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private var currentClient: HttpClient? = null
     private val mutex = Mutex()
 
-    private val _client: StateFlow<HttpClient> = proxyConfigFlow
-        .map { proxyConfig ->
-            mutex.withLock {
-                currentClient?.close()
-                val newClient = createGitHubHttpClient(
-                    tokenStore = tokenStore,
-                    rateLimitRepository = rateLimitRepository,
-                    proxyConfig = proxyConfig
-                )
-                currentClient = newClient
-                newClient
-            }
-        }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.Eagerly,
-            initialValue = createGitHubHttpClient(
-                tokenStore = tokenStore,
-                rateLimitRepository = rateLimitRepository,
-                proxyConfig = proxyConfigFlow.value
-            ).also { currentClient = it }
-        )
+    @Volatile
+    private var currentClient: HttpClient = createGitHubHttpClient(
+        tokenStore = tokenStore,
+        rateLimitRepository = rateLimitRepository,
+        proxyConfig = proxyConfigFlow.value
+    )
 
-    /** Get the current HttpClient (always up to date with proxy settings) */
-    val client: HttpClient get() = _client.value
+    init {
+        proxyConfigFlow
+            .drop(1)
+            .distinctUntilChanged()
+            .onEach { proxyConfig ->
+                mutex.withLock {
+                    currentClient.close()
+                    currentClient = createGitHubHttpClient(
+                        tokenStore = tokenStore,
+                        rateLimitRepository = rateLimitRepository,
+                        proxyConfig = proxyConfig
+                    )
+                }
+            }
+            .launchIn(scope)
+    }
+
+    val client: HttpClient get() = currentClient
 
     fun close() {
-        currentClient?.close()
+        currentClient.close()
         scope.cancel()
     }
 }

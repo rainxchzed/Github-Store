@@ -56,11 +56,6 @@ class DesktopInstaller(
 
     }
 
-    override fun uninstall(packageName: String) {
-        // Desktop doesn't have a unified uninstall mechanism
-        Logger.d { "Uninstall not supported on desktop for: $packageName" }
-    }
-
     override fun openApp(packageName: String): Boolean {
         // Desktop apps are launched differently per platform
         Logger.d { "Open app not supported on desktop for: $packageName" }

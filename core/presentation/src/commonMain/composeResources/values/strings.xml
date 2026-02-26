@@ -108,6 +108,7 @@
 
     <!-- Sections -->
     <string name="section_appearance">APPEARANCE</string>
+    <string name="section_network">NETWORK</string>
     <string name="section_about">ABOUT</string>
 
     <!-- Appearance -->
@@ -122,6 +123,27 @@
 
     <!-- Account -->
     <string name="logout">Logout</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">Proxy Type</string>
+    <string name="proxy_none">None</string>
+    <string name="proxy_system">System</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">Host</string>
+    <string name="proxy_port">Port</string>
+    <string name="proxy_username">Username (optional)</string>
+    <string name="proxy_password">Password (optional)</string>
+    <string name="proxy_save">Save Proxy</string>
+    <string name="proxy_saved">Proxy settings saved</string>
+    <string name="proxy_system_description">Uses your device's proxy settings</string>
+    <string name="proxy_port_error">Port must be 1–65535</string>
+    <string name="proxy_none_description">Direct connection, no proxy</string>
+    <string name="failed_to_save_proxy_settings">Failed to save proxy settings</string>
+    <string name="proxy_host_required">Proxy host is required</string>
+    <string name="invalid_proxy_port">Invalid proxy port</string>
+    <string name="proxy_show_password">Show password</string>
+    <string name="proxy_hide_password">Hide password</string>
 
     <!-- Snackbar -->
     <string name="logout_success">Logged out successfully, redirecting...</string>
@@ -171,15 +193,11 @@
     <string name="installing">Installing</string>
     <string name="pending_install">Pending install</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">Uninstall</string>
+    <!-- Open -->
     <string name="open_app">Open</string>
-    <string name="downgrade_requires_uninstall">Downgrade requires uninstall</string>
-    <string name="downgrade_warning_message">Installing version %1$s requires uninstalling the current version (%2$s) first. Your app data will be lost.</string>
-    <string name="uninstall_first">Uninstall first</string>
+    <string name="downgrade_warning_message">Cannot install version %1$s because a newer version (%2$s) is already installed. Please uninstall the current version manually first.</string>
     <string name="install_version">Install %1$s</string>
     <string name="failed_to_open_app">Failed to open %1$s</string>
-    <string name="failed_to_uninstall">Failed to uninstall %1$s</string>
 
     <!-- Install helpers -->
     <string name="open_in_obtainium">Open in Obtainium</string>

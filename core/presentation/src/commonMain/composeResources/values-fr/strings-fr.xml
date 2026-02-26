@@ -91,6 +91,7 @@
 
     <string name="section_appearance">APPARENCE</string>
     <string name="section_about">À PROPOS</string>
+    <string name="section_network">RÉSEAU</string>
 
     <string name="theme_color">Couleur du thème</string>
     <string name="amoled_black_theme">Thème noir AMOLED</string>
@@ -314,15 +315,11 @@
     <string name="inspect_with_appmanager">Inspecter avec AppManager</string>
     <string name="appmanager_description">Vérifier les permissions, trackers et sécurité</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">Désinstaller</string>
+    <!-- Open -->
     <string name="open_app">Ouvrir</string>
-    <string name="downgrade_requires_uninstall">La rétrogradation nécessite la désinstallation</string>
-    <string name="downgrade_warning_message">L\'installation de la version %1$s nécessite la désinstallation de la version actuelle (%2$s). Les données de l\'application seront perdues.</string>
-    <string name="uninstall_first">Désinstaller d\'abord</string>
+    <string name="downgrade_warning_message">Impossible d\'installer la version %1$s car une version plus récente (%2$s) est déjà installée. Veuillez d\'abord désinstaller manuellement la version actuelle.</string>
     <string name="install_version">Installer %1$s</string>
     <string name="failed_to_open_app">Impossible d\'ouvrir %1$s</string>
-    <string name="failed_to_uninstall">Impossible de désinstaller %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Dernière</string>
@@ -334,5 +331,26 @@
     <string name="last_checked_minutes_ago">il y a %1$d min</string>
     <string name="last_checked_hours_ago">il y a %1$d h</string>
     <string name="checking_for_updates">Vérification des mises à jour…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">Type de proxy</string>
+    <string name="proxy_none">Aucun</string>
+    <string name="proxy_system">Système</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">Hôte</string>
+    <string name="proxy_port">Port</string>
+    <string name="proxy_username">Nom d\'utilisateur (facultatif)</string>
+    <string name="proxy_password">Mot de passe (facultatif)</string>
+    <string name="proxy_save">Sauvegarder le Proxy</string>
+    <string name="proxy_saved">Paramètres du proxy enregistrés</string>
+    <string name="proxy_system_description">Utilise les paramètres proxy de l\'appareil</string>
+    <string name="proxy_port_error">Le port doit être entre 1 et 65535</string>
+    <string name="proxy_none_description">Connexion directe, pas de proxy</string>
+    <string name="failed_to_save_proxy_settings">Échec de l'enregistrement des paramètres du proxy</string>
+    <string name="proxy_host_required">L’hôte du proxy est requis</string>
+    <string name="invalid_proxy_port">Port proxy invalide</string>
+    <string name="proxy_show_password">Afficher le mot de passe</string>
+    <string name="proxy_hide_password">Masquer le mot de passe</string>
 
 </resources>

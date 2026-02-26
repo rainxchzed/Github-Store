@@ -28,7 +28,5 @@ interface Installer {
 
     fun getApkInfoExtractor(): InstallerInfoExtractor
 
-    fun uninstall(packageName: String)
-
     fun openApp(packageName: String): Boolean
 }

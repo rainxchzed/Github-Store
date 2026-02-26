@@ -10,6 +10,8 @@ import java.net.PasswordAuthentication
 import java.net.ProxySelector
 
 actual fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient {
+    java.net.Authenticator.setDefault(null)
+
     return HttpClient(OkHttp) {
         engine {
             when (proxyConfig) {

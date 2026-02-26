@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CardDefaults
@@ -77,92 +76,38 @@ fun SmartInstallButton(
 
     val isActiveDownload = state.isDownloading || state.downloadStage != DownloadStage.IDLE
 
-    // When same version is installed, show Open + Uninstall (Play Store style)
+    // When same version is installed, show Open button
     if (isSameVersionInstalled && !isActiveDownload) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ElevatedCard(
+            modifier = modifier
+                .height(52.dp)
+                .clickable { onAction(DetailsAction.OpenApp) }
+                .liquefiable(liquidState),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            ),
+            shape = CircleShape
         ) {
-            // Uninstall button
-            ElevatedCard(
-                onClick = { onAction(DetailsAction.UninstallApp) },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp)
-                    .liquefiable(liquidState),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                ),
-                shape = RoundedCornerShape(
-                    topStart = 24.dp,
-                    bottomStart = 24.dp,
-                    topEnd = 6.dp,
-                    bottomEnd = 6.dp
-                )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                        Text(
-                            text = stringResource(Res.string.uninstall),
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                }
-            }
-
-            // Open button
-            ElevatedCard(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp)
-                    .clickable { onAction(DetailsAction.OpenApp) }
-                    .liquefiable(liquidState),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
-                shape = RoundedCornerShape(
-                    topStart = 6.dp,
-                    bottomStart = 6.dp,
-                    topEnd = 24.dp,
-                    bottomEnd = 24.dp
-                )
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                        Text(
-                            text = stringResource(Res.string.open_app),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Text(
+                        text = stringResource(Res.string.open_app),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }

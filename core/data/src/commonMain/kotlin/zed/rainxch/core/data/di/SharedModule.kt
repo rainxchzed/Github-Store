@@ -4,6 +4,9 @@ import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.koin.dsl.module
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.data_source.impl.DefaultTokenStore
@@ -21,13 +24,16 @@ import zed.rainxch.core.data.repository.FavouritesRepositoryImpl
 import zed.rainxch.core.data.repository.InstalledAppsRepositoryImpl
 import zed.rainxch.core.data.repository.RateLimitRepositoryImpl
 import zed.rainxch.core.data.repository.StarredRepositoryImpl
+import zed.rainxch.core.data.repository.ProxyRepositoryImpl
 import zed.rainxch.core.data.repository.ThemesRepositoryImpl
 import zed.rainxch.core.domain.getPlatform
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.model.Platform
+import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
+import zed.rainxch.core.domain.repository.ProxyRepository
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.repository.ThemesRepository
@@ -84,6 +90,12 @@ val coreModule = module {
         )
     }
 
+    single<ProxyRepository> {
+        ProxyRepositoryImpl(
+            preferences = get()
+        )
+    }
+
     single<SyncInstalledAppsUseCase> {
         SyncInstalledAppsUseCase(
             packageMonitor = get(),
@@ -96,6 +108,32 @@ val coreModule = module {
 
 val networkModule = module {
     single<GitHubClientProvider> {
+        val config = runBlocking {
+            runCatching {
+                withTimeout(1_500L) {
+                    get<ProxyRepository>().getProxyConfig().first()
+                }
+            }.getOrDefault(ProxyConfig.None)
+        }
+
+        when (config) {
+            is ProxyConfig.None -> ProxyManager.setNoProxy()
+            is ProxyConfig.System -> ProxyManager.setSystemProxy()
+            is ProxyConfig.Http -> ProxyManager.setHttpProxy(
+                host = config.host,
+                port = config.port,
+                username = config.username,
+                password = config.password
+            )
+
+            is ProxyConfig.Socks -> ProxyManager.setSocksProxy(
+                host = config.host,
+                port = config.port,
+                username = config.username,
+                password = config.password
+            )
+        }
+
         GitHubClientProvider(
             tokenStore = get(),
             rateLimitRepository = get(),

@@ -109,6 +109,7 @@
     <!-- Sections -->
     <string name="section_appearance">ASPETTO</string>
     <string name="section_about">INFORMAZIONI</string>
+    <string name="section_network">RETE</string>
 
     <!-- Appearance -->
     <string name="theme_color">Colore del Tema</string>
@@ -345,15 +346,11 @@
     <!-- Install status -->
     <string name="pending_install">Installazione in sospeso</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">Disinstalla</string>
+    <!-- Open -->
     <string name="open_app">Apri</string>
-    <string name="downgrade_requires_uninstall">Il downgrade richiede la disinstallazione</string>
-    <string name="downgrade_warning_message">L\'installazione della versione %1$s richiede la disinstallazione della versione corrente (%2$s). I dati dell\'app verranno persi.</string>
-    <string name="uninstall_first">Disinstalla prima</string>
+    <string name="downgrade_warning_message">Impossibile installare la versione %1$s perché una versione più recente (%2$s) è già installata. Disinstalla manualmente la versione corrente prima di procedere.</string>
     <string name="install_version">Installa %1$s</string>
     <string name="failed_to_open_app">Impossibile aprire %1$s</string>
-    <string name="failed_to_uninstall">Impossibile disinstallare %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Ultima</string>
@@ -370,5 +367,26 @@
     <string name="last_checked_minutes_ago">%1$d min fa</string>
     <string name="last_checked_hours_ago">%1$d h fa</string>
     <string name="checking_for_updates">Controllo aggiornamenti…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">Tipo di proxy</string>
+    <string name="proxy_none">Nessuno</string>
+    <string name="proxy_system">Sistema</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">Host</string>
+    <string name="proxy_port">Porta</string>
+    <string name="proxy_username">Nome utente (facoltativo)</string>
+    <string name="proxy_password">Password (facoltativo)</string>
+    <string name="proxy_save">Salva Proxy</string>
+    <string name="proxy_saved">Impostazioni proxy salvate</string>
+    <string name="proxy_system_description">Usa le impostazioni proxy del dispositivo</string>
+    <string name="proxy_port_error">La porta deve essere 1–65535</string>
+    <string name="proxy_none_description">Connessione diretta, nessun proxy</string>
+    <string name="failed_to_save_proxy_settings">Impossibile salvare le impostazioni del proxy</string>
+    <string name="proxy_host_required">L'host del proxy è obbligatorio</string>
+    <string name="invalid_proxy_port">Porta proxy non valida</string>
+    <string name="proxy_show_password">Mostra password</string>
+    <string name="proxy_hide_password">Nascondi password</string>
 
 </resources>

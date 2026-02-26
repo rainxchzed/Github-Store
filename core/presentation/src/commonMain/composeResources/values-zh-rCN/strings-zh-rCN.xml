@@ -93,6 +93,7 @@
 
     <string name="section_appearance">外观</string>
     <string name="section_about">关于</string>
+    <string name="section_network">网络</string>
 
     <string name="theme_color">主题颜色</string>
     <string name="amoled_black_theme">AMOLED 黑色主题</string>
@@ -315,15 +316,11 @@
     <string name="inspect_with_appmanager">使用 AppManager 检查</string>
     <string name="appmanager_description">检查权限、追踪器和安全性</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">卸载</string>
+    <!-- Open -->
     <string name="open_app">打开</string>
-    <string name="downgrade_requires_uninstall">降级需要先卸载</string>
-    <string name="downgrade_warning_message">安装版本 %1$s 需要先卸载当前版本（%2$s）。应用数据将丢失。</string>
-    <string name="uninstall_first">先卸载</string>
+    <string name="downgrade_warning_message">无法安装版本 %1$s，因为已安装了更新的版本（%2$s）。请先手动卸载当前版本。</string>
     <string name="install_version">安装 %1$s</string>
     <string name="failed_to_open_app">无法打开 %1$s</string>
-    <string name="failed_to_uninstall">无法卸载 %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">最新</string>
@@ -335,5 +332,26 @@
     <string name="last_checked_minutes_ago">%1$d 分钟前</string>
     <string name="last_checked_hours_ago">%1$d 小时前</string>
     <string name="checking_for_updates">正在检查更新…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">代理类型</string>
+    <string name="proxy_none">无</string>
+    <string name="proxy_system">系统代理</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">主机地址</string>
+    <string name="proxy_port">端口</string>
+    <string name="proxy_username">用户名（可选）</string>
+    <string name="proxy_password">密码（可选）</string>
+    <string name="proxy_save">保存代理</string>
+    <string name="proxy_saved">代理设置已保存</string>
+    <string name="proxy_system_description">使用设备的代理设置</string>
+    <string name="proxy_port_error">端口必须为 1–65535</string>
+    <string name="proxy_none_description">直连，不使用代理</string>
+    <string name="failed_to_save_proxy_settings">无法保存代理设置</string>
+    <string name="proxy_host_required">必须填写代理主机</string>
+    <string name="invalid_proxy_port">无效的代理端口</string>
+    <string name="proxy_show_password">显示密码</string>
+    <string name="proxy_hide_password">隐藏密码</string>
 
 </resources>

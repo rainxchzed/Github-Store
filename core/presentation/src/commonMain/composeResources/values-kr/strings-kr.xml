@@ -107,6 +107,7 @@
     <!-- Sections -->
     <string name="section_appearance">외관</string>
     <string name="section_about">정보</string>
+    <string name="section_network">네트워크</string>
 
     <!-- Appearance -->
     <string name="theme_color">테마 색상</string>
@@ -347,15 +348,11 @@
     <!-- Install status -->
     <string name="pending_install">설치 대기 중</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">제거</string>
+    <!-- Open -->
     <string name="open_app">열기</string>
-    <string name="downgrade_requires_uninstall">다운그레이드를 위해 제거가 필요합니다</string>
-    <string name="downgrade_warning_message">버전 %1$s을(를) 설치하려면 현재 버전(%2$s)을 먼저 제거해야 합니다. 앱 데이터가 삭제됩니다.</string>
-    <string name="uninstall_first">먼저 제거</string>
+    <string name="downgrade_warning_message">더 최신 버전(%2$s)이 이미 설치되어 있어 버전 %1$s을(를) 설치할 수 없습니다. 현재 버전을 먼저 수동으로 제거해 주세요.</string>
     <string name="install_version">%1$s 설치</string>
     <string name="failed_to_open_app">%1$s 열기 실패</string>
-    <string name="failed_to_uninstall">%1$s 제거 실패</string>
 
     <!-- Version picker -->
     <string name="latest_badge">최신</string>
@@ -367,5 +364,26 @@
     <string name="last_checked_minutes_ago">%1$d분 전</string>
     <string name="last_checked_hours_ago">%1$d시간 전</string>
     <string name="checking_for_updates">업데이트 확인 중…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">프록시 유형</string>
+    <string name="proxy_none">없음</string>
+    <string name="proxy_system">시스템</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">호스트</string>
+    <string name="proxy_port">포트</string>
+    <string name="proxy_username">사용자 이름 (선택 사항)</string>
+    <string name="proxy_password">비밀번호 (선택 사항)</string>
+    <string name="proxy_save">프록시 저장</string>
+    <string name="proxy_saved">프록시 설정이 저장되었습니다</string>
+    <string name="proxy_system_description">기기의 프록시 설정을 사용합니다</string>
+    <string name="proxy_port_error">포트는 1–65535 사이여야 합니다</string>
+    <string name="proxy_none_description">직접 연결, 프록시 없음</string>
+    <string name="failed_to_save_proxy_settings">프록시 설정을 저장하지 못했습니다</string>
+    <string name="proxy_host_required">프록시 호스트가 필요합니다</string>
+    <string name="invalid_proxy_port">잘못된 프록시 포트</string>
+    <string name="proxy_show_password">비밀번호 표시</string>
+    <string name="proxy_hide_password">비밀번호 숨기기</string>
 
 </resources>

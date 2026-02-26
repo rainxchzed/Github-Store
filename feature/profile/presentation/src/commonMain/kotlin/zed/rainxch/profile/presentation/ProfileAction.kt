@@ -13,4 +13,11 @@ sealed interface ProfileAction {
     data object OnLogoutDismiss : ProfileAction
     data object OnHelpClick : ProfileAction
     data class OnFontThemeSelected(val fontTheme: FontTheme) : ProfileAction
+    data class OnProxyTypeSelected(val type: ProxyType) : ProfileAction
+    data class OnProxyHostChanged(val host: String) : ProfileAction
+    data class OnProxyPortChanged(val port: String) : ProfileAction
+    data class OnProxyUsernameChanged(val username: String) : ProfileAction
+    data class OnProxyPasswordChanged(val password: String) : ProfileAction
+    data object OnProxyPasswordVisibilityToggle : ProfileAction
+    data object OnProxySave : ProfileAction
 }

@@ -28,7 +28,6 @@ sealed interface DetailsAction {
     data object OnToggleFavorite : DetailsAction
     data object CheckForUpdates : DetailsAction
     data object UpdateApp : DetailsAction
-    data object UninstallApp : DetailsAction
     data object OpenApp : DetailsAction
 
     data class OnMessage(val messageText: StringResource) : DetailsAction

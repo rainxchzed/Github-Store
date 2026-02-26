@@ -91,6 +91,7 @@
 
     <string name="section_appearance">外観</string>
     <string name="section_about">情報</string>
+    <string name="section_network">ネットワーク</string>
 
     <string name="theme_color">テーマカラー</string>
     <string name="amoled_black_theme">AMOLED ブラックテーマ</string>
@@ -314,15 +315,11 @@
     <string name="inspect_with_appmanager">AppManagerで検査</string>
     <string name="appmanager_description">権限、トラッカー、セキュリティを確認</string>
 
-    <!-- Uninstall / Open -->
-    <string name="uninstall">アンインストール</string>
+    <!-- Open -->
     <string name="open_app">開く</string>
-    <string name="downgrade_requires_uninstall">ダウングレードにはアンインストールが必要</string>
-    <string name="downgrade_warning_message">バージョン%1$sのインストールには、現在のバージョン（%2$s）のアンインストールが必要です。アプリデータは失われます。</string>
-    <string name="uninstall_first">先にアンインストール</string>
+    <string name="downgrade_warning_message">より新しいバージョン（%2$s）がすでにインストールされているため、バージョン%1$sをインストールできません。まず現在のバージョンを手動でアンインストールしてください。</string>
     <string name="install_version">%1$sをインストール</string>
     <string name="failed_to_open_app">%1$sを開けませんでした</string>
-    <string name="failed_to_uninstall">%1$sのアンインストールに失敗しました</string>
 
     <!-- Version picker -->
     <string name="latest_badge">最新</string>
@@ -334,5 +331,26 @@
     <string name="last_checked_minutes_ago">%1$d分前</string>
     <string name="last_checked_hours_ago">%1$d時間前</string>
     <string name="checking_for_updates">アップデートを確認中…</string>
+
+    <!-- Proxy -->
+    <string name="proxy_type">プロキシの種類</string>
+    <string name="proxy_none">なし</string>
+    <string name="proxy_system">システム</string>
+    <string name="proxy_http">HTTP</string>
+    <string name="proxy_socks">SOCKS</string>
+    <string name="proxy_host">ホスト</string>
+    <string name="proxy_port">ポート</string>
+    <string name="proxy_username">ユーザー名（任意）</string>
+    <string name="proxy_password">パスワード（任意）</string>
+    <string name="proxy_save">プロキシを保存</string>
+    <string name="proxy_saved">プロキシ設定を保存しました</string>
+    <string name="proxy_system_description">デバイスのプロキシ設定を使用します</string>
+    <string name="proxy_port_error">ポートは1〜65535の範囲で指定してください</string>
+    <string name="proxy_none_description">直接接続、プロキシなし</string>
+    <string name="failed_to_save_proxy_settings">プロキシ設定の保存に失敗しました</string>
+    <string name="proxy_host_required">プロキシホストは必須です</string>
+    <string name="invalid_proxy_port">無効なプロキシポート</string>
+    <string name="proxy_show_password">パスワードを表示</string>
+    <string name="proxy_hide_password">パスワードを非表示</string>
 
 </resources>
