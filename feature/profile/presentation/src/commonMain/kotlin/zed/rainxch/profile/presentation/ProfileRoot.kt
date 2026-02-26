@@ -50,6 +50,8 @@ import zed.rainxch.profile.presentation.components.sections.settings
 fun ProfileRoot(
     onNavigateBack: () -> Unit,
     onNavigateToAuthentication: () -> Unit,
+    onNavigateToStarredRepos: () -> Unit,
+    onNavigateToFavouriteRepos: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -96,6 +98,14 @@ fun ProfileRoot(
 
                 ProfileAction.OnLoginClick -> {
                     onNavigateToAuthentication()
+                }
+
+                ProfileAction.OnFavouriteReposClick -> {
+                    onNavigateToFavouriteRepos()
+                }
+
+                ProfileAction.OnStarredReposClick -> {
+                    onNavigateToStarredRepos()
                 }
 
                 else -> {
@@ -152,7 +162,7 @@ fun ProfileScreen(
             )
 
             item {
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(16.dp))
             }
 
             settings(

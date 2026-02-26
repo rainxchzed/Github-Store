@@ -216,6 +216,12 @@ fun AppNavigation(
                         },
                         onNavigateToAuthentication = {
                             navController.navigate(GithubStoreGraph.AuthenticationScreen)
+                        },
+                        onNavigateToStarredRepos = {
+                            navController.navigate(GithubStoreGraph.StarredReposScreen)
+                        },
+                        onNavigateToFavouriteRepos = {
+                            navController.navigate(GithubStoreGraph.FavouritesScreen)
                         }
                     )
                 }
