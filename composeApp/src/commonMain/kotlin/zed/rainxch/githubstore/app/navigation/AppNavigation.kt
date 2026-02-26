@@ -213,6 +213,9 @@ fun AppNavigation(
                     ProfileRoot(
                         onNavigateBack = {
                             navController.navigateUp()
+                        },
+                        onNavigateToAuthentication = {
+                            navController.navigate(GithubStoreGraph.AuthenticationScreen)
                         }
                     )
                 }
