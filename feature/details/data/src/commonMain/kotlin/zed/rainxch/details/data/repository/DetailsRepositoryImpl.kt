@@ -28,8 +28,6 @@ import zed.rainxch.core.data.dto.UserProfileNetwork
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.data.mappers.toDomain
 import zed.rainxch.core.domain.model.GithubUserProfile
-import zed.rainxch.details.data.mappers.toDomain
-import zed.rainxch.details.data.model.GithubUserProfileDto
 import zed.rainxch.details.data.utils.ReadmeLocalizationHelper
 import zed.rainxch.details.data.utils.preprocessMarkdown
 import zed.rainxch.details.domain.model.RepoStats
@@ -419,9 +417,9 @@ class DetailsRepositoryImpl(
     override suspend fun getUserProfile(username: String): GithubUserProfile {
         val cacheKey = "details:profile:$username"
 
-        cacheManager.get<GithubUserProfileDto>(cacheKey)?.let { cached ->
+        cacheManager.get<GithubUserProfile>(cacheKey)?.let { cached ->
             logger.debug("Cache hit for user profile $username")
-            return cached.toDomain()
+            return cached
         }
 
         return try {
@@ -431,7 +429,7 @@ class DetailsRepositoryImpl(
                 }
             }.getOrThrow()
 
-            val result = GithubUserProfileDto(
+            val result = GithubUserProfile(
                 id = user.id,
                 login = user.login,
                 name = user.name,
@@ -445,14 +443,14 @@ class DetailsRepositoryImpl(
                 company = user.company,
                 blog = user.blog,
                 twitterUsername = user.twitterUsername
-            ).toDomain()
+            )
 
             cacheManager.put(cacheKey, result, USER_PROFILE)
             result
         } catch (e: Exception) {
-            cacheManager.getStale<GithubUserProfileDto>(cacheKey)?.let { stale ->
+            cacheManager.getStale<GithubUserProfile>(cacheKey)?.let { stale ->
                 logger.debug("Network error, using stale cache for profile $username")
-                return stale.toDomain()
+                return stale
             }
             throw e
         }

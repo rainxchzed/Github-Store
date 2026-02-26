@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import zed.rainxch.core.data.cache.CacheManager
 import zed.rainxch.core.data.cache.CacheManager.CacheTtl.USER_PROFILE
-import zed.rainxch.core.data.cache.CacheTtl
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.dto.UserProfileNetwork
 import zed.rainxch.core.data.network.executeRequest
