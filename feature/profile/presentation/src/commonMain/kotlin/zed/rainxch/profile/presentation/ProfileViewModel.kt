@@ -37,6 +37,7 @@ class ProfileViewModel(
             if (!hasLoadedInitialData) {
                 loadCurrentTheme()
                 collectIsUserLoggedIn()
+                loadUserProfile()
                 loadVersionName()
                 loadProxyConfig()
 
@@ -67,7 +68,20 @@ class ProfileViewModel(
             profileRepository.isUserLoggedIn
                 .collect { isLoggedIn ->
                     _state.update { it.copy(isUserLoggedIn = isLoggedIn) }
+                    if (isLoggedIn) {
+                        loadUserProfile()
+                    } else {
+                        _state.update { it.copy(userProfile = null) }
+                    }
                 }
+        }
+    }
+
+    private fun loadUserProfile() {
+        viewModelScope.launch {
+            profileRepository.getUser().collect { profile ->
+                _state.update { it.copy(userProfile = profile) }
+            }
         }
     }
 
@@ -170,7 +184,7 @@ class ProfileViewModel(
                     runCatching {
                         profileRepository.logout()
                     }.onSuccess {
-                        _state.update { it.copy(isLogoutDialogVisible = false) }
+                        _state.update { it.copy(isLogoutDialogVisible = false, userProfile = null) }
                         _events.send(ProfileEvent.OnLogoutSuccessful)
                     }.onFailure { error ->
                         _state.update { it.copy(isLogoutDialogVisible = false) }

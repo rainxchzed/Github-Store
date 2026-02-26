@@ -9,6 +9,9 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.Serializable
+import zed.rainxch.core.data.cache.CacheManager
+import zed.rainxch.core.data.cache.CacheTtl
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.domain.model.GithubRelease
@@ -29,8 +32,16 @@ import zed.rainxch.details.domain.repository.DetailsRepository
 class DetailsRepositoryImpl(
     private val httpClient: HttpClient,
     private val localizationManager: LocalizationManager,
-    private val logger: GitHubStoreLogger
+    private val logger: GitHubStoreLogger,
+    private val cacheManager: CacheManager
 ) : DetailsRepository {
+
+    @Serializable
+    private data class CachedReadme(
+        val content: String,
+        val languageCode: String?,
+        val path: String
+    )
 
     private val readmeHelper = ReadmeLocalizationHelper(localizationManager)
 
@@ -58,19 +69,47 @@ class DetailsRepositoryImpl(
     }
 
     override suspend fun getRepositoryById(id: Long): GithubRepoSummary {
-        return httpClient.executeRequest<RepoByIdNetwork> {
+        val cacheKey = "details:repo_id:$id"
+
+        cacheManager.get<GithubRepoSummary>(cacheKey)?.let { cached ->
+            logger.debug("Cache hit for repo id=$id")
+            return cached
+        }
+
+        val result = httpClient.executeRequest<RepoByIdNetwork> {
             get("/repositories/$id") {
                 header(HttpHeaders.Accept, "application/vnd.github+json")
             }
         }.getOrThrow().toGithubRepoSummary()
+
+        cacheManager.put(cacheKey, result, CacheTtl.REPO_DETAILS)
+        return result
     }
 
     override suspend fun getRepositoryByOwnerAndName(owner: String, name: String): GithubRepoSummary {
-        return httpClient.executeRequest<RepoByIdNetwork> {
-            get("/repos/$owner/$name") {
-                header(HttpHeaders.Accept, "application/vnd.github+json")
+        val cacheKey = "details:repo:$owner/$name"
+
+        cacheManager.get<GithubRepoSummary>(cacheKey)?.let { cached ->
+            logger.debug("Cache hit for repo $owner/$name")
+            return cached
+        }
+
+        return try {
+            val result = httpClient.executeRequest<RepoByIdNetwork> {
+                get("/repos/$owner/$name") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                }
+            }.getOrThrow().toGithubRepoSummary()
+
+            cacheManager.put(cacheKey, result, CacheTtl.REPO_DETAILS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<GithubRepoSummary>(cacheKey)?.let { stale ->
+                logger.debug("Network error, using stale cache for $owner/$name")
+                return stale
             }
-        }.getOrThrow().toGithubRepoSummary()
+            throw e
+        }
     }
 
     override suspend fun getLatestPublishedRelease(
@@ -78,22 +117,40 @@ class DetailsRepositoryImpl(
         repo: String,
         defaultBranch: String
     ): GithubRelease? {
-        val releases = httpClient.executeRequest<List<ReleaseNetwork>> {
-            get("/repos/$owner/$repo/releases") {
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-                parameter("per_page", 10)
+        val cacheKey = "details:latest_release:$owner/$repo"
+
+        cacheManager.get<GithubRelease>(cacheKey)?.let { cached ->
+            logger.debug("Cache hit for latest release $owner/$repo")
+            return cached
+        }
+
+        return try {
+            val releases = httpClient.executeRequest<List<ReleaseNetwork>> {
+                get("/repos/$owner/$repo/releases") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                    parameter("per_page", 10)
+                }
+            }.getOrNull() ?: return null
+
+            val latest = releases
+                .asSequence()
+                .filter { (it.draft != true) && (it.prerelease != true) }
+                .maxByOrNull { it.publishedAt ?: it.createdAt ?: "" }
+                ?: return null
+
+            val result = latest.copy(
+                body = processReleaseBody(latest.body, owner, repo, defaultBranch)
+            ).toDomain()
+
+            cacheManager.put(cacheKey, result, CacheTtl.RELEASES)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<GithubRelease>(cacheKey)?.let { stale ->
+                logger.debug("Network error, using stale cache for latest release $owner/$repo")
+                return stale
             }
-        }.getOrNull() ?: return null
-
-        val latest = releases
-            .asSequence()
-            .filter { (it.draft != true) && (it.prerelease != true) }
-            .maxByOrNull { it.publishedAt ?: it.createdAt ?: "" }
-            ?: return null
-
-        return latest.copy(
-            body = processReleaseBody(latest.body, owner, repo, defaultBranch)
-        ).toDomain()
+            throw e
+        }
     }
 
     override suspend fun getAllReleases(
@@ -101,21 +158,43 @@ class DetailsRepositoryImpl(
         repo: String,
         defaultBranch: String
     ): List<GithubRelease> {
-        val releases = httpClient.executeRequest<List<ReleaseNetwork>> {
-            get("/repos/$owner/$repo/releases") {
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-                parameter("per_page", 30)
-            }
-        }.getOrNull() ?: return emptyList()
+        val cacheKey = "details:releases:$owner/$repo"
 
-        return releases
-            .filter { it.draft != true }
-            .map { release ->
-                release.copy(
-                    body = processReleaseBody(release.body, owner, repo, defaultBranch)
-                ).toDomain()
+        cacheManager.get<List<GithubRelease>>(cacheKey)?.let { cached ->
+            if (cached.isNotEmpty()) {
+                logger.debug("Cache hit for all releases $owner/$repo: ${cached.size} releases")
+                return cached
             }
-            .sortedByDescending { it.publishedAt }
+        }
+
+        return try {
+            val releases = httpClient.executeRequest<List<ReleaseNetwork>> {
+                get("/repos/$owner/$repo/releases") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                    parameter("per_page", 30)
+                }
+            }.getOrNull() ?: return emptyList()
+
+            val result = releases
+                .filter { it.draft != true }
+                .map { release ->
+                    release.copy(
+                        body = processReleaseBody(release.body, owner, repo, defaultBranch)
+                    ).toDomain()
+                }
+                .sortedByDescending { it.publishedAt }
+
+            if (result.isNotEmpty()) {
+                cacheManager.put(cacheKey, result, CacheTtl.RELEASES)
+            }
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<List<GithubRelease>>(cacheKey)?.let { stale ->
+                logger.debug("Network error, using stale cache for releases $owner/$repo")
+                return stale
+            }
+            throw e
+        }
     }
 
     private fun processReleaseBody(
@@ -139,6 +218,32 @@ class DetailsRepositoryImpl(
 
 
     override suspend fun getReadme(
+        owner: String,
+        repo: String,
+        defaultBranch: String
+    ): Triple<String, String?, String>? {
+        val cacheKey = "details:readme:$owner/$repo"
+
+        cacheManager.get<CachedReadme>(cacheKey)?.let { cached ->
+            logger.debug("Cache hit for readme $owner/$repo")
+            return Triple(cached.content, cached.languageCode, cached.path)
+        }
+
+        val result = fetchReadmeFromApi(owner, repo, defaultBranch)
+
+        if (result != null) {
+            val cachedReadme = CachedReadme(
+                content = result.first,
+                languageCode = result.second,
+                path = result.third
+            )
+            cacheManager.put(cacheKey, cachedReadme, CacheTtl.README)
+        }
+
+        return result
+    }
+
+    private suspend fun fetchReadmeFromApi(
         owner: String,
         repo: String,
         defaultBranch: String
@@ -263,40 +368,76 @@ class DetailsRepositoryImpl(
     }
 
     override suspend fun getRepoStats(owner: String, repo: String): RepoStats {
-        val info = httpClient.executeRequest<RepoInfoNetwork> {
-            get("/repos/$owner/$repo") {
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-            }
-        }.getOrThrow()
+        val cacheKey = "details:stats:$owner/$repo"
 
-        return RepoStats(
-            stars = info.stars,
-            forks = info.forks,
-            openIssues = info.openIssues,
-        )
+        cacheManager.get<RepoStats>(cacheKey)?.let { cached ->
+            logger.debug("Cache hit for repo stats $owner/$repo")
+            return cached
+        }
+
+        return try {
+            val info = httpClient.executeRequest<RepoInfoNetwork> {
+                get("/repos/$owner/$repo") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                }
+            }.getOrThrow()
+
+            val result = RepoStats(
+                stars = info.stars,
+                forks = info.forks,
+                openIssues = info.openIssues,
+            )
+
+            cacheManager.put(cacheKey, result, CacheTtl.REPO_STATS)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<RepoStats>(cacheKey)?.let { stale ->
+                logger.debug("Network error, using stale cache for stats $owner/$repo")
+                return stale
+            }
+            throw e
+        }
     }
 
     override suspend fun getUserProfile(username: String): GithubUserProfile {
-        val user = httpClient.executeRequest<UserProfileNetwork> {
-            get("/users/$username") {
-                header(HttpHeaders.Accept, "application/vnd.github+json")
-            }
-        }.getOrThrow()
+        val cacheKey = "details:profile:$username"
 
-        return GithubUserProfile(
-            id = user.id,
-            login = user.login,
-            name = user.name,
-            bio = user.bio,
-            avatarUrl = user.avatarUrl,
-            htmlUrl = user.htmlUrl,
-            followers = user.followers,
-            following = user.following,
-            publicRepos = user.publicRepos,
-            location = user.location,
-            company = user.company,
-            blog = user.blog,
-            twitterUsername = user.twitterUsername
-        )
+        cacheManager.get<GithubUserProfile>(cacheKey)?.let { cached ->
+            logger.debug("Cache hit for user profile $username")
+            return cached
+        }
+
+        return try {
+            val user = httpClient.executeRequest<UserProfileNetwork> {
+                get("/users/$username") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                }
+            }.getOrThrow()
+
+            val result = GithubUserProfile(
+                id = user.id,
+                login = user.login,
+                name = user.name,
+                bio = user.bio,
+                avatarUrl = user.avatarUrl,
+                htmlUrl = user.htmlUrl,
+                followers = user.followers,
+                following = user.following,
+                publicRepos = user.publicRepos,
+                location = user.location,
+                company = user.company,
+                blog = user.blog,
+                twitterUsername = user.twitterUsername
+            )
+
+            cacheManager.put(cacheKey, result, CacheTtl.USER_PROFILE)
+            result
+        } catch (e: Exception) {
+            cacheManager.getStale<GithubUserProfile>(cacheKey)?.let { stale ->
+                logger.debug("Network error, using stale cache for profile $username")
+                return stale
+            }
+            throw e
+        }
     }
 }

@@ -8,6 +8,7 @@ val searchModule = module {
     single<SearchRepository> {
         SearchRepositoryImpl(
             httpClient = get(),
+            cacheManager = get()
         )
     }
 }

@@ -14,6 +14,8 @@ kotlin {
                 implementation(projects.feature.profile.domain)
 
                 implementation(libs.bundles.koin.common)
+                implementation(libs.bundles.ktor.common)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
 

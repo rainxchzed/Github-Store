@@ -9,7 +9,8 @@ val detailsModule = module {
         DetailsRepositoryImpl(
             logger = get(),
             httpClient = get(),
-            localizationManager = get()
+            localizationManager = get(),
+            cacheManager = get()
         )
     }
 }

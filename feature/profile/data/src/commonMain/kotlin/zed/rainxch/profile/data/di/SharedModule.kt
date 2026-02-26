@@ -8,7 +8,10 @@ val settingsModule = module {
     single<ProfileRepository> {
         ProfileRepositoryImpl(
             authenticationState = get(),
-            tokenStore = get()
+            tokenStore = get(),
+            httpClient = get(),
+            cacheManager = get(),
+            logger = get()
         )
     }
 }

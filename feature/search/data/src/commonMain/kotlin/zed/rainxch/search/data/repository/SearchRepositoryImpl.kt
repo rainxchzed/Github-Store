@@ -18,6 +18,8 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withTimeoutOrNull
+import zed.rainxch.core.data.cache.CacheManager
+import zed.rainxch.core.data.cache.CacheTtl
 import zed.rainxch.core.data.dto.GithubRepoNetworkModel
 import zed.rainxch.core.data.dto.GithubRepoSearchResponse
 import zed.rainxch.core.data.mappers.toSummary
@@ -34,6 +36,7 @@ import zed.rainxch.search.data.utils.LruCache
 
 class SearchRepositoryImpl(
     private val httpClient: HttpClient,
+    private val cacheManager: CacheManager
 ) : SearchRepository {
     private val releaseCheckCache = LruCache<String, GithubRepoSummary>(maxSize = 500)
     private val cacheMutex = Mutex()
@@ -45,6 +48,17 @@ class SearchRepositoryImpl(
         private const val MAX_AUTO_SKIP_PAGES = 3
     }
 
+    private fun searchCacheKey(
+        query: String,
+        platform: SearchPlatform,
+        language: ProgrammingLanguage,
+        sortBy: SortBy,
+        page: Int
+    ): String {
+        val queryHash = query.trim().lowercase().hashCode().toUInt().toString(16)
+        return "search:$queryHash:${platform.name}:${language.name}:${sortBy.name}:page$page"
+    }
+
     override fun searchRepositories(
         query: String,
         searchPlatform: SearchPlatform,
@@ -52,6 +66,14 @@ class SearchRepositoryImpl(
         sortBy: SortBy,
         page: Int
     ): Flow<PaginatedDiscoveryRepositories> = channelFlow {
+        val cacheKey = searchCacheKey(query, searchPlatform, language, sortBy, page)
+
+        val cached = cacheManager.get<PaginatedDiscoveryRepositories>(cacheKey)
+        if (cached != null && cached.repos.isNotEmpty()) {
+            send(cached)
+            return@channelFlow
+        }
+
         val searchQuery = buildSearchQuery(query, searchPlatform, language)
         val (sort, order) = sortBy.toGithubParams()
 
@@ -92,14 +114,14 @@ class SearchRepositoryImpl(
                 val verified = verifyBatch(response.items, searchPlatform)
 
                 if (verified.isNotEmpty()) {
-                    send(
-                        PaginatedDiscoveryRepositories(
-                            repos = verified,
-                            hasMore = baseHasMore,
-                            nextPageIndex = currentPage + 1,
-                            totalCount = total
-                        )
+                    val result = PaginatedDiscoveryRepositories(
+                        repos = verified,
+                        hasMore = baseHasMore,
+                        nextPageIndex = currentPage + 1,
+                        totalCount = total
                     )
+                    cacheManager.put(cacheKey, result, CacheTtl.SEARCH_RESULTS)
+                    send(result)
                     return@channelFlow
                 }
 

@@ -1,27 +1,80 @@
 package zed.rainxch.profile.data.repository
 
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import zed.rainxch.core.data.cache.CacheManager
+import zed.rainxch.core.data.cache.CacheTtl
 import zed.rainxch.core.data.data_source.TokenStore
+import zed.rainxch.core.data.dto.UserProfileNetwork
+import zed.rainxch.core.data.network.executeRequest
+import zed.rainxch.core.domain.logging.GitHubStoreLogger
 import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.feature.profile.data.BuildKonfig
+import zed.rainxch.profile.data.mappers.toUserProfile
 import zed.rainxch.profile.domain.model.UserProfile
 import zed.rainxch.profile.domain.repository.ProfileRepository
 
 class ProfileRepositoryImpl(
     private val authenticationState: AuthenticationState,
-    private val tokenStore: TokenStore
+    private val tokenStore: TokenStore,
+    private val httpClient: HttpClient,
+    private val cacheManager: CacheManager,
+    private val logger: GitHubStoreLogger
 ) : ProfileRepository {
+
+    companion object {
+        private const val CACHE_KEY = "profile:me"
+    }
+
     override val isUserLoggedIn: Flow<Boolean>
         get() = authenticationState
             .isUserLoggedIn()
             .flowOn(Dispatchers.IO)
 
-    override fun getUser(): Flow<UserProfile?> {
-        return flowOf(null)
-    }
+    override fun getUser(): Flow<UserProfile?> = flow {
+        val token = tokenStore.currentToken()
+        if (token == null) {
+            cacheManager.invalidate(CACHE_KEY)
+            emit(null)
+            return@flow
+        }
+
+        val cached = cacheManager.get<UserProfile>(CACHE_KEY)
+        if (cached != null) {
+            logger.debug("Profile cache hit")
+            emit(cached)
+            return@flow
+        }
+
+        try {
+            val networkProfile = httpClient.executeRequest<UserProfileNetwork> {
+                get("/user") {
+                    header(HttpHeaders.Accept, "application/vnd.github+json")
+                }
+            }.getOrThrow()
+
+            val userProfile = networkProfile.toUserProfile()
+            cacheManager.put(CACHE_KEY, userProfile, CacheTtl.USER_PROFILE)
+            logger.debug("Fetched and cached user profile: ${userProfile.username}")
+            emit(userProfile)
+        } catch (e: Exception) {
+            logger.error("Failed to fetch user profile: ${e.message}")
+
+            val stale = cacheManager.getStale<UserProfile>(CACHE_KEY)
+            if (stale != null) {
+                logger.debug("Using stale cached profile as fallback")
+                emit(stale)
+            } else {
+                emit(null)
+            }
+        }
+    }.flowOn(Dispatchers.IO)
 
     override fun getVersionName(): String {
         return BuildKonfig.VERSION_NAME
@@ -29,5 +82,6 @@ class ProfileRepositoryImpl(
 
     override suspend fun logout() {
         tokenStore.clear()
+        cacheManager.invalidate(CACHE_KEY)
     }
 }
