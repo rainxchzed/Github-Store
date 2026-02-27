@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import zed.rainxch.githubstore.core.presentation.res.*
 import org.jetbrains.compose.resources.stringResource
 
@@ -31,18 +33,24 @@ fun LogoutDialog(
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
+        ),
         modifier = modifier
+            .padding(16.dp)
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .padding(16.dp)
     ) {
         Column (
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = stringResource(Res.string.warning),
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold
             )
 
             Text(
@@ -54,7 +62,7 @@ fun LogoutDialog(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
             ) {
                 TextButton(
                     onClick = {

@@ -111,7 +111,7 @@ private fun ProxyTypeCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(32.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -123,7 +123,7 @@ private fun ProxyTypeCard(
                 fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -173,7 +173,7 @@ private fun ProxyDetailsCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(32.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

@@ -42,7 +42,7 @@ fun LazyListScope.logout(
             colors = CardDefaults.elevatedCardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             ),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(32.dp),
             onClick = {
                 onAction(ProfileAction.OnLogoutClick)
             }
@@ -52,7 +52,6 @@ fun LazyListScope.logout(
                 title = stringResource(Res.string.logout),
                 actions = {
                     IconButton(
-                        shapes = IconButtonDefaults.shapes(),
                         onClick = {
                             onAction(ProfileAction.OnLogoutClick)
                         },

@@ -80,7 +80,7 @@ private fun OptionCard(
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .7f),
         ),
         onClick = onClick,
-        shape = RoundedCornerShape(36.dp),
+        shape = RoundedCornerShape(32.dp),
         border = BorderStroke(
             width = .5.dp,
             color = MaterialTheme.colorScheme.surface
@@ -88,9 +88,9 @@ private fun OptionCard(
         enabled = enabled
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Icon(
                 imageVector = icon,

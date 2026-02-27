@@ -108,7 +108,7 @@ fun ProfileRoot(
                 ProfileAction.OnStarredReposClick -> {
                     onNavigateToStarredRepos()
                 }
-                
+
                 is ProfileAction.OnRepositoriesClick -> {
                     onNavigateToDevProfile(action.username)
                 }
@@ -146,7 +146,7 @@ fun ProfileScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarState,
-                modifier = Modifier.padding(bottom = bottomNavHeight)
+                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp)
             )
         },
         topBar = {
@@ -193,18 +193,18 @@ fun ProfileScreen(
                 onAction = onAction
             )
 
-            if (state.isUserLoggedIn) {
-                item {
-                    Spacer(Modifier.height(16.dp))
-                }
+            item {
+                Spacer(Modifier.height(16.dp))
+            }
 
+            if (state.isUserLoggedIn) {
                 logout(
                     onAction = onAction
                 )
             }
 
             item {
-                Spacer(Modifier.height(64.dp))
+                Spacer(Modifier.height(bottomNavHeight + 32.dp))
             }
         }
     }

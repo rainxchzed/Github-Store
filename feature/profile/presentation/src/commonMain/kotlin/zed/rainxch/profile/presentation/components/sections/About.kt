@@ -49,11 +49,13 @@ fun LazyListScope.about(
         Spacer(Modifier.height(8.dp))
 
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
             colors = CardDefaults.elevatedCardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
             ),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(32.dp)
         ) {
             AboutItem(
                 icon = Icons.Filled.Info,
@@ -63,6 +65,7 @@ fun LazyListScope.about(
                         text = versionName,
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
             )
