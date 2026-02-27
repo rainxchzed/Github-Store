@@ -350,11 +350,15 @@
     <!-- Install status -->
     <string name="pending_install">ইনস্টল মুলতুবি</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">আনইনস্টল</string>
     <string name="open_app">খুলুন</string>
-    <string name="downgrade_warning_message">সংস্করণ %1$s ইনস্টল করা যাচ্ছে না কারণ একটি নতুন সংস্করণ (%2$s) ইতিমধ্যে ইনস্টল করা আছে। অনুগ্রহ করে প্রথমে বর্তমান সংস্করণটি ম্যানুয়ালি আনইনস্টল করুন।</string>
+    <string name="downgrade_requires_uninstall">ডাউনগ্রেডের জন্য আনইনস্টল প্রয়োজন</string>
+    <string name="downgrade_warning_message">সংস্করণ %1$s ইনস্টল করতে বর্তমান সংস্করণ (%2$s) প্রথমে আনইনস্টল করতে হবে। অ্যাপের ডেটা মুছে যাবে।</string>
+    <string name="uninstall_first">প্রথমে আনইনস্টল করুন</string>
     <string name="install_version">%1$s ইনস্টল করুন</string>
     <string name="failed_to_open_app">%1$s খুলতে ব্যর্থ</string>
+    <string name="failed_to_uninstall">%1$s আনইনস্টল করতে ব্যর্থ</string>
 
     <!-- Version picker -->
     <string name="latest_badge">সর্বশেষ</string>
@@ -387,5 +391,20 @@
     <string name="invalid_proxy_port">অবৈধ প্রক্সি পোর্ট</string>
     <string name="proxy_show_password">পাসওয়ার্ড দেখান</string>
     <string name="proxy_hide_password">পাসওয়ার্ড লুকান</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">এই অ্যাপ ট্র্যাক করুন</string>
+    <string name="app_tracked_successfully">অ্যাপ ট্র্যাকিং তালিকায় যোগ করা হয়েছে</string>
+    <string name="failed_to_track_app">অ্যাপ ট্র্যাক করতে ব্যর্থ: %1$s</string>
+    <string name="already_tracked">অ্যাপটি ইতিমধ্যে ট্র্যাক করা হচ্ছে</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">GitHub-এ সাইন ইন করুন</string>
+    <string name="profile_sign_in_description">সম্পূর্ণ অভিজ্ঞতা আনলক করুন। আপনার অ্যাপ পরিচালনা করুন, পছন্দ সিঙ্ক করুন এবং দ্রুত ব্রাউজ করুন।</string>
+    <string name="profile_repos">রিপোজিটরি</string>
+    <string name="profile_login">লগইন</string>
+    <string name="profile_stars_description">GitHub-এ আপনার স্টার করা রিপোজিটরি</string>
+    <string name="profile_favourites_description">স্থানীয়ভাবে সংরক্ষিত আপনার প্রিয় রিপোজিটরি</string>
 
 </resources>

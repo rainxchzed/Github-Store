@@ -315,11 +315,15 @@
     <string name="inspect_with_appmanager">Inspecter avec AppManager</string>
     <string name="appmanager_description">Vérifier les permissions, trackers et sécurité</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Désinstaller</string>
     <string name="open_app">Ouvrir</string>
-    <string name="downgrade_warning_message">Impossible d\'installer la version %1$s car une version plus récente (%2$s) est déjà installée. Veuillez d\'abord désinstaller manuellement la version actuelle.</string>
+    <string name="downgrade_requires_uninstall">La rétrogradation nécessite la désinstallation</string>
+    <string name="downgrade_warning_message">L\'installation de la version %1$s nécessite la désinstallation de la version actuelle (%2$s). Les données de l\'application seront perdues.</string>
+    <string name="uninstall_first">Désinstaller d\'abord</string>
     <string name="install_version">Installer %1$s</string>
     <string name="failed_to_open_app">Impossible d\'ouvrir %1$s</string>
+    <string name="failed_to_uninstall">Impossible de désinstaller %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Dernière</string>
@@ -352,5 +356,20 @@
     <string name="invalid_proxy_port">Port proxy invalide</string>
     <string name="proxy_show_password">Afficher le mot de passe</string>
     <string name="proxy_hide_password">Masquer le mot de passe</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">Suivre cette app</string>
+    <string name="app_tracked_successfully">App ajoutée à la liste de suivi</string>
+    <string name="failed_to_track_app">Échec du suivi de l\'app : %1$s</string>
+    <string name="already_tracked">L\'app est déjà suivie</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">Se connecter à GitHub</string>
+    <string name="profile_sign_in_description">Débloquez l\'expérience complète. Gérez vos apps, synchronisez vos préférences et naviguez plus vite.</string>
+    <string name="profile_repos">Dépôts</string>
+    <string name="profile_login">Connexion</string>
+    <string name="profile_stars_description">Vos dépôts étoilés sur GitHub</string>
+    <string name="profile_favourites_description">Vos dépôts favoris enregistrés localement</string>
 
 </resources>

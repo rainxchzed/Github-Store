@@ -350,11 +350,15 @@
     <!-- Install status -->
     <string name="pending_install">इंस्टॉल लंबित</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">अनइंस्टॉल</string>
     <string name="open_app">खोलें</string>
-    <string name="downgrade_warning_message">संस्करण %1$s इंस्टॉल नहीं किया जा सकता क्योंकि एक नया संस्करण (%2$s) पहले से इंस्टॉल है। कृपया पहले वर्तमान संस्करण को मैन्युअल रूप से अनइंस्टॉल करें।</string>
+    <string name="downgrade_requires_uninstall">डाउनग्रेड के लिए अनइंस्टॉल आवश्यक</string>
+    <string name="downgrade_warning_message">संस्करण %1$s इंस्टॉल करने के लिए पहले वर्तमान संस्करण (%2$s) को अनइंस्टॉल करना होगा। ऐप डेटा खो जाएगा।</string>
+    <string name="uninstall_first">पहले अनइंस्टॉल करें</string>
     <string name="install_version">%1$s इंस्टॉल करें</string>
     <string name="failed_to_open_app">%1$s खोलने में विफल</string>
+    <string name="failed_to_uninstall">%1$s अनइंस्टॉल करने में विफल</string>
 
     <!-- Version picker -->
     <string name="latest_badge">नवीनतम</string>
@@ -387,5 +391,20 @@
     <string name="invalid_proxy_port">अमान्य प्रॉक्सी पोर्ट</string>
     <string name="proxy_show_password">पासवर्ड दिखाएँ</string>
     <string name="proxy_hide_password">पासवर्ड छुपाएँ</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">इस ऐप को ट्रैक करें</string>
+    <string name="app_tracked_successfully">ऐप ट्रैकिंग सूची में जोड़ा गया</string>
+    <string name="failed_to_track_app">ऐप ट्रैक करने में विफल: %1$s</string>
+    <string name="already_tracked">ऐप पहले से ट्रैक हो रहा है</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">GitHub में साइन इन करें</string>
+    <string name="profile_sign_in_description">पूरा अनुभव अनलॉक करें। अपने ऐप्स मैनेज करें, प्राथमिकताएँ सिंक करें और तेज़ी से ब्राउज़ करें।</string>
+    <string name="profile_repos">रिपॉजिटरी</string>
+    <string name="profile_login">लॉगिन</string>
+    <string name="profile_stars_description">GitHub पर आपकी स्टार की गई रिपॉजिटरी</string>
+    <string name="profile_favourites_description">स्थानीय रूप से सहेजी गई आपकी पसंदीदा रिपॉजिटरी</string>
 
 </resources>

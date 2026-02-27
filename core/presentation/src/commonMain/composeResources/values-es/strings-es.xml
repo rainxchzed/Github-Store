@@ -315,11 +315,15 @@
     <string name="inspect_with_appmanager">Inspeccionar con AppManager</string>
     <string name="appmanager_description">Verificar permisos, rastreadores y seguridad</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Desinstalar</string>
     <string name="open_app">Abrir</string>
-    <string name="downgrade_warning_message">No se puede instalar la versión %1$s porque ya hay una versión más reciente (%2$s) instalada. Por favor, desinstala la versión actual manualmente primero.</string>
+    <string name="downgrade_requires_uninstall">La degradación requiere desinstalar</string>
+    <string name="downgrade_warning_message">Instalar la versión %1$s requiere desinstalar la versión actual (%2$s) primero. Los datos de la app se perderán.</string>
+    <string name="uninstall_first">Desinstalar primero</string>
     <string name="install_version">Instalar %1$s</string>
     <string name="failed_to_open_app">Error al abrir %1$s</string>
+    <string name="failed_to_uninstall">Error al desinstalar %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Última</string>
@@ -352,5 +356,20 @@
     <string name="invalid_proxy_port">Puerto de proxy no válido</string>
     <string name="proxy_show_password">Mostrar contraseña</string>
     <string name="proxy_hide_password">Ocultar contraseña</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">Rastrear esta app</string>
+    <string name="app_tracked_successfully">App añadida a la lista de seguimiento</string>
+    <string name="failed_to_track_app">Error al rastrear la app: %1$s</string>
+    <string name="already_tracked">La app ya está siendo rastreada</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">Iniciar sesión en GitHub</string>
+    <string name="profile_sign_in_description">Desbloquea la experiencia completa. Gestiona tus apps, sincroniza tus preferencias y navega más rápido.</string>
+    <string name="profile_repos">Repos</string>
+    <string name="profile_login">Iniciar sesión</string>
+    <string name="profile_stars_description">Tus repositorios destacados de GitHub</string>
+    <string name="profile_favourites_description">Tus repositorios favoritos guardados localmente</string>
 
 </resources>

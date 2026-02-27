@@ -315,11 +315,15 @@
     <!-- Install status -->
     <string name="pending_install">Ожидает установки</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Удалить</string>
     <string name="open_app">Открыть</string>
-    <string name="downgrade_warning_message">Невозможно установить версию %1$s, так как более новая версия (%2$s) уже установлена. Пожалуйста, сначала удалите текущую версию вручную.</string>
+    <string name="downgrade_requires_uninstall">Для понижения версии требуется удаление</string>
+    <string name="downgrade_warning_message">Для установки версии %1$s необходимо сначала удалить текущую версию (%2$s). Данные приложения будут потеряны.</string>
+    <string name="uninstall_first">Сначала удалить</string>
     <string name="install_version">Установить %1$s</string>
     <string name="failed_to_open_app">Не удалось открыть %1$s</string>
+    <string name="failed_to_uninstall">Не удалось удалить %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Последняя</string>
@@ -352,5 +356,20 @@
     <string name="invalid_proxy_port">Недопустимый порт прокси</string>
     <string name="proxy_show_password">Показать пароль</string>
     <string name="proxy_hide_password">Скрыть пароль</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">Отслеживать приложение</string>
+    <string name="app_tracked_successfully">Приложение добавлено в список отслеживания</string>
+    <string name="failed_to_track_app">Не удалось отследить приложение: %1$s</string>
+    <string name="already_tracked">Приложение уже отслеживается</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">Войти через GitHub</string>
+    <string name="profile_sign_in_description">Откройте полный доступ. Управляйте приложениями, синхронизируйте настройки и просматривайте быстрее.</string>
+    <string name="profile_repos">Репозитории</string>
+    <string name="profile_login">Войти</string>
+    <string name="profile_stars_description">Ваши избранные репозитории на GitHub</string>
+    <string name="profile_favourites_description">Ваши избранные репозитории, сохранённые локально</string>
 
 </resources>

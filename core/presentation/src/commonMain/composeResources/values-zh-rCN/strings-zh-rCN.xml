@@ -316,11 +316,15 @@
     <string name="inspect_with_appmanager">使用 AppManager 检查</string>
     <string name="appmanager_description">检查权限、追踪器和安全性</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">卸载</string>
     <string name="open_app">打开</string>
-    <string name="downgrade_warning_message">无法安装版本 %1$s，因为已安装了更新的版本（%2$s）。请先手动卸载当前版本。</string>
+    <string name="downgrade_requires_uninstall">降级需要先卸载</string>
+    <string name="downgrade_warning_message">安装版本 %1$s 需要先卸载当前版本（%2$s）。应用数据将丢失。</string>
+    <string name="uninstall_first">先卸载</string>
     <string name="install_version">安装 %1$s</string>
     <string name="failed_to_open_app">无法打开 %1$s</string>
+    <string name="failed_to_uninstall">无法卸载 %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">最新</string>
@@ -354,4 +358,18 @@
     <string name="proxy_show_password">显示密码</string>
     <string name="proxy_hide_password">隐藏密码</string>
 
+
+    <!-- Track app feature -->
+    <string name="track_this_app">跟踪此应用</string>
+    <string name="app_tracked_successfully">应用已添加到跟踪列表</string>
+    <string name="failed_to_track_app">跟踪应用失败：%1$s</string>
+    <string name="already_tracked">该应用已在跟踪中</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">登录 GitHub</string>
+    <string name="profile_sign_in_description">解锁完整体验。管理您的应用、同步偏好设置，更快地浏览。</string>
+    <string name="profile_repos">仓库</string>
+    <string name="profile_login">登录</string>
+    <string name="profile_stars_description">您在 GitHub 上收藏的仓库</string>
+    <string name="profile_favourites_description">本地保存的收藏仓库</string>
 </resources>

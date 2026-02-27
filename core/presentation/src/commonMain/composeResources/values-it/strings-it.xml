@@ -346,11 +346,15 @@
     <!-- Install status -->
     <string name="pending_install">Installazione in sospeso</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Disinstalla</string>
     <string name="open_app">Apri</string>
-    <string name="downgrade_warning_message">Impossibile installare la versione %1$s perché una versione più recente (%2$s) è già installata. Disinstalla manualmente la versione corrente prima di procedere.</string>
+    <string name="downgrade_requires_uninstall">Il downgrade richiede la disinstallazione</string>
+    <string name="downgrade_warning_message">L\'installazione della versione %1$s richiede la disinstallazione della versione corrente (%2$s). I dati dell\'app verranno persi.</string>
+    <string name="uninstall_first">Disinstalla prima</string>
     <string name="install_version">Installa %1$s</string>
     <string name="failed_to_open_app">Impossibile aprire %1$s</string>
+    <string name="failed_to_uninstall">Impossibile disinstallare %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Ultima</string>
@@ -388,5 +392,20 @@
     <string name="invalid_proxy_port">Porta proxy non valida</string>
     <string name="proxy_show_password">Mostra password</string>
     <string name="proxy_hide_password">Nascondi password</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">Traccia questa app</string>
+    <string name="app_tracked_successfully">App aggiunta alla lista di monitoraggio</string>
+    <string name="failed_to_track_app">Impossibile tracciare l\'app: %1$s</string>
+    <string name="already_tracked">L\'app è già monitorata</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">Accedi a GitHub</string>
+    <string name="profile_sign_in_description">Sblocca l\'esperienza completa. Gestisci le tue app, sincronizza le preferenze e naviga più velocemente.</string>
+    <string name="profile_repos">Repo</string>
+    <string name="profile_login">Accedi</string>
+    <string name="profile_stars_description">I tuoi repository preferiti su GitHub</string>
+    <string name="profile_favourites_description">I tuoi repository preferiti salvati localmente</string>
 
 </resources>

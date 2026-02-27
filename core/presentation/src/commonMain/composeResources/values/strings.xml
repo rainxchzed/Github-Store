@@ -193,11 +193,15 @@
     <string name="installing">Installing</string>
     <string name="pending_install">Pending install</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Uninstall</string>
     <string name="open_app">Open</string>
-    <string name="downgrade_warning_message">Cannot install version %1$s because a newer version (%2$s) is already installed. Please uninstall the current version manually first.</string>
+    <string name="downgrade_requires_uninstall">Downgrade requires uninstall</string>
+    <string name="downgrade_warning_message">Installing version %1$s requires uninstalling the current version (%2$s) first. Your app data will be lost.</string>
+    <string name="uninstall_first">Uninstall first</string>
     <string name="install_version">Install %1$s</string>
     <string name="failed_to_open_app">Failed to open %1$s</string>
+    <string name="failed_to_uninstall">Failed to uninstall %1$s</string>
 
     <!-- Install helpers -->
     <string name="open_in_obtainium">Open in Obtainium</string>
@@ -388,4 +392,12 @@
     <string name="app_tracked_successfully">App added to tracking list</string>
     <string name="failed_to_track_app">Failed to track app: %1$s</string>
     <string name="already_tracked">App is already being tracked</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">Sign in to GitHub</string>
+    <string name="profile_sign_in_description">Unlock the full experience. Manage your apps, sync your preferences, and browse faster.</string>
+    <string name="profile_repos">Repos</string>
+    <string name="profile_login">Login</string>
+    <string name="profile_stars_description">Your Starred Repositories from GitHub</string>
+    <string name="profile_favourites_description">Your Favourite Repositories saved locally</string>
 </resources>

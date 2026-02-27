@@ -313,11 +313,15 @@
     <!-- Install status -->
     <string name="pending_install">Oczekuje na instalację</string>
 
-    <!-- Open -->
+    <!-- Uninstall / Open -->
+    <string name="uninstall">Odinstaluj</string>
     <string name="open_app">Otwórz</string>
-    <string name="downgrade_warning_message">Nie można zainstalować wersji %1$s, ponieważ nowsza wersja (%2$s) jest już zainstalowana. Najpierw ręcznie odinstaluj bieżącą wersję.</string>
+    <string name="downgrade_requires_uninstall">Obniżenie wersji wymaga odinstalowania</string>
+    <string name="downgrade_warning_message">Instalacja wersji %1$s wymaga odinstalowania bieżącej wersji (%2$s). Dane aplikacji zostaną utracone.</string>
+    <string name="uninstall_first">Najpierw odinstaluj</string>
     <string name="install_version">Zainstaluj %1$s</string>
     <string name="failed_to_open_app">Nie udało się otworzyć %1$s</string>
+    <string name="failed_to_uninstall">Nie udało się odinstalować %1$s</string>
 
     <!-- Version picker -->
     <string name="latest_badge">Najnowsza</string>
@@ -350,5 +354,20 @@
     <string name="invalid_proxy_port">Nieprawidłowy port proxy</string>
     <string name="proxy_show_password">Pokaż hasło</string>
     <string name="proxy_hide_password">Ukryj hasło</string>
+
+
+    <!-- Track app feature -->
+    <string name="track_this_app">Śledź tę aplikację</string>
+    <string name="app_tracked_successfully">Aplikacja dodana do listy śledzonych</string>
+    <string name="failed_to_track_app">Nie udało się śledzić aplikacji: %1$s</string>
+    <string name="already_tracked">Aplikacja jest już śledzona</string>
+
+    <!-- Profile section -->
+    <string name="profile_sign_in_title">Zaloguj się przez GitHub</string>
+    <string name="profile_sign_in_description">Odblokuj pełnię możliwości. Zarządzaj aplikacjami, synchronizuj preferencje i przeglądaj szybciej.</string>
+    <string name="profile_repos">Repozytoria</string>
+    <string name="profile_login">Zaloguj się</string>
+    <string name="profile_stars_description">Twoje repozytoria oznaczone gwiazdką na GitHubie</string>
+    <string name="profile_favourites_description">Twoje ulubione repozytoria zapisane lokalnie</string>
 
 </resources>
