@@ -15,6 +15,7 @@ sealed interface SearchAction {
     data object OnSearchImeClick : SearchAction
     data object OnNavigateBackClick : SearchAction
     data object LoadMore : SearchAction
+    data object OnClearClick : SearchAction
     data object Retry : SearchAction
     data object OnToggleLanguageSheetVisibility : SearchAction
 }

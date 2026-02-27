@@ -74,7 +74,7 @@ class SearchRepositoryImpl(
             return@channelFlow
         }
 
-        val searchQuery = buildSearchQuery(query, searchPlatform, language)
+        val searchQuery = buildSearchQuery(query, language)
         val (sort, order) = sortBy.toGithubParams()
 
         try {
@@ -195,7 +195,6 @@ class SearchRepositoryImpl(
 
     private fun buildSearchQuery(
         userQuery: String,
-        searchPlatform: SearchPlatform,
         language: ProgrammingLanguage
     ): String {
         val clean = userQuery.trim()
@@ -207,21 +206,13 @@ class SearchRepositoryImpl(
         val scope = " in:name,description"
         val common = " archived:false fork:true"
 
-        val platformHints = when (searchPlatform) {
-            SearchPlatform.All -> ""
-            SearchPlatform.Android -> " topic:android"
-            SearchPlatform.Windows -> " topic:windows"
-            SearchPlatform.Macos -> " topic:macos"
-            SearchPlatform.Linux -> " topic:linux"
-        }
-
         val languageFilter = if (language != ProgrammingLanguage.All && language.queryValue != null) {
             " language:${language.queryValue}"
         } else {
             ""
         }
 
-        return ("$q$scope$common" + platformHints + languageFilter).trim()
+        return ("$q$scope$common" + languageFilter).trim()
     }
 
     private fun assetMatchesPlatform(nameRaw: String, platform: SearchPlatform): Boolean {
