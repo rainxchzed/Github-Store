@@ -5,21 +5,25 @@ import androidx.lifecycle.viewModelScope
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import zed.rainxch.core.domain.logging.GitHubStoreLogger
+import zed.rainxch.core.domain.model.Platform
 import zed.rainxch.core.domain.model.RateLimitException
 import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
+import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepository
 import zed.rainxch.domain.repository.SearchRepository
 
@@ -30,6 +34,8 @@ class SearchViewModel(
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
     private val logger: GitHubStoreLogger,
+    private val shareManager: ShareManager,
+    private val platform: Platform
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -60,6 +66,9 @@ class SearchViewModel(
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = SearchState()
         )
+
+    private val _events = Channel<SearchEvent>()
+    val events = _events.receiveAsFlow()
 
     private fun syncSystemState() {
         viewModelScope.launch {
@@ -334,6 +343,24 @@ class SearchViewModel(
                 searchDebounceJob?.cancel()
                 currentPage = 1
                 performSearch(isInitial = true)
+            }
+
+            is SearchAction.OnShareClick -> {
+                viewModelScope.launch {
+                    runCatching {
+                        shareManager.shareText("https://github-store.org/app?repo=${action.repo.fullName}")
+                    }.onFailure { t ->
+                        logger.error("Failed to share link: ${t.message}")
+                        _events.send(
+                            SearchEvent.OnMessage(getString(Res.string.failed_to_share_link))
+                        )
+                        return@launch
+                    }
+
+                    if (platform != Platform.ANDROID) {
+                        _events.send(SearchEvent.OnMessage(getString(Res.string.link_copied_to_clipboard)))
+                    }
+                }
             }
 
             is SearchAction.OnSortBySelected -> {

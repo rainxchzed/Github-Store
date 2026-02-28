@@ -36,6 +36,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -44,6 +46,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,12 +64,15 @@ import io.github.fletchmckee.liquid.liquefiable
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.RepositoryCard
+import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
+import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.domain.model.ProgrammingLanguage
 import zed.rainxch.domain.model.SearchPlatform
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -86,6 +92,18 @@ fun SearchRoot(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val snackbarHost = remember { SnackbarHostState() }
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is SearchEvent.OnMessage -> {
+                scope.launch {
+                    snackbarHost.showSnackbar(event.message)
+                }
+            }
+        }
+    }
 
     if (state.isLanguageSheetVisible) {
         LanguageFilterBottomSheet(
@@ -101,6 +119,7 @@ fun SearchRoot(
 
     SearchScreen(
         state = state,
+        snackbarHost = snackbarHost,
         onAction = { action ->
             when (action) {
                 is SearchAction.OnRepositoryClick -> {
@@ -127,11 +146,13 @@ fun SearchRoot(
 @Composable
 fun SearchScreen(
     state: SearchState,
+    snackbarHost: SnackbarHostState,
     onAction: (SearchAction) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyStaggeredGridState()
     val liquidState = LocalBottomNavigationLiquid.current
+    val bottomNavHeight = LocalBottomNavigationHeight.current
 
     val shouldLoadMore by remember {
         derivedStateOf {
@@ -142,7 +163,8 @@ fun SearchScreen(
             if (totalItems == 0 ||
                 state.isLoadingMore ||
                 state.isLoading ||
-                !state.hasMorePages) {
+                !state.hasMorePages
+            ) {
                 return@derivedStateOf false
             }
 
@@ -176,7 +198,8 @@ fun SearchScreen(
             layoutInfo.totalItemsCount > 0 &&
             !state.isLoadingMore &&
             !state.isLoading &&
-            state.hasMorePages) {
+            state.hasMorePages
+        ) {
 
             val hasEmptySpace = lastVisible.index == layoutInfo.totalItemsCount - 1 &&
                     lastVisible.offset.y + lastVisible.size.height < layoutInfo.viewportEndOffset
@@ -200,6 +223,12 @@ fun SearchScreen(
                 onAction = onAction,
                 state = state,
                 focusRequester = focusRequester
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHost,
+                modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp)
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
@@ -358,6 +387,9 @@ fun SearchScreen(
                                 onDeveloperClick = { username ->
                                     onAction(SearchAction.OnRepositoryDeveloperClick(username))
                                 },
+                                onShareClick = {
+                                    onAction(SearchAction.OnShareClick(discoveryRepository.repository))
+                                },
                                 modifier = Modifier
                                     .animateItem()
                                     .liquefiable(liquidState)
@@ -467,7 +499,8 @@ private fun Preview() {
     GithubStoreTheme {
         SearchScreen(
             state = SearchState(),
-            onAction = {}
+            snackbarHost = SnackbarHostState(),
+            onAction = {},
         )
     }
 }

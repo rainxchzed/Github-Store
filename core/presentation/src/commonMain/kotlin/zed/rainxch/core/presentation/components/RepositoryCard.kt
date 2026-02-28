@@ -20,10 +20,9 @@ import androidx.compose.material.icons.automirrored.outlined.CallSplit
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,22 +47,19 @@ import zed.rainxch.core.presentation.model.DiscoveryRepository
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.formatReleasedAt
 import zed.rainxch.core.presentation.utils.hasWeekNotPassed
-import zed.rainxch.githubstore.core.presentation.res.Res
-import zed.rainxch.githubstore.core.presentation.res.forked_repository
-import zed.rainxch.githubstore.core.presentation.res.home_view_details
-import zed.rainxch.githubstore.core.presentation.res.installed
-import zed.rainxch.githubstore.core.presentation.res.open_in_browser
-import zed.rainxch.githubstore.core.presentation.res.update_available
+import zed.rainxch.githubstore.core.presentation.res.*
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun RepositoryCard(
     discoveryRepository: DiscoveryRepository,
     onClick: () -> Unit,
+    onShareClick: () -> Unit,
     onDeveloperClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
+
     ExpressiveCard(
         onClick = onClick,
         modifier = modifier
@@ -264,6 +260,20 @@ fun RepositoryCard(
                     )
 
                     IconButton(
+                        onClick = onShareClick,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        shapes = IconButtonDefaults.shapes(),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = stringResource(Res.string.share_repository),
+                        )
+                    }
+
+                    IconButton(
                         onClick = {
                             uriHandler.openUri(discoveryRepository.repository.htmlUrl)
                         },
@@ -421,6 +431,7 @@ fun RepositoryCardPreview() {
                 isStarred = false
             ),
             onClick = { },
+            onShareClick = { },
             onDeveloperClick = { }
         )
     }

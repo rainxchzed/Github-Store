@@ -20,6 +20,7 @@ import zed.rainxch.core.domain.repository.FavouritesRepository
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.repository.StarredRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
+import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.core.presentation.model.DiscoveryRepository
 import zed.rainxch.githubstore.core.presentation.res.*
 import zed.rainxch.home.domain.repository.HomeRepository
@@ -32,7 +33,8 @@ class HomeViewModel(
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
-    private val logger: GitHubStoreLogger
+    private val logger: GitHubStoreLogger,
+    private val shareManager: ShareManager
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -248,6 +250,24 @@ class HomeViewModel(
                         _events.send(HomeEvent.OnScrollToListTop)
                     }
 
+                }
+            }
+
+            is HomeAction.OnShareClick -> {
+                viewModelScope.launch {
+                    runCatching {
+                        shareManager.shareText("https://github-store.org/app?repo=${action.repo.fullName}")
+                    }.onFailure { t ->
+                        logger.error("Failed to share link: ${t.message}")
+                        _events.send(
+                            HomeEvent.OnMessage(getString(Res.string.failed_to_share_link))
+                        )
+                        return@launch
+                    }
+
+                    if (platform != Platform.ANDROID) {
+                        _events.send(HomeEvent.OnMessage(getString(Res.string.link_copied_to_clipboard)))
+                    }
                 }
             }
 

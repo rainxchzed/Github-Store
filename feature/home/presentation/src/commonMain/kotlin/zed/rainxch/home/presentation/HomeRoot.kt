@@ -26,6 +26,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -58,6 +60,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.domain.model.GithubRepoSummary
 import zed.rainxch.core.presentation.components.GithubStoreButton
 import zed.rainxch.core.presentation.components.RepositoryCard
+import zed.rainxch.core.presentation.locals.LocalBottomNavigationHeight
 import zed.rainxch.core.presentation.locals.LocalBottomNavigationLiquid
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
@@ -77,6 +80,7 @@ fun HomeRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val listState = rememberLazyStaggeredGridState()
     val scope = rememberCoroutineScope()
+    val snackbarHost = remember { SnackbarHostState() }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -85,11 +89,18 @@ fun HomeRoot(
                     listState.animateScrollToItem(0)
                 }
             }
+
+            is HomeEvent.OnMessage -> {
+                scope.launch {
+                    snackbarHost.showSnackbar(event.message)
+                }
+            }
         }
     }
 
     HomeScreen(
         state = state,
+        snackbarHost = snackbarHost,
         onAction = { action ->
             when (action) {
                 HomeAction.OnSearchClick -> {
@@ -125,10 +136,12 @@ fun HomeRoot(
 @Composable
 fun HomeScreen(
     state: HomeState,
+    snackbarHost: SnackbarHostState,
     onAction: (HomeAction) -> Unit,
     listState: LazyStaggeredGridState,
 ) {
     val liquidState = LocalBottomNavigationLiquid.current
+    val bottomNavHeight = LocalBottomNavigationHeight.current
 
     val shouldLoadMore by remember {
         derivedStateOf {
@@ -161,6 +174,12 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 TopAppBar()
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHost,
+                    modifier = Modifier.padding(bottom = bottomNavHeight + 16.dp)
+                )
             },
             containerColor = MaterialTheme.colorScheme.background
         ) { innerPadding ->
@@ -213,14 +232,17 @@ private fun MainState(
                 items = state.repos,
                 key = { it.repository.id },
                 contentType = { "repo" }
-            ) { homeRepo ->
+            ) { discoveryRepository ->
                 RepositoryCard(
-                    discoveryRepository = homeRepo,
+                    discoveryRepository = discoveryRepository,
                     onClick = {
-                        onAction(HomeAction.OnRepositoryClick(homeRepo.repository))
+                        onAction(HomeAction.OnRepositoryClick(discoveryRepository.repository))
                     },
                     onDeveloperClick = { username ->
                         onAction(HomeAction.OnRepositoryDeveloperClick(username))
+                    },
+                    onShareClick = {
+                        onAction(HomeAction.OnShareClick(discoveryRepository.repository))
                     },
                     modifier = Modifier
                         .animateItem()
@@ -389,7 +411,8 @@ private fun Preview() {
             HomeScreen(
                 state = HomeState(),
                 onAction = {},
-                listState = rememberLazyStaggeredGridState()
+                snackbarHost = SnackbarHostState(),
+                listState = rememberLazyStaggeredGridState(),
             )
         }
     }
