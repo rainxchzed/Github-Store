@@ -385,4 +385,8 @@
     <string name="auth_hint_check_connection">Revisa tu conexión a internet e intenta de nuevo.</string>
     <string name="auth_hint_denied">Rechazaste la solicitud de autorización. Intenta de nuevo si fue involuntario.</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">Leer más</string>
+    <string name="show_less">Mostrar menos</string>
+
 </resources>

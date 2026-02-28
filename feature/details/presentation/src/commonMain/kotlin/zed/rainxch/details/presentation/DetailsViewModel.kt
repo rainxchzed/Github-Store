@@ -776,6 +776,18 @@ class DetailsViewModel(
                 }
             }
 
+            DetailsAction.ToggleAboutExpanded -> {
+                _state.update {
+                    it.copy(isAboutExpanded = !it.isAboutExpanded)
+                }
+            }
+
+            DetailsAction.ToggleWhatsNewExpanded -> {
+                _state.update {
+                    it.copy(isWhatsNewExpanded = !it.isWhatsNewExpanded)
+                }
+            }
+
             DetailsAction.TrackExistingApp -> {
                 val snapshot = _state.value
                 if (snapshot.isTrackingApp || !snapshot.isTrackable) return

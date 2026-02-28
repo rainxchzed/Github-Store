@@ -420,4 +420,8 @@
     <string name="auth_hint_check_connection">कृपया अपना इंटरनेट कनेक्शन जाँचें और पुनः प्रयास करें।</string>
     <string name="auth_hint_denied">आपने प्राधिकरण अनुरोध अस्वीकार कर दिया। यदि यह अनजाने में हुआ तो पुनः प्रयास करें।</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">और पढ़ें</string>
+    <string name="show_less">कम दिखाएं</string>
+
 </resources>

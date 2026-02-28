@@ -385,4 +385,8 @@
     <string name="auth_hint_try_again">请重新登录以获取新的验证码。</string>
     <string name="auth_hint_check_connection">请检查您的网络连接并重试。</string>
     <string name="auth_hint_denied">您拒绝了授权请求。如果是误操作，请重试。</string>
+    <!-- Read More / Show Less -->
+    <string name="read_more">阅读更多</string>
+    <string name="show_less">收起</string>
+
 </resources>

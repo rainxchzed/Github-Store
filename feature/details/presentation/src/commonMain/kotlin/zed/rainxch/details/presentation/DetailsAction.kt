@@ -38,4 +38,6 @@ sealed interface DetailsAction {
     data class SelectReleaseCategory(val category: ReleaseCategory) : DetailsAction
     data class SelectRelease(val release: GithubRelease) : DetailsAction
     data object ToggleVersionPicker : DetailsAction
+    data object ToggleAboutExpanded : DetailsAction
+    data object ToggleWhatsNewExpanded : DetailsAction
 }

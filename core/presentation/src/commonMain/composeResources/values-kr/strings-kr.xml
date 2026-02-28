@@ -417,4 +417,8 @@
     <string name="auth_hint_try_again">새 코드를 받으려면 다시 로그인해 주세요.</string>
     <string name="auth_hint_check_connection">인터넷 연결을 확인하고 다시 시도하세요.</string>
     <string name="auth_hint_denied">인증 요청을 거부했습니다. 의도하지 않은 경우 다시 시도하세요.</string>
+    <!-- Read More / Show Less -->
+    <string name="read_more">더 보기</string>
+    <string name="show_less">간략히</string>
+
 </resources>

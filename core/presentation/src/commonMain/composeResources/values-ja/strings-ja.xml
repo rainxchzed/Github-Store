@@ -384,4 +384,8 @@
     <string name="auth_hint_try_again">新しいコードを取得するために再度サインインしてください。</string>
     <string name="auth_hint_check_connection">インターネット接続を確認して再試行してください。</string>
     <string name="auth_hint_denied">認証リクエストを拒否しました。意図しない場合は再試行してください。</string>
+    <!-- Read More / Show Less -->
+    <string name="read_more">もっと読む</string>
+    <string name="show_less">折りたたむ</string>
+
 </resources>

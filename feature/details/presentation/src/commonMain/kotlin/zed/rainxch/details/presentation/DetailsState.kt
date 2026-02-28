@@ -54,6 +54,9 @@ data class DetailsState(
     val isFavourite: Boolean = false,
     val isStarred: Boolean = false,
     val isTrackingApp: Boolean = false,
+
+    val isAboutExpanded: Boolean = false,
+    val isWhatsNewExpanded: Boolean = false,
 ) {
     /**
      * True when the app is detected as installed on the system (via assets matching)

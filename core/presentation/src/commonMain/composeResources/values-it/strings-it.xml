@@ -421,4 +421,8 @@
     <string name="auth_hint_check_connection">Controlla la tua connessione internet e riprova.</string>
     <string name="auth_hint_denied">Hai rifiutato la richiesta di autorizzazione. Riprova se è stato involontario.</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">Leggi di più</string>
+    <string name="show_less">Mostra meno</string>
+
 </resources>

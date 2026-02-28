@@ -417,4 +417,8 @@
     <string name="auth_hint_check_connection">Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.</string>
     <string name="auth_hint_denied">Yetkilendirme isteğini reddettiniz. İstemeden yaptıysanız tekrar deneyin.</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">Devamını oku</string>
+    <string name="show_less">Daha az göster</string>
+
 </resources>
