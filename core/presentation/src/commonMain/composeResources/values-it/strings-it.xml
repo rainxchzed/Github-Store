@@ -408,4 +408,17 @@
     <string name="profile_stars_description">I tuoi repository preferiti su GitHub</string>
     <string name="profile_favourites_description">I tuoi repository preferiti salvati localmente</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">Sessione scaduta</string>
+    <string name="session_expired_message">La tua sessione GitHub è scaduta o il token è stato revocato. Accedi di nuovo per continuare a utilizzare le funzionalità autenticate.</string>
+    <string name="session_expired_hint">Puoi continuare a navigare come ospite con richieste API limitate.</string>
+    <string name="sign_in_again">Accedi di nuovo</string>
+    <string name="continue_as_guest">Continua come ospite</string>
+    <string name="logout_revocation_note">Questo cancellerà la sessione locale e i dati nella cache. Per revocare completamente l\'accesso, visita GitHub Settings > Applications.</string>
+    <string name="auth_code_expires_in">Il codice scade tra %1$s</string>
+    <string name="auth_error_code_expired">Il codice del dispositivo è scaduto.</string>
+    <string name="auth_hint_try_again">Riprova ad accedere per ottenere un nuovo codice.</string>
+    <string name="auth_hint_check_connection">Controlla la tua connessione internet e riprova.</string>
+    <string name="auth_hint_denied">Hai rifiutato la richiesta di autorizzazione. Riprova se è stato involontario.</string>
+
 </resources>

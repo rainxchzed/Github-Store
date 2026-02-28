@@ -12,8 +12,13 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 fun hasWeekNotPassed(isoInstant: String): Boolean {
-    val updated = Instant.parse(isoInstant)
+    val updated = try {
+        Instant.parse(isoInstant)
+    } catch (_: IllegalArgumentException) {
+        return false
+    }
     val now = Clock.System.now()
     val diff = now - updated
 

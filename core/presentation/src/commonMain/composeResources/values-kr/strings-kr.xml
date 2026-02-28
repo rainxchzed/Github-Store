@@ -404,4 +404,17 @@
     <string name="profile_login">로그인</string>
     <string name="profile_stars_description">GitHub에서 별표한 저장소</string>
     <string name="profile_favourites_description">로컬에 저장된 즐겨찾기 저장소</string>
+
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">세션 만료</string>
+    <string name="session_expired_message">GitHub 세션이 만료되었거나 토큰이 취소되었습니다. 인증된 기능을 계속 사용하려면 다시 로그인하세요.</string>
+    <string name="session_expired_hint">제한된 API 요청으로 게스트로 계속 탐색할 수 있습니다.</string>
+    <string name="sign_in_again">다시 로그인</string>
+    <string name="continue_as_guest">게스트로 계속</string>
+    <string name="logout_revocation_note">로컬 세션과 캐시 데이터가 삭제됩니다. 접근을 완전히 취소하려면 GitHub Settings > Applications를 방문하세요.</string>
+    <string name="auth_code_expires_in">코드 만료까지 %1$s</string>
+    <string name="auth_error_code_expired">디바이스 코드가 만료되었습니다.</string>
+    <string name="auth_hint_try_again">새 코드를 받으려면 다시 로그인해 주세요.</string>
+    <string name="auth_hint_check_connection">인터넷 연결을 확인하고 다시 시도하세요.</string>
+    <string name="auth_hint_denied">인증 요청을 거부했습니다. 의도하지 않은 경우 다시 시도하세요.</string>
 </resources>

@@ -407,4 +407,17 @@
     <string name="profile_stars_description">GitHub-এ আপনার স্টার করা রিপোজিটরি</string>
     <string name="profile_favourites_description">স্থানীয়ভাবে সংরক্ষিত আপনার প্রিয় রিপোজিটরি</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">সেশনের মেয়াদ শেষ</string>
+    <string name="session_expired_message">আপনার GitHub সেশনের মেয়াদ শেষ হয়ে গেছে বা টোকেনটি প্রত্যাহার করা হয়েছে। প্রমাণিত বৈশিষ্ট্যগুলি ব্যবহার চালিয়ে যেতে অনুগ্রহ করে আবার সাইন ইন করুন।</string>
+    <string name="session_expired_hint">আপনি সীমিত API অনুরোধ সহ অতিথি হিসেবে ব্রাউজ করতে পারেন।</string>
+    <string name="sign_in_again">আবার সাইন ইন করুন</string>
+    <string name="continue_as_guest">অতিথি হিসেবে চালিয়ে যান</string>
+    <string name="logout_revocation_note">এটি আপনার স্থানীয় সেশন এবং ক্যাশ ডেটা মুছে ফেলবে। সম্পূর্ণরূপে অ্যাক্সেস প্রত্যাহার করতে, GitHub Settings > Applications এ যান।</string>
+    <string name="auth_code_expires_in">কোডের মেয়াদ শেষ হবে %1$s এ</string>
+    <string name="auth_error_code_expired">ডিভাইস কোডের মেয়াদ শেষ হয়ে গেছে।</string>
+    <string name="auth_hint_try_again">একটি নতুন কোড পেতে অনুগ্রহ করে আবার সাইন ইন করার চেষ্টা করুন।</string>
+    <string name="auth_hint_check_connection">অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।</string>
+    <string name="auth_hint_denied">আপনি অনুমোদনের অনুরোধ প্রত্যাখ্যান করেছেন। এটি অনিচ্ছাকৃত হলে আবার চেষ্টা করুন।</string>
+
 </resources>

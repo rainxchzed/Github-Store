@@ -407,4 +407,17 @@
     <string name="profile_stars_description">GitHub पर आपकी स्टार की गई रिपॉजिटरी</string>
     <string name="profile_favourites_description">स्थानीय रूप से सहेजी गई आपकी पसंदीदा रिपॉजिटरी</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">सत्र समाप्त</string>
+    <string name="session_expired_message">आपका GitHub सत्र समाप्त हो गया है या टोकन रद्द कर दिया गया है। प्रमाणित सुविधाओं का उपयोग जारी रखने के लिए कृपया फिर से साइन इन करें।</string>
+    <string name="session_expired_hint">आप सीमित API अनुरोधों के साथ अतिथि के रूप में ब्राउज़ कर सकते हैं।</string>
+    <string name="sign_in_again">फिर से साइन इन करें</string>
+    <string name="continue_as_guest">अतिथि के रूप में जारी रखें</string>
+    <string name="logout_revocation_note">यह आपका स्थानीय सत्र और कैश डेटा साफ़ कर देगा। पूर्ण रूप से पहुँच रद्द करने के लिए, GitHub Settings > Applications पर जाएँ।</string>
+    <string name="auth_code_expires_in">कोड %1$s में समाप्त होगा</string>
+    <string name="auth_error_code_expired">डिवाइस कोड की अवधि समाप्त हो गई है।</string>
+    <string name="auth_hint_try_again">नया कोड प्राप्त करने के लिए कृपया फिर से साइन इन करें।</string>
+    <string name="auth_hint_check_connection">कृपया अपना इंटरनेट कनेक्शन जाँचें और पुनः प्रयास करें।</string>
+    <string name="auth_hint_denied">आपने प्राधिकरण अनुरोध अस्वीकार कर दिया। यदि यह अनजाने में हुआ तो पुनः प्रयास करें।</string>
+
 </resources>

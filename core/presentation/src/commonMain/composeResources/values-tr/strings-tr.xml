@@ -404,4 +404,17 @@
     <string name="profile_stars_description">GitHub'daki yıldızlı repolarınız</string>
     <string name="profile_favourites_description">Yerel olarak kaydedilen favori repolarınız</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">Oturum Süresi Doldu</string>
+    <string name="session_expired_message">GitHub oturumunuzun süresi doldu veya token iptal edildi. Kimliği doğrulanmış özellikleri kullanmaya devam etmek için lütfen tekrar giriş yapın.</string>
+    <string name="session_expired_hint">Sınırlı API istekleriyle misafir olarak gezinmeye devam edebilirsiniz.</string>
+    <string name="sign_in_again">Tekrar Giriş Yap</string>
+    <string name="continue_as_guest">Misafir olarak devam et</string>
+    <string name="logout_revocation_note">Bu işlem yerel oturumunuzu ve önbellek verilerinizi temizleyecektir. Erişimi tamamen iptal etmek için GitHub Settings > Applications sayfasını ziyaret edin.</string>
+    <string name="auth_code_expires_in">Kodun süresi %1$s sonra dolacak</string>
+    <string name="auth_error_code_expired">Cihaz kodunun süresi doldu.</string>
+    <string name="auth_hint_try_again">Yeni bir kod almak için lütfen tekrar giriş yapmayı deneyin.</string>
+    <string name="auth_hint_check_connection">Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.</string>
+    <string name="auth_hint_denied">Yetkilendirme isteğini reddettiniz. İstemeden yaptıysanız tekrar deneyin.</string>
+
 </resources>

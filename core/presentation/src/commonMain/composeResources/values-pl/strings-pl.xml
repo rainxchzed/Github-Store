@@ -370,4 +370,17 @@
     <string name="profile_stars_description">Twoje repozytoria oznaczone gwiazdką na GitHubie</string>
     <string name="profile_favourites_description">Twoje ulubione repozytoria zapisane lokalnie</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">Sesja wygasła</string>
+    <string name="session_expired_message">Twoja sesja GitHub wygasła lub token został unieważniony. Zaloguj się ponownie, aby kontynuować korzystanie z funkcji wymagających uwierzytelnienia.</string>
+    <string name="session_expired_hint">Możesz nadal przeglądać jako gość z ograniczoną liczbą zapytań API.</string>
+    <string name="sign_in_again">Zaloguj się ponownie</string>
+    <string name="continue_as_guest">Kontynuuj jako gość</string>
+    <string name="logout_revocation_note">Spowoduje to wyczyszczenie lokalnej sesji i danych z pamięci podręcznej. Aby całkowicie cofnąć dostęp, odwiedź GitHub Settings > Applications.</string>
+    <string name="auth_code_expires_in">Kod wygasa za %1$s</string>
+    <string name="auth_error_code_expired">Kod urządzenia wygasł.</string>
+    <string name="auth_hint_try_again">Spróbuj zalogować się ponownie, aby uzyskać nowy kod.</string>
+    <string name="auth_hint_check_connection">Sprawdź połączenie internetowe i spróbuj ponownie.</string>
+    <string name="auth_hint_denied">Odrzuciłeś żądanie autoryzacji. Spróbuj ponownie, jeśli było to niezamierzone.</string>
+
 </resources>

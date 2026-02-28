@@ -372,4 +372,17 @@
     <string name="profile_stars_description">Vos dépôts étoilés sur GitHub</string>
     <string name="profile_favourites_description">Vos dépôts favoris enregistrés localement</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">Session expirée</string>
+    <string name="session_expired_message">Votre session GitHub a expiré ou le jeton a été révoqué. Veuillez vous reconnecter pour continuer à utiliser les fonctionnalités authentifiées.</string>
+    <string name="session_expired_hint">Vous pouvez toujours naviguer en tant qu\'invité avec des requêtes API limitées.</string>
+    <string name="sign_in_again">Se reconnecter</string>
+    <string name="continue_as_guest">Continuer en tant qu\'invité</string>
+    <string name="logout_revocation_note">Cela effacera votre session locale et les données en cache. Pour révoquer complètement l\'accès, visitez GitHub Settings > Applications.</string>
+    <string name="auth_code_expires_in">Le code expire dans %1$s</string>
+    <string name="auth_error_code_expired">Le code de l\'appareil a expiré.</string>
+    <string name="auth_hint_try_again">Veuillez réessayer de vous connecter pour obtenir un nouveau code.</string>
+    <string name="auth_hint_check_connection">Vérifiez votre connexion internet et réessayez.</string>
+    <string name="auth_hint_denied">Vous avez refusé la demande d\'autorisation. Réessayez si c\'était involontaire.</string>
+
 </resources>

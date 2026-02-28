@@ -371,4 +371,17 @@
     <string name="profile_login">ログイン</string>
     <string name="profile_stars_description">GitHubのスター付きリポジトリ</string>
     <string name="profile_favourites_description">ローカルに保存されたお気に入りリポジトリ</string>
+
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">セッション期限切れ</string>
+    <string name="session_expired_message">GitHubセッションの有効期限が切れたか、トークンが取り消されました。認証機能を引き続き使用するには、再度サインインしてください。</string>
+    <string name="session_expired_hint">制限されたAPIリクエストでゲストとして閲覧を続けることができます。</string>
+    <string name="sign_in_again">再度サインイン</string>
+    <string name="continue_as_guest">ゲストとして続行</string>
+    <string name="logout_revocation_note">ローカルセッションとキャッシュデータが消去されます。アクセスを完全に取り消すには、GitHub Settings > Applicationsにアクセスしてください。</string>
+    <string name="auth_code_expires_in">コードの有効期限: %1$s</string>
+    <string name="auth_error_code_expired">デバイスコードの有効期限が切れました。</string>
+    <string name="auth_hint_try_again">新しいコードを取得するために再度サインインしてください。</string>
+    <string name="auth_hint_check_connection">インターネット接続を確認して再試行してください。</string>
+    <string name="auth_hint_denied">認証リクエストを拒否しました。意図しない場合は再試行してください。</string>
 </resources>

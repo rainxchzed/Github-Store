@@ -372,4 +372,17 @@
     <string name="profile_stars_description">Ваши избранные репозитории на GitHub</string>
     <string name="profile_favourites_description">Ваши избранные репозитории, сохранённые локально</string>
 
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">Сессия истекла</string>
+    <string name="session_expired_message">Ваша сессия GitHub истекла или токен был отозван. Пожалуйста, войдите снова для продолжения использования авторизованных функций.</string>
+    <string name="session_expired_hint">Вы можете продолжить просмотр как гость с ограниченным количеством API-запросов.</string>
+    <string name="sign_in_again">Войти снова</string>
+    <string name="continue_as_guest">Продолжить как гость</string>
+    <string name="logout_revocation_note">Это очистит вашу локальную сессию и кэшированные данные. Чтобы полностью отозвать доступ, перейдите в GitHub Settings > Applications.</string>
+    <string name="auth_code_expires_in">Код истекает через %1$s</string>
+    <string name="auth_error_code_expired">Срок действия кода устройства истёк.</string>
+    <string name="auth_hint_try_again">Пожалуйста, попробуйте войти снова для получения нового кода.</string>
+    <string name="auth_hint_check_connection">Проверьте подключение к интернету и попробуйте снова.</string>
+    <string name="auth_hint_denied">Вы отклонили запрос авторизации. Попробуйте снова, если это было непреднамеренно.</string>
+
 </resources>
