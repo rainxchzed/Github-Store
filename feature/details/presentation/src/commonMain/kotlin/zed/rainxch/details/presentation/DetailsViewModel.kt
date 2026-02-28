@@ -37,6 +37,7 @@ import zed.rainxch.core.domain.system.Installer
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.core.domain.utils.BrowserHelper
+import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.domain.repository.DetailsRepository
 import zed.rainxch.details.presentation.model.DownloadStage
@@ -55,6 +56,7 @@ class DetailsViewModel(
     private val installer: Installer,
     private val platform: Platform,
     private val helper: BrowserHelper,
+    private val shareManager: ShareManager,
     private val installedAppsRepository: InstalledAppsRepository,
     private val favouritesRepository: FavouritesRepository,
     private val starredRepository: StarredRepository,
@@ -303,111 +305,6 @@ class DetailsViewModel(
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun trackExistingApp() {
-        viewModelScope.launch {
-            try {
-                val repo = _state.value.repository ?: return@launch
-                val release = _state.value.selectedRelease
-                val primaryAsset = _state.value.primaryAsset
-
-                if (platform != Platform.ANDROID) return@launch
-
-                _state.update { it.copy(isTrackingApp = true) }
-
-                // Try to find the package name from the primary asset's APK info
-                // We need to check if any app matching this repo is installed
-                val allPackages = packageMonitor.getAllInstalledPackageNames()
-
-                // Try to extract package name from the APK asset name pattern
-                // Common patterns: com.example.app, app-release.apk, etc.
-                val possiblePackageName = "app.github.${repo.owner.login}.${repo.name}".lowercase()
-
-                // Check if already tracked
-                val existingTracked = installedAppsRepository.getAppByRepoId(repo.id)
-                if (existingTracked != null) {
-                    _events.send(DetailsEvent.OnMessage(getString(Res.string.already_tracked)))
-                    _state.update { it.copy(isTrackingApp = false) }
-                    return@launch
-                }
-
-                val systemInfo = packageMonitor.getInstalledPackageInfo(possiblePackageName)
-
-                val packageName: String
-                val versionName: String
-                val versionCode: Long
-                val appName: String
-
-                if (systemInfo != null && systemInfo.isInstalled) {
-                    packageName = possiblePackageName
-                    versionName = systemInfo.versionName
-                    versionCode = systemInfo.versionCode
-                    appName = repo.name
-                } else {
-                    // Can't detect package on system — still track with release tag info
-                    packageName = possiblePackageName
-                    versionName = release?.tagName ?: "unknown"
-                    versionCode = 0L
-                    appName = repo.name
-                }
-
-                val releaseTag = release?.tagName ?: versionName
-
-                val installedApp = InstalledApp(
-                    packageName = packageName,
-                    repoId = repo.id,
-                    repoName = repo.name,
-                    repoOwner = repo.owner.login,
-                    repoOwnerAvatarUrl = repo.owner.avatarUrl,
-                    repoDescription = repo.description,
-                    primaryLanguage = repo.language,
-                    repoUrl = repo.htmlUrl,
-                    installedVersion = releaseTag,
-                    installedAssetName = primaryAsset?.name,
-                    installedAssetUrl = primaryAsset?.downloadUrl,
-                    latestVersion = releaseTag,
-                    latestAssetName = primaryAsset?.name,
-                    latestAssetUrl = primaryAsset?.downloadUrl,
-                    latestAssetSize = primaryAsset?.size,
-                    appName = appName,
-                    installSource = InstallSource.MANUAL,
-                    installedAt = System.now().toEpochMilliseconds(),
-                    lastCheckedAt = System.now().toEpochMilliseconds(),
-                    lastUpdatedAt = System.now().toEpochMilliseconds(),
-                    isUpdateAvailable = false,
-                    updateCheckEnabled = true,
-                    releaseNotes = release?.description ?: "",
-                    systemArchitecture = installer.detectSystemArchitecture().name,
-                    fileExtension = primaryAsset?.name?.substringAfterLast('.', "apk") ?: "apk",
-                    isPendingInstall = false,
-                    installedVersionName = versionName,
-                    installedVersionCode = versionCode,
-                    latestVersionName = versionName,
-                    latestVersionCode = versionCode
-                )
-
-                installedAppsRepository.saveInstalledApp(installedApp)
-
-                // Reload the installed app state
-                val savedApp = installedAppsRepository.getAppByRepoId(repo.id)
-                _state.update { it.copy(installedApp = savedApp, isTrackingApp = false) }
-
-                _events.send(DetailsEvent.OnMessage(getString(Res.string.app_tracked_successfully)))
-
-                logger.debug("Successfully tracked existing app: ${repo.name} as $packageName")
-
-            } catch (e: Exception) {
-                logger.error("Failed to track existing app: ${e.message}")
-                _state.update { it.copy(isTrackingApp = false) }
-                _events.send(
-                    DetailsEvent.OnMessage(
-                        getString(Res.string.failed_to_track_app, e.message ?: "Unknown error")
-                    )
-                )
-            }
-        }
-    }
-
-    @OptIn(ExperimentalTime::class)
     fun onAction(action: DetailsAction) {
         when (action) {
             DetailsAction.Retry -> {
@@ -552,22 +449,14 @@ class DetailsViewModel(
                 }
             }
 
-            DetailsAction.CheckForUpdates -> {
+            DetailsAction.OnShareClick -> {
                 viewModelScope.launch {
-                    try {
-                        syncInstalledAppsUseCase()
+                    _state.value.repository?.let { repo ->
+                        shareManager.shareText("https://github-store.org/app?repo=${repo.fullName}")
 
-                        val installedApp = _state.value.installedApp ?: return@launch
-                        val hasUpdate =
-                            installedAppsRepository.checkForUpdates(installedApp.packageName)
-
-                        if (hasUpdate) {
-                            val updatedApp =
-                                installedAppsRepository.getAppByPackage(installedApp.packageName)
-                            _state.value = _state.value.copy(installedApp = updatedApp)
+                        if (platform != Platform.ANDROID) {
+                            _events.send(DetailsEvent.OnMessage("Link copied to clipboard"))
                         }
-                    } catch (t: Throwable) {
-                        logger.error("Failed to check for updates: ${t.message}")
                     }
                 }
             }
@@ -786,12 +675,6 @@ class DetailsViewModel(
                 _state.update {
                     it.copy(isWhatsNewExpanded = !it.isWhatsNewExpanded)
                 }
-            }
-
-            DetailsAction.TrackExistingApp -> {
-                val snapshot = _state.value
-                if (snapshot.isTrackingApp || !snapshot.isTrackable) return
-                trackExistingApp()
             }
 
             DetailsAction.OnNavigateBackClick -> {

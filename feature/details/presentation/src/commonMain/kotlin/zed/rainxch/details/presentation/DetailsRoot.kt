@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.AlertDialog
@@ -334,9 +335,7 @@ private fun DetailsTopbar(
                             ),
                         )
                     }
-                }
 
-                if (state.repository != null) {
                     IconButton(
                         onClick = {
                             onAction(DetailsAction.OnToggleFavorite)
@@ -357,6 +356,21 @@ private fun DetailsTopbar(
                                     Res.string.add_to_favourites
                                 }
                             ),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            onAction(DetailsAction.OnShareClick)
+                        },
+                        shapes = IconButtonDefaults.shapes(),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = null,
                         )
                     }
                 }

@@ -1,4 +1,4 @@
-package zed.rainxch.core.data.services
+package zed.rainxch.core.data.utils
 
 import zed.rainxch.core.domain.utils.ClipboardHelper
 import java.awt.Toolkit

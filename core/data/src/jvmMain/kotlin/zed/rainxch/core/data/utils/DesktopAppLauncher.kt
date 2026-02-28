@@ -1,4 +1,4 @@
-package zed.rainxch.core.data.services
+package zed.rainxch.core.data.utils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

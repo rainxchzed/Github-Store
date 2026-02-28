@@ -19,11 +19,13 @@ import zed.rainxch.core.data.services.LocalizationManager
 import zed.rainxch.core.data.utils.AndroidAppLauncher
 import zed.rainxch.core.data.utils.AndroidBrowserHelper
 import zed.rainxch.core.data.utils.AndroidClipboardHelper
+import zed.rainxch.core.data.utils.AndroidShareManager
 import zed.rainxch.core.domain.network.Downloader
 import zed.rainxch.core.domain.system.PackageMonitor
 import zed.rainxch.core.domain.utils.AppLauncher
 import zed.rainxch.core.domain.utils.BrowserHelper
 import zed.rainxch.core.domain.utils.ClipboardHelper
+import zed.rainxch.core.domain.utils.ShareManager
 
 actual val corePlatformModule = module {
     // Core
@@ -79,6 +81,12 @@ actual val corePlatformModule = module {
         AndroidAppLauncher(
             context = androidContext(),
             logger = get()
+        )
+    }
+
+    single<ShareManager> {
+        AndroidShareManager(
+            context = androidContext()
         )
     }
 
