@@ -6,7 +6,9 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -32,6 +34,7 @@ class AuthenticationViewModel(
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
+    private var countdownJob: Job? = null
 
     private val _state: MutableStateFlow<AuthenticationState> =
         MutableStateFlow(AuthenticationState())
@@ -80,6 +83,38 @@ class AuthenticationViewModel(
                     )
                 }
             }
+            AuthenticationAction.SkipLogin -> {
+                _events.trySend(AuthenticationEvents.OnNavigateToMain)
+            }
+        }
+    }
+
+    private fun startCountdown(start: GithubDeviceStart) {
+        countdownJob?.cancel()
+        countdownJob = viewModelScope.launch {
+            var remaining = start.expiresInSec
+            while (remaining > 0) {
+                _state.update { currentState ->
+                    val loginState = currentState.loginState
+                    if (loginState is AuthLoginState.DevicePrompt) {
+                        currentState.copy(
+                            loginState = loginState.copy(remainingSeconds = remaining)
+                        )
+                    } else {
+                        return@launch
+                    }
+                }
+                delay(1000L)
+                remaining--
+            }
+            _state.update {
+                it.copy(
+                    loginState = AuthLoginState.Error(
+                        message = getString(Res.string.auth_error_code_expired),
+                        recoveryHint = getString(Res.string.auth_hint_try_again)
+                    )
+                )
+            }
         }
     }
 
@@ -93,10 +128,15 @@ class AuthenticationViewModel(
                 withContext(Dispatchers.Main.immediate) {
                     _state.update {
                         it.copy(
-                            loginState = AuthLoginState.DevicePrompt(start),
+                            loginState = AuthLoginState.DevicePrompt(
+                                start = start,
+                                remainingSeconds = start.expiresInSec
+                            ),
                             copied = false
                         )
                     }
+
+                    startCountdown(start)
 
                     try {
                         clipboardHelper.copy(
@@ -105,13 +145,15 @@ class AuthenticationViewModel(
                         )
                         _state.update { it.copy(copied = true) }
                     } catch (e: Exception) {
-                        logger.debug("⚠️ Failed to copy to clipboard: ${e.message}")
+                        logger.debug("Failed to copy to clipboard: ${e.message}")
                     }
                 }
 
                 withContext(Dispatchers.IO) {
                     authenticationRepository.awaitDeviceToken(start = start)
                 }
+
+                countdownJob?.cancel()
 
                 withContext(Dispatchers.Main.immediate) {
                     _state.update { it.copy(loginState = AuthLoginState.LoggedIn) }
@@ -121,17 +163,41 @@ class AuthenticationViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
+                countdownJob?.cancel()
+                val (message, hint) = categorizeError(t)
                 withContext(Dispatchers.Main.immediate) {
                     _state.update {
                         it.copy(
                             loginState = AuthLoginState.Error(
-                                t.message ?: getString(Res.string.error_unknown)
+                                message = message,
+                                recoveryHint = hint
                             )
                         )
                     }
                 }
             }
         }
+    }
+
+    private suspend fun categorizeError(t: Throwable): Pair<String, String?> {
+        val msg = t.message ?: return getString(Res.string.error_unknown) to null
+        val lowerMsg = msg.lowercase()
+        return when {
+            "timeout" in lowerMsg || "timed out" in lowerMsg ->
+                msg to getString(Res.string.auth_hint_check_connection)
+            "network" in lowerMsg || "unresolvedaddress" in lowerMsg || "connect" in lowerMsg ->
+                msg to getString(Res.string.auth_hint_check_connection)
+            "expired" in lowerMsg || "expire" in lowerMsg ->
+                msg to getString(Res.string.auth_hint_try_again)
+            "denied" in lowerMsg || "access_denied" in lowerMsg ->
+                msg to getString(Res.string.auth_hint_denied)
+            else -> msg to null
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        countdownJob?.cancel()
     }
 
     private fun openGitHub(start: GithubDeviceStart) {

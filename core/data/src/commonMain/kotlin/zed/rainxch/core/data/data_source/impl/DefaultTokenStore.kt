@@ -19,7 +19,10 @@ class DefaultTokenStore(
     private val json = Json { ignoreUnknownKeys = true }
 
     override suspend fun save(token: GithubDeviceTokenSuccessDto) {
-        val jsonString = json.encodeToString(GithubDeviceTokenSuccessDto.serializer(), token)
+        val stamped = token.copy(
+            savedAtEpochMillis = token.savedAtEpochMillis ?: System.currentTimeMillis()
+        )
+        val jsonString = json.encodeToString(GithubDeviceTokenSuccessDto.serializer(), stamped)
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = jsonString
         }
@@ -50,8 +53,15 @@ class DefaultTokenStore(
         }.getOrNull()
     }
 
-
     override suspend fun clear() {
         dataStore.edit { it.remove(TOKEN_KEY) }
+    }
+
+    override suspend fun isTokenExpired(): Boolean {
+        val token = currentToken() ?: return true
+        val savedAt = token.savedAtEpochMillis ?: return false
+        val expiresIn = token.expiresIn ?: return false
+        val expiresAtMillis = savedAt + (expiresIn * 1000L)
+        return System.currentTimeMillis() > expiresAtMillis
     }
 }

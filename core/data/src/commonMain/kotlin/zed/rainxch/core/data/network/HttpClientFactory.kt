@@ -11,10 +11,13 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
+import kotlinx.coroutines.CoroutineScope
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.network.interceptor.RateLimitInterceptor
+import zed.rainxch.core.data.network.interceptor.UnauthorizedInterceptor
 import zed.rainxch.core.domain.model.ProxyConfig
 import zed.rainxch.core.domain.model.RateLimitException
+import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
@@ -24,6 +27,8 @@ expect fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient
 fun createGitHubHttpClient(
     tokenStore: TokenStore,
     rateLimitRepository: RateLimitRepository,
+    authenticationState: AuthenticationState? = null,
+    scope: CoroutineScope? = null,
     proxyConfig: ProxyConfig = ProxyConfig.None
 ): HttpClient {
     val json = Json {
@@ -34,6 +39,13 @@ fun createGitHubHttpClient(
     return createPlatformHttpClient(proxyConfig).config {
         install(RateLimitInterceptor) {
             this.rateLimitRepository = rateLimitRepository
+        }
+
+        if (authenticationState != null && scope != null) {
+            install(UnauthorizedInterceptor) {
+                this.authenticationState = authenticationState
+                this.scope = scope
+            }
         }
 
         install(ContentNegotiation) {

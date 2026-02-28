@@ -9,4 +9,5 @@ interface TokenStore {
     fun blockingCurrentToken() : GithubDeviceTokenSuccessDto?
     suspend fun save(token: GithubDeviceTokenSuccessDto)
     suspend fun clear()
+    suspend fun isTokenExpired(): Boolean
 }

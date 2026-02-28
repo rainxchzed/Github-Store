@@ -89,6 +89,12 @@ class MainViewModel(
             }
         }
 
+        viewModelScope.launch {
+            authenticationState.sessionExpiredEvent.collect {
+                _state.update { it.copy(showSessionExpiredDialog = true) }
+            }
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             syncUseCase().onSuccess {
                 installedAppsRepository.checkAllForUpdates()
@@ -100,6 +106,9 @@ class MainViewModel(
         when (action) {
             MainAction.DismissRateLimitDialog -> {
                 _state.update { it.copy(showRateLimitDialog = false) }
+            }
+            MainAction.DismissSessionExpiredDialog -> {
+                _state.update { it.copy(showSessionExpiredDialog = false) }
             }
         }
     }

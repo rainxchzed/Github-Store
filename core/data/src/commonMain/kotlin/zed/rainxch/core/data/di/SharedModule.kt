@@ -143,6 +143,7 @@ val networkModule = module {
         GitHubClientProvider(
             tokenStore = get(),
             rateLimitRepository = get(),
+            authenticationState = get(),
             proxyConfigFlow = ProxyManager.currentProxyConfig
         )
     }
@@ -150,7 +151,9 @@ val networkModule = module {
     single<HttpClient> {
         createGitHubHttpClient(
             tokenStore = get(),
-            rateLimitRepository = get()
+            rateLimitRepository = get(),
+            authenticationState = get(),
+            scope = get()
         )
     }
 

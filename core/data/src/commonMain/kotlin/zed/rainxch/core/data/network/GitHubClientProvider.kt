@@ -14,11 +14,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.domain.model.ProxyConfig
+import zed.rainxch.core.domain.repository.AuthenticationState
 import zed.rainxch.core.domain.repository.RateLimitRepository
 
 class GitHubClientProvider(
     private val tokenStore: TokenStore,
     private val rateLimitRepository: RateLimitRepository,
+    private val authenticationState: AuthenticationState,
     proxyConfigFlow: StateFlow<ProxyConfig>
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -28,6 +30,8 @@ class GitHubClientProvider(
     private var currentClient: HttpClient = createGitHubHttpClient(
         tokenStore = tokenStore,
         rateLimitRepository = rateLimitRepository,
+        authenticationState = authenticationState,
+        scope = scope,
         proxyConfig = proxyConfigFlow.value
     )
 
@@ -41,6 +45,8 @@ class GitHubClientProvider(
                     currentClient = createGitHubHttpClient(
                         tokenStore = tokenStore,
                         rateLimitRepository = rateLimitRepository,
+                        authenticationState = authenticationState,
+                        scope = scope,
                         proxyConfig = proxyConfig
                     )
                 }

@@ -16,6 +16,7 @@ import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
 import zed.rainxch.githubstore.app.navigation.AppNavigation
 import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
 import zed.rainxch.githubstore.app.components.RateLimitDialog
+import zed.rainxch.githubstore.app.components.SessionExpiredDialog
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -68,6 +69,18 @@ fun App(deepLinkUri: String? = null) {
                     }
                 )
             }
+        }
+
+        if (state.showSessionExpiredDialog) {
+            SessionExpiredDialog(
+                onDismiss = {
+                    viewModel.onAction(MainAction.DismissSessionExpiredDialog)
+                },
+                onSignIn = {
+                    viewModel.onAction(MainAction.DismissSessionExpiredDialog)
+                    navBackStack.navigate(GithubStoreGraph.AuthenticationScreen)
+                }
+            )
         }
 
         AppNavigation(

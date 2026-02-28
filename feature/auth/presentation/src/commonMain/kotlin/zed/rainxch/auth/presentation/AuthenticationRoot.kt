@@ -25,8 +25,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -145,6 +147,16 @@ fun AuthenticationScreen(
                         color = MaterialTheme.colorScheme.error
                     )
 
+                    authState.recoveryHint?.let { hint ->
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = hint,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
                     Spacer(Modifier.height(12.dp))
 
                     GithubStoreButton(
@@ -154,6 +166,19 @@ fun AuthenticationScreen(
                         },
                         modifier = Modifier.fillMaxWidth(.7f)
                     )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    TextButton(
+                        onClick = { onAction(AuthenticationAction.SkipLogin) }
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.continue_as_guest),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+
                     Spacer(Modifier.weight(2f))
                 }
             }
@@ -223,6 +248,25 @@ fun StateDevicePrompt(
         }
 
         Spacer(Modifier.height(16.dp))
+
+        if (authState.remainingSeconds > 0) {
+            val minutes = authState.remainingSeconds / 60
+            val seconds = authState.remainingSeconds % 60
+            val formatted = remember(minutes, seconds) {
+                "%d:%02d".format(minutes, seconds)
+            }
+            Text(
+                text = stringResource(Res.string.auth_code_expires_in, formatted),
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (authState.remainingSeconds < 60) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.outline
+                }
+            )
+
+            Spacer(Modifier.height(16.dp))
+        }
 
         GithubStoreButton(
             text = stringResource(Res.string.open_github),
@@ -309,6 +353,18 @@ fun StateLoggedOut(
             },
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(Modifier.height(8.dp))
+
+        TextButton(
+            onClick = { onAction(AuthenticationAction.SkipLogin) }
+        ) {
+            Text(
+                text = stringResource(Res.string.continue_as_guest),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.outline
+            )
+        }
     }
 }
 

@@ -82,6 +82,6 @@ class ProfileRepositoryImpl(
 
     override suspend fun logout() {
         tokenStore.clear()
-        cacheManager.invalidate(CACHE_KEY)
+        cacheManager.clearAll()
     }
 }

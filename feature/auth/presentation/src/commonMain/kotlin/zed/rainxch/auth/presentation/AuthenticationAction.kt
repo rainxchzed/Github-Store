@@ -9,4 +9,5 @@ sealed interface AuthenticationAction {
     data object MarkLoggedOut : AuthenticationAction
     data object MarkLoggedIn : AuthenticationAction
     data class OnInfo(val message: String) : AuthenticationAction
+    data object SkipLogin : AuthenticationAction
 }

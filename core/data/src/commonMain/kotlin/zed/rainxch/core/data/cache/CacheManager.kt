@@ -85,6 +85,11 @@ class CacheManager(
         cacheDao.deleteByPrefix(prefix)
     }
 
+    suspend fun clearAll() {
+        memoryCache.clear()
+        cacheDao.deleteAll()
+    }
+
     suspend fun cleanupExpired() {
         val currentTime = now()
         val expiredKeys = memoryCache.entries

@@ -400,4 +400,21 @@
     <string name="profile_login">Login</string>
     <string name="profile_stars_description">Your Starred Repositories from GitHub</string>
     <string name="profile_favourites_description">Your Favourite Repositories saved locally</string>
+
+    <!-- Session expired dialog -->
+    <string name="session_expired_title">Session Expired</string>
+    <string name="session_expired_message">Your GitHub session has expired or the token was revoked. Please sign in again to continue using authenticated features.</string>
+    <string name="session_expired_hint">You can still browse as a guest with limited API requests.</string>
+    <string name="sign_in_again">Sign In Again</string>
+    <string name="continue_as_guest">Continue as Guest</string>
+
+    <!-- Logout improvements -->
+    <string name="logout_revocation_note">This will clear your local session and cached data. To fully revoke access, visit GitHub Settings > Applications.</string>
+
+    <!-- Auth UI improvements -->
+    <string name="auth_code_expires_in">Code expires in %1$s</string>
+    <string name="auth_error_code_expired">The device code has expired.</string>
+    <string name="auth_hint_try_again">Please try signing in again to get a new code.</string>
+    <string name="auth_hint_check_connection">Please check your internet connection and try again.</string>
+    <string name="auth_hint_denied">You denied the authorization request. Try again if this was unintentional.</string>
 </resources>

@@ -10,5 +10,6 @@ data class GithubDeviceTokenSuccessDto(
     @SerialName("expires_in") val expiresIn: Long? = null,
     @SerialName("scope") val scope: String? = null,
     @SerialName("refresh_token") val refreshToken: String? = null,
-    @SerialName("refresh_token_expires_in") val refreshTokenExpiresIn: Long? = null
+    @SerialName("refresh_token_expires_in") val refreshTokenExpiresIn: Long? = null,
+    @SerialName("saved_at") val savedAtEpochMillis: Long? = null
 )
