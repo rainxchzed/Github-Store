@@ -383,4 +383,8 @@
     <string name="auth_hint_check_connection">Sprawdź połączenie internetowe i spróbuj ponownie.</string>
     <string name="auth_hint_denied">Odrzuciłeś żądanie autoryzacji. Spróbuj ponownie, jeśli było to niezamierzone.</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">Czytaj więcej</string>
+    <string name="show_less">Pokaż mniej</string>
+
 </resources>

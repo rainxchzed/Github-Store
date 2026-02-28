@@ -385,4 +385,8 @@
     <string name="auth_hint_check_connection">Проверьте подключение к интернету и попробуйте снова.</string>
     <string name="auth_hint_denied">Вы отклонили запрос авторизации. Попробуйте снова, если это было непреднамеренно.</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">Читать далее</string>
+    <string name="show_less">Свернуть</string>
+
 </resources>

@@ -385,4 +385,8 @@
     <string name="auth_hint_check_connection">Vérifiez votre connexion internet et réessayez.</string>
     <string name="auth_hint_denied">Vous avez refusé la demande d\'autorisation. Réessayez si c\'était involontaire.</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">Lire la suite</string>
+    <string name="show_less">Afficher moins</string>
+
 </resources>

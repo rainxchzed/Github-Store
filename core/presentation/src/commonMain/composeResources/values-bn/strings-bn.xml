@@ -420,4 +420,8 @@
     <string name="auth_hint_check_connection">অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।</string>
     <string name="auth_hint_denied">আপনি অনুমোদনের অনুরোধ প্রত্যাখ্যান করেছেন। এটি অনিচ্ছাকৃত হলে আবার চেষ্টা করুন।</string>
 
+    <!-- Read More / Show Less -->
+    <string name="read_more">আরও পড়ুন</string>
+    <string name="show_less">কম দেখান</string>
+
 </resources>
