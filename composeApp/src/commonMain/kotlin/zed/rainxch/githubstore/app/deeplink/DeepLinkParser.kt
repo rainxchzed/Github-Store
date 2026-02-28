@@ -89,7 +89,7 @@ object DeepLinkParser {
                 }
             }
             result.toString()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             value
         }
     }

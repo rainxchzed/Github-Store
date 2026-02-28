@@ -12,7 +12,8 @@ kotlin {
                 implementation(projects.core.presentation)
                 implementation(projects.feature.profile.domain)
 
-                implementation(compose.components.uiToolingPreview)
+                
+                implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(compose.components.resources)
 
                 implementation(libs.liquid)

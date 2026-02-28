@@ -14,7 +14,7 @@ kotlin {
 
                 implementation(libs.liquid)
 
-                implementation(compose.components.uiToolingPreview)
+                implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(compose.components.resources)
             }
         }

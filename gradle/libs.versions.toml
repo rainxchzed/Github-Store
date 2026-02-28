@@ -2,16 +2,16 @@
 agp = "8.13.1"
 composeBom = "2025.07.00"
 kermit = "2.0.8"
-kotlin = "2.3.0"
-ksp = "2.2.0-2.0.2"
+kotlin = "2.3.10"
+ksp = "2.3.5"
 google-services = "4.4.3"
 
 androidDesugarJdkLibs = "2.1.5"
-androidTools = "31.12.0"
+androidTools = "32.0.1"
 
 # Compose
-compose-hot-reload = "1.0.0-beta04"
-compose-multiplatform = "1.9.0-beta01"
+compose-hot-reload = "1.0.0"
+compose-multiplatform = "1.10.1"
 # Maintain compose multiplatform version aligned with navigation, cache error could happen
 compose-lifecycle = "2.9.1"
 navigation-compose = "2.9.1"
@@ -20,41 +20,42 @@ material-icons = "1.7.3"
 compose-gradle-plugin = "1.10.0"
 
 # AndroidX
-androidx-activity = "1.10.1"
-androidx-core = "1.16.0"
+androidx-activity = "1.12.4"
+androidx-core = "1.17.0"
 androidx-lifecycle = "2.9.0"
 androidx-test-ext = "1.2.1"
 androidx-runner = "1.6.2"
 androidx-test-core = "1.7.0"
 appcompatVersion = "1.7.1"
-core-splashscreen = "1.0.1"
+core-splashscreen = "1.2.0"
 
 # Kotlinx
 kotlinx-coroutines = "1.10.2"
-kotlinx-serialization = "1.9.0"
+kotlinx-serialization = "1.10.0"
 kotlinx-datetime = "0.7.1"
 kotlinx-collections-immutable = "0.4.0"
 
 # Third party
-koin = "4.1.0"
-ktor = "3.2.3"
-room = "2.7.2"
-sqlite = "2.5.2"
-datastore = "1.1.7"
+koin = "4.1.1"
+ktor = "3.4.0"
+room = "2.8.4"
+sqlite = "2.6.2"
+datastore = "1.2.0"
 firebase-bom = "34.0.0"
 adaptive = "1.2.0-alpha04"
 compose-jetbrains = "1.8.2"
 compose-jetbrains-material-you = "1.9.0-alpha04"
-jetbrains-savedstate = "1.3.1"
+jetbrains-savedstate = "1.4.0"
 coil = "3.3.0"
 coil-network = "3.3.0"
-moko = "0.19.1"
+moko = "0.20.1"
 buildkonfig = "0.17.1"
-markdownRenderer = "0.39.1"
+markdownRenderer = "0.39.2"
 liquid = "1.1.1"
-landscapist = "2.9.1"
+landscapist = "2.9.5"
 jsystemthemedetector = "3.9.1"
-work = "2.10.1"
+work = "2.11.1"
+resources="1.10.1"
 
 projectApplicationId = "zed.rainxch.githubstore"
 projectVersionName = "1.6.0"
@@ -63,17 +64,11 @@ projectTargetSdkVersion = "36"
 projectCompileSdkVersion = "36"
 projectVersionCode = "11"
 
-# Desktop Version
-desktopPackageName = "GitHub-Store"
-desktopPackageVersion = "1.5.1"
-
 [libraries]
 # Kotlin
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "compose-lifecycle" }
 androidx-material3 = { module = "androidx.compose.material3:material3" }
-androidx-ui = { module = "androidx.compose.ui:ui" }
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 # AndroidX Core
@@ -85,8 +80,6 @@ jetbrains-compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifec
 koin-core-viewmodel = { group = "io.insert-koin", name = "koin-core-viewmodel", version.ref = "koin" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 
-androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
-
 # Kotlinx
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
@@ -95,7 +88,6 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 
 # Compose
-jetbrains-compose-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "compose-multiplatform" }
 jetbrains-compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 
 # Koin
@@ -112,7 +104,6 @@ jsystemthemedetector = { module = "com.github.Dansoftowner:jSystemThemeDetector"
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
@@ -132,10 +123,6 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
-# Firebase
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
-
 # Image loading
 landscapist-image = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist" }
 landscapist-core = { module = "com.github.skydoves:landscapist-core", version.ref = "landscapist" }
@@ -151,14 +138,14 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 androidx-room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room" }
-ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 buildkonfig-gradlePlugin = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-gradle-plugin", version.ref = "buildkonfig" }
 buildkonfig-compiler = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-compiler", version.ref = "buildkonfig" }
 
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref="resources" }
+androidx-compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref="resources" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
@@ -187,8 +174,6 @@ liquid = { module = "io.github.fletchmckee.liquid:liquid", version.ref = "liquid
 
 [plugins]
 
-convention-android-application = { id = "zed.rainxch.convention.android.application", version = "unspecified" }
-convention-android-application-compose = { id = "zed.rainxch.convention.android.application.compose", version = "unspecified" }
 convention-cmp-application = { id = "zed.rainxch.convention.cmp.application", version = "unspecified" }
 convention-kmp-library = { id = "zed.rainxch.convention.kmp.library", version = "unspecified" }
 convention-cmp-library = { id = "zed.rainxch.convention.cmp.library", version = "unspecified" }
@@ -204,7 +189,6 @@ android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.
 
 # Kotlin
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 # Compose
@@ -215,7 +199,6 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 # Build tools
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
-google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 

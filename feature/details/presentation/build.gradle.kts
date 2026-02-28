@@ -19,7 +19,8 @@ kotlin {
                 implementation(libs.liquid)
                 implementation(libs.kotlinx.datetime)
 
-                implementation(compose.components.uiToolingPreview)
+                
+                implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(libs.bundles.landscapist)
             }
         }

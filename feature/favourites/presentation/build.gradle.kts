@@ -15,7 +15,8 @@ kotlin {
                 implementation(libs.bundles.landscapist)
                 implementation(libs.kotlinx.collections.immutable)
 
-                implementation(compose.components.uiToolingPreview)
+                
+                implementation(libs.androidx.compose.ui.tooling.preview)
                 implementation(compose.components.resources)
             }
         }
