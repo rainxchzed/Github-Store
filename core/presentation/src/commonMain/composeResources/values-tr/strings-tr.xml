@@ -425,4 +425,14 @@
     <string name="failed_to_share_link">Bağlantı paylaşılamadı</string>
     <string name="link_copied_to_clipboard">Bağlantı panoya kopyalandı</string>
 
+    <!-- Translation feature -->
+    <string name="translate">Çevir</string>
+    <string name="translating">Çevriliyor…</string>
+    <string name="show_original">Orijinali göster</string>
+    <string name="translated_to">%1$s diline çevrildi</string>
+    <string name="translate_to">Şuna çevir…</string>
+    <string name="search_language">Dil ara</string>
+    <string name="change_language">Dili değiştir</string>
+    <string name="translation_failed">Çeviri başarısız. Lütfen tekrar deneyin.</string>
+
 </resources>

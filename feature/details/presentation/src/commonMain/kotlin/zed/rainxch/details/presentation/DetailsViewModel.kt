@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import zed.rainxch.githubstore.core.presentation.res.*
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -40,9 +41,12 @@ import zed.rainxch.core.domain.utils.BrowserHelper
 import zed.rainxch.core.domain.utils.ShareManager
 import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.domain.repository.DetailsRepository
+import zed.rainxch.details.domain.repository.TranslationRepository
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.details.presentation.model.InstallLogItem
 import zed.rainxch.details.presentation.model.LogResult
+import zed.rainxch.details.presentation.model.SupportedLanguages
+import zed.rainxch.details.presentation.model.TranslationState
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
@@ -62,6 +66,7 @@ class DetailsViewModel(
     private val starredRepository: StarredRepository,
     private val packageMonitor: PackageMonitor,
     private val syncInstalledAppsUseCase: SyncInstalledAppsUseCase,
+    private val translationRepository: TranslationRepository,
     private val logger: GitHubStoreLogger
 ) : ViewModel() {
 
@@ -275,6 +280,7 @@ class DetailsViewModel(
                     isAppManagerAvailable = isAppManagerAvailable,
                     isAppManagerEnabled = isAppManagerEnabled,
                     installedApp = installedApp,
+                    deviceLanguageCode = translationRepository.getDeviceLanguageCode(),
                 )
 
                 observeInstalledApp(repo.id)
@@ -662,7 +668,8 @@ class DetailsViewModel(
                         selectedRelease = release,
                         installableAssets = installable,
                         primaryAsset = primary,
-                        isVersionPickerVisible = false
+                        isVersionPickerVisible = false,
+                        whatsNewTranslation = TranslationState()
                     )
                 }
             }
@@ -682,6 +689,55 @@ class DetailsViewModel(
             DetailsAction.ToggleWhatsNewExpanded -> {
                 _state.update {
                     it.copy(isWhatsNewExpanded = !it.isWhatsNewExpanded)
+                }
+            }
+
+            is DetailsAction.TranslateAbout -> {
+                val readme = _state.value.readmeMarkdown ?: return
+                translateContent(
+                    text = readme,
+                    targetLanguageCode = action.targetLanguageCode,
+                    updateState = { ts -> _state.update { it.copy(aboutTranslation = ts) } },
+                    getCurrentState = { _state.value.aboutTranslation }
+                )
+            }
+
+            is DetailsAction.TranslateWhatsNew -> {
+                val description = _state.value.selectedRelease?.description ?: return
+                translateContent(
+                    text = description,
+                    targetLanguageCode = action.targetLanguageCode,
+                    updateState = { ts -> _state.update { it.copy(whatsNewTranslation = ts) } },
+                    getCurrentState = { _state.value.whatsNewTranslation }
+                )
+            }
+
+            DetailsAction.ToggleAboutTranslation -> {
+                _state.update {
+                    val current = it.aboutTranslation
+                    it.copy(aboutTranslation = current.copy(isShowingTranslation = !current.isShowingTranslation))
+                }
+            }
+
+            DetailsAction.ToggleWhatsNewTranslation -> {
+                _state.update {
+                    val current = it.whatsNewTranslation
+                    it.copy(whatsNewTranslation = current.copy(isShowingTranslation = !current.isShowingTranslation))
+                }
+            }
+
+            is DetailsAction.ShowLanguagePicker -> {
+                _state.update {
+                    it.copy(
+                        isLanguagePickerVisible = true,
+                        languagePickerTarget = action.target
+                    )
+                }
+            }
+
+            DetailsAction.DismissLanguagePicker -> {
+                _state.update {
+                    it.copy(isLanguagePickerVisible = false, languagePickerTarget = null)
                 }
             }
 
@@ -1017,7 +1073,7 @@ class DetailsViewModel(
 
         val assetsToClean = listOfNotNull(currentAssetName, cachedDownloadAssetName).distinct()
         if (assetsToClean.isNotEmpty()) {
-            viewModelScope.launch {
+            viewModelScope.launch(NonCancellable) {
                 for (asset in assetsToClean) {
                     try {
                         downloader.cancelDownload(asset)
@@ -1026,6 +1082,56 @@ class DetailsViewModel(
                         logger.error("Failed to clean download on leave: ${t.message}")
                     }
                 }
+            }
+        }
+    }
+
+    private fun translateContent(
+        text: String,
+        targetLanguageCode: String,
+        updateState: (TranslationState) -> Unit,
+        getCurrentState: () -> TranslationState
+    ) {
+        viewModelScope.launch {
+            try {
+                updateState(
+                    getCurrentState().copy(
+                        isTranslating = true,
+                        error = null,
+                        targetLanguageCode = targetLanguageCode
+                    )
+                )
+
+                val result = translationRepository.translate(
+                    text = text,
+                    targetLanguage = targetLanguageCode
+                )
+
+                val langDisplayName = SupportedLanguages.all
+                    .find { it.code == targetLanguageCode }?.displayName
+                    ?: targetLanguageCode
+
+                updateState(
+                    TranslationState(
+                        isTranslating = false,
+                        translatedText = result.translatedText,
+                        isShowingTranslation = true,
+                        targetLanguageCode = targetLanguageCode,
+                        targetLanguageDisplayName = langDisplayName,
+                        detectedSourceLanguage = result.detectedSourceLanguage
+                    )
+                )
+            } catch (e: Exception) {
+                logger.error("Translation failed: ${e.message}")
+                updateState(
+                    getCurrentState().copy(
+                        isTranslating = false,
+                        error = e.message
+                    )
+                )
+                _events.send(
+                    DetailsEvent.OnMessage(getString(Res.string.translation_failed))
+                )
             }
         }
     }

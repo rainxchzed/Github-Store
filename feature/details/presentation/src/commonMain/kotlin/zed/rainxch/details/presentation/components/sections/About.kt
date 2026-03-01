@@ -38,6 +38,8 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import io.github.fletchmckee.liquid.liquefiable
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.jetbrains.compose.resources.stringResource
+import zed.rainxch.details.presentation.components.TranslationControls
+import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
@@ -49,6 +51,10 @@ fun LazyListScope.about(
     isExpanded: Boolean,
     onToggleExpanded: () -> Unit,
     collapsedHeight: Dp,
+    translationState: TranslationState,
+    onTranslateClick: () -> Unit,
+    onLanguagePickerClick: () -> Unit,
+    onToggleTranslation: () -> Unit,
 ) {
     item {
         val liquidState = LocalTopbarLiquidState.current
@@ -72,14 +78,26 @@ fun LazyListScope.about(
                 modifier = Modifier.liquefiable(liquidState)
             )
 
-            readmeLanguage?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.liquefiable(liquidState)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                TranslationControls(
+                    translationState = translationState,
+                    onTranslateClick = onTranslateClick,
+                    onLanguagePickerClick = onLanguagePickerClick,
+                    onToggleTranslation = onToggleTranslation,
                 )
+
+                readmeLanguage?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.liquefiable(liquidState)
+                    )
+                }
             }
         }
     }
@@ -87,8 +105,14 @@ fun LazyListScope.about(
     item {
         val liquidState = LocalTopbarLiquidState.current
 
+        val displayContent = if (translationState.isShowingTranslation && translationState.translatedText != null) {
+            translationState.translatedText
+        } else {
+            readmeMarkdown
+        }
+
         ExpandableMarkdownContent(
-            content = readmeMarkdown,
+            content = displayContent,
             isExpanded = isExpanded,
             onToggleExpanded = onToggleExpanded,
             imageTransformer = MarkdownImageTransformer,

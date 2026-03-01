@@ -428,4 +428,14 @@
     <string name="failed_to_share_link">লিংক শেয়ার করতে ব্যর্থ হয়েছে</string>
     <string name="link_copied_to_clipboard">লিংক ক্লিপবোর্ডে কপি করা হয়েছে</string>
 
+    <!-- Translation feature -->
+    <string name="translate">অনুবাদ করুন</string>
+    <string name="translating">অনুবাদ হচ্ছে…</string>
+    <string name="show_original">মূল দেখান</string>
+    <string name="translated_to">%1$s এ অনুবাদিত</string>
+    <string name="translate_to">অনুবাদ করুন…</string>
+    <string name="search_language">ভাষা খুঁজুন</string>
+    <string name="change_language">ভাষা পরিবর্তন করুন</string>
+    <string name="translation_failed">অনুবাদ ব্যর্থ হয়েছে। আবার চেষ্টা করুন।</string>
+
 </resources>

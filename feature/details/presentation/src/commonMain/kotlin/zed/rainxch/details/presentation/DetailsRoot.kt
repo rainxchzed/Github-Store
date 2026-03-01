@@ -64,6 +64,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import zed.rainxch.core.presentation.theme.GithubStoreTheme
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.isLiquidFrostAvailable
+import zed.rainxch.details.presentation.components.LanguagePicker
 import zed.rainxch.details.presentation.components.sections.about
 import zed.rainxch.details.presentation.components.sections.author
 import zed.rainxch.details.presentation.components.sections.header
@@ -199,6 +200,24 @@ fun DetailsScreen(
             modifier = Modifier.liquefiable(liquidTopbarState)
         ) { innerPadding ->
 
+            LanguagePicker(
+                isVisible = state.isLanguagePickerVisible,
+                selectedLanguageCode = when (state.languagePickerTarget) {
+                    TranslationTarget.ABOUT -> state.aboutTranslation.targetLanguageCode
+                    TranslationTarget.WHATS_NEW -> state.whatsNewTranslation.targetLanguageCode
+                    null -> null
+                },
+                onLanguageSelected = { language ->
+                    when (state.languagePickerTarget) {
+                        TranslationTarget.ABOUT -> onAction(DetailsAction.TranslateAbout(language.code))
+                        TranslationTarget.WHATS_NEW -> onAction(DetailsAction.TranslateWhatsNew(language.code))
+                        null -> {}
+                    }
+                    onAction(DetailsAction.DismissLanguagePicker)
+                },
+                onDismiss = { onAction(DetailsAction.DismissLanguagePicker) }
+            )
+
             if (state.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -248,6 +267,16 @@ fun DetailsScreen(
                             isExpanded = state.isAboutExpanded,
                             onToggleExpanded = { onAction(DetailsAction.ToggleAboutExpanded) },
                             collapsedHeight = collapsedSectionHeight,
+                            translationState = state.aboutTranslation,
+                            onTranslateClick = {
+                                onAction(DetailsAction.TranslateAbout(state.deviceLanguageCode))
+                            },
+                            onLanguagePickerClick = {
+                                onAction(DetailsAction.ShowLanguagePicker(TranslationTarget.ABOUT))
+                            },
+                            onToggleTranslation = {
+                                onAction(DetailsAction.ToggleAboutTranslation)
+                            },
                         )
                     }
 
@@ -257,6 +286,16 @@ fun DetailsScreen(
                             isExpanded = state.isWhatsNewExpanded,
                             onToggleExpanded = { onAction(DetailsAction.ToggleWhatsNewExpanded) },
                             collapsedHeight = collapsedSectionHeight,
+                            translationState = state.whatsNewTranslation,
+                            onTranslateClick = {
+                                onAction(DetailsAction.TranslateWhatsNew(state.deviceLanguageCode))
+                            },
+                            onLanguagePickerClick = {
+                                onAction(DetailsAction.ShowLanguagePicker(TranslationTarget.WHATS_NEW))
+                            },
+                            onToggleTranslation = {
+                                onAction(DetailsAction.ToggleWhatsNewTranslation)
+                            },
                         )
                     }
 

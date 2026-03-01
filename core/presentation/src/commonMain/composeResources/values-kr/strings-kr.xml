@@ -425,4 +425,14 @@
     <string name="failed_to_share_link">링크 공유에 실패했습니다</string>
     <string name="link_copied_to_clipboard">링크가 클립보드에 복사되었습니다</string>
 
+    <!-- Translation feature -->
+    <string name="translate">번역</string>
+    <string name="translating">번역 중…</string>
+    <string name="show_original">원문 보기</string>
+    <string name="translated_to">%1$s로 번역됨</string>
+    <string name="translate_to">번역 대상…</string>
+    <string name="search_language">언어 검색</string>
+    <string name="change_language">언어 변경</string>
+    <string name="translation_failed">번역 실패. 다시 시도해주세요.</string>
+
 </resources>

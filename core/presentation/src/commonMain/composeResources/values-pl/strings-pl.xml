@@ -391,4 +391,14 @@
     <string name="failed_to_share_link">Nie udało się udostępnić linku</string>
     <string name="link_copied_to_clipboard">Link skopiowany do schowka</string>
 
+    <!-- Translation feature -->
+    <string name="translate">Tłumacz</string>
+    <string name="translating">Tłumaczenie…</string>
+    <string name="show_original">Pokaż oryginał</string>
+    <string name="translated_to">Przetłumaczono na %1$s</string>
+    <string name="translate_to">Tłumacz na…</string>
+    <string name="search_language">Szukaj języka</string>
+    <string name="change_language">Zmień język</string>
+    <string name="translation_failed">Tłumaczenie nie powiodło się. Spróbuj ponownie.</string>
+
 </resources>

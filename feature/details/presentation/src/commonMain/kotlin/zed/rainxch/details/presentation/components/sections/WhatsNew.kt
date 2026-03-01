@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,6 +37,8 @@ import io.github.fletchmckee.liquid.liquefiable
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.jetbrains.compose.resources.stringResource
 import zed.rainxch.core.domain.model.GithubRelease
+import zed.rainxch.details.presentation.components.TranslationControls
+import zed.rainxch.details.presentation.model.TranslationState
 import zed.rainxch.details.presentation.utils.LocalTopbarLiquidState
 import zed.rainxch.details.presentation.utils.MarkdownImageTransformer
 import zed.rainxch.details.presentation.utils.rememberMarkdownColors
@@ -48,6 +49,10 @@ fun LazyListScope.whatsNew(
     isExpanded: Boolean,
     onToggleExpanded: () -> Unit,
     collapsedHeight: Dp,
+    translationState: TranslationState,
+    onTranslateClick: () -> Unit,
+    onLanguagePickerClick: () -> Unit,
+    onToggleTranslation: () -> Unit,
 ) {
     item {
         val liquidState = LocalTopbarLiquidState.current
@@ -56,15 +61,28 @@ fun LazyListScope.whatsNew(
 
         Spacer(Modifier.height(16.dp))
 
-        Text(
-            text = stringResource(Res.string.whats_new),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+        Row(
             modifier = Modifier
-                .liquefiable(liquidState)
+                .fillMaxWidth()
                 .padding(bottom = 8.dp),
-            fontWeight = FontWeight.Bold,
-        )
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(Res.string.whats_new),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.liquefiable(liquidState),
+                fontWeight = FontWeight.Bold,
+            )
+
+            TranslationControls(
+                translationState = translationState,
+                onTranslateClick = onTranslateClick,
+                onLanguagePickerClick = onLanguagePickerClick,
+                onToggleTranslation = onToggleTranslation,
+            )
+        }
 
         Spacer(Modifier.height(8.dp))
 
@@ -107,8 +125,14 @@ fun LazyListScope.whatsNew(
                 val flavour = remember { GFMFlavourDescriptor() }
                 val cardColor = MaterialTheme.colorScheme.surfaceContainerLow
 
+                val displayContent = if (translationState.isShowingTranslation && translationState.translatedText != null) {
+                    translationState.translatedText
+                } else {
+                    release.description ?: stringResource(Res.string.no_release_notes)
+                }
+
                 val collapsedHeightPx = with(density) { collapsedHeight.toPx() }
-                var contentHeightPx by remember(release.description, collapsedHeightPx) {
+                var contentHeightPx by remember(displayContent, collapsedHeightPx) {
                     mutableFloatStateOf(0f)
                 }
                 val needsExpansion = remember(contentHeightPx, collapsedHeightPx) {
@@ -127,8 +151,7 @@ fun LazyListScope.whatsNew(
                             }
                         ) {
                             Markdown(
-                                content = release.description
-                                    ?: stringResource(Res.string.no_release_notes),
+                                content = displayContent,
                                 colors = colors,
                                 typography = typography,
                                 flavour = flavour,

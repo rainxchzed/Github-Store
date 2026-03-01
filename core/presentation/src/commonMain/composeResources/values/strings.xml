@@ -425,4 +425,14 @@
     <string name="share_repository">Share repository</string>
     <string name="failed_to_share_link">Failed to share link</string>
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
+
+    <!-- Translation feature -->
+    <string name="translate">Translate</string>
+    <string name="translating">Translating…</string>
+    <string name="show_original">Show Original</string>
+    <string name="translated_to">Translated to %1$s</string>
+    <string name="translate_to">Translate to…</string>
+    <string name="search_language">Search language</string>
+    <string name="change_language">Change language</string>
+    <string name="translation_failed">Translation failed. Please try again.</string>
 </resources>

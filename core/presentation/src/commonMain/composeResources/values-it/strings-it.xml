@@ -429,4 +429,14 @@
     <string name="failed_to_share_link">Impossibile condividere il link</string>
     <string name="link_copied_to_clipboard">Link copiato negli appunti</string>
 
+    <!-- Translation feature -->
+    <string name="translate">Traduci</string>
+    <string name="translating">Traduzione…</string>
+    <string name="show_original">Mostra originale</string>
+    <string name="translated_to">Tradotto in %1$s</string>
+    <string name="translate_to">Traduci in…</string>
+    <string name="search_language">Cerca lingua</string>
+    <string name="change_language">Cambia lingua</string>
+    <string name="translation_failed">Traduzione fallita. Riprova.</string>
+
 </resources>

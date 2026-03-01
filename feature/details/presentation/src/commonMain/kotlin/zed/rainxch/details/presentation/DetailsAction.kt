@@ -38,4 +38,11 @@ sealed interface DetailsAction {
     data object ToggleVersionPicker : DetailsAction
     data object ToggleAboutExpanded : DetailsAction
     data object ToggleWhatsNewExpanded : DetailsAction
+
+    data class TranslateAbout(val targetLanguageCode: String) : DetailsAction
+    data class TranslateWhatsNew(val targetLanguageCode: String) : DetailsAction
+    data object ToggleAboutTranslation : DetailsAction
+    data object ToggleWhatsNewTranslation : DetailsAction
+    data class ShowLanguagePicker(val target: TranslationTarget) : DetailsAction
+    data object DismissLanguagePicker : DetailsAction
 }

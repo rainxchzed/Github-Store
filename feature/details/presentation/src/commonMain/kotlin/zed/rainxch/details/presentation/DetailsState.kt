@@ -10,6 +10,7 @@ import zed.rainxch.details.domain.model.ReleaseCategory
 import zed.rainxch.details.domain.model.RepoStats
 import zed.rainxch.details.presentation.model.DownloadStage
 import zed.rainxch.details.presentation.model.InstallLogItem
+import zed.rainxch.details.presentation.model.TranslationState
 
 data class DetailsState(
     val isLoading: Boolean = true,
@@ -57,6 +58,12 @@ data class DetailsState(
 
     val isAboutExpanded: Boolean = false,
     val isWhatsNewExpanded: Boolean = false,
+
+    val aboutTranslation: TranslationState = TranslationState(),
+    val whatsNewTranslation: TranslationState = TranslationState(),
+    val isLanguagePickerVisible: Boolean = false,
+    val languagePickerTarget: TranslationTarget? = null,
+    val deviceLanguageCode: String = "en",
 ) {
     /**
      * True when the app is detected as installed on the system (via assets matching)
@@ -74,4 +81,8 @@ data class DetailsState(
             ReleaseCategory.PRE_RELEASE -> allReleases.filter { it.isPrerelease }
             ReleaseCategory.ALL -> allReleases
         }
+}
+
+enum class TranslationTarget {
+    ABOUT, WHATS_NEW
 }

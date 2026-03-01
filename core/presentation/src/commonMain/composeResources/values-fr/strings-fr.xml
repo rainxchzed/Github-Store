@@ -393,4 +393,14 @@
     <string name="failed_to_share_link">Échec du partage du lien</string>
     <string name="link_copied_to_clipboard">Lien copié dans le presse-papiers</string>
 
+    <!-- Translation feature -->
+    <string name="translate">Traduire</string>
+    <string name="translating">Traduction…</string>
+    <string name="show_original">Afficher l\'original</string>
+    <string name="translated_to">Traduit en %1$s</string>
+    <string name="translate_to">Traduire en…</string>
+    <string name="search_language">Rechercher une langue</string>
+    <string name="change_language">Changer de langue</string>
+    <string name="translation_failed">Échec de la traduction. Veuillez réessayer.</string>
+
 </resources>

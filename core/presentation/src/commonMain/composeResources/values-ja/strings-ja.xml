@@ -392,4 +392,14 @@
     <string name="failed_to_share_link">リンクの共有に失敗しました</string>
     <string name="link_copied_to_clipboard">リンクをクリップボードにコピーしました</string>
 
+    <!-- Translation feature -->
+    <string name="translate">翻訳</string>
+    <string name="translating">翻訳中…</string>
+    <string name="show_original">原文を表示</string>
+    <string name="translated_to">%1$sに翻訳済み</string>
+    <string name="translate_to">翻訳先…</string>
+    <string name="search_language">言語を検索</string>
+    <string name="change_language">言語を変更</string>
+    <string name="translation_failed">翻訳に失敗しました。もう一度お試しください。</string>
+
 </resources>

@@ -393,4 +393,14 @@
     <string name="failed_to_share_link">Не удалось поделиться ссылкой</string>
     <string name="link_copied_to_clipboard">Ссылка скопирована в буфер обмена</string>
 
+    <!-- Translation feature -->
+    <string name="translate">Перевести</string>
+    <string name="translating">Перевод…</string>
+    <string name="show_original">Показать оригинал</string>
+    <string name="translated_to">Переведено на %1$s</string>
+    <string name="translate_to">Перевести на…</string>
+    <string name="search_language">Поиск языка</string>
+    <string name="change_language">Изменить язык</string>
+    <string name="translation_failed">Ошибка перевода. Попробуйте ещё раз.</string>
+
 </resources>

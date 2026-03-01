@@ -393,4 +393,14 @@
     <string name="failed_to_share_link">无法分享链接</string>
     <string name="link_copied_to_clipboard">链接已复制到剪贴板</string>
 
+    <!-- Translation feature -->
+    <string name="translate">翻译</string>
+    <string name="translating">翻译中…</string>
+    <string name="show_original">显示原文</string>
+    <string name="translated_to">已翻译为%1$s</string>
+    <string name="translate_to">翻译为…</string>
+    <string name="search_language">搜索语言</string>
+    <string name="change_language">更改语言</string>
+    <string name="translation_failed">翻译失败，请重试。</string>
+
 </resources>
