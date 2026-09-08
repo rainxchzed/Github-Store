@@ -2,6 +2,7 @@ package zed.rainxch.githubstore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -90,11 +91,12 @@ class MainViewModel(
                     Appearance(personality, accent, paper, amoled, isDark)
                 }.collect { snapshot ->
                     _state.update { it.withAppearance(snapshot).copy(isAppearanceLoaded = true) }
-                    firstEmitted.complete(Unit)
+                    if (!firstEmitted.isCompleted) firstEmitted.complete(Unit)
                 }
             } catch (e: CancellationException) {
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Logger.w(e) { "Appearance preference stream failed, releasing gate on defaults" }
                 _state.update { it.copy(isAppearanceLoaded = true) }
             }
         }

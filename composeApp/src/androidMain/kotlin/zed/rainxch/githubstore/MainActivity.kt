@@ -19,10 +19,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import zed.rainxch.core.data.services.LocalizationManager
@@ -31,6 +29,7 @@ import zed.rainxch.core.domain.helpers.ShareManager
 import zed.rainxch.core.domain.repository.TweaksRepository
 import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
+import zed.rainxch.githubstore.utils.readStartupPreference
 import zed.rainxch.githubstore.utils.updateSystemBars
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -60,13 +59,11 @@ class MainActivity : ComponentActivity() {
 
         runBlocking {
             val tag =
-                try {
-                    withTimeoutOrNull(LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds) {
-                        tweaksRepository.getAppLanguage().first()
-                    }
-                } catch (_: Exception) {
-                    null
-                }
+                readStartupPreference(
+                    label = "appLanguage",
+                    timeout = LANGUAGE_PREF_READ_TIMEOUT_MS.milliseconds,
+                    flow = tweaksRepository.getAppLanguage(),
+                )
             localizationManager.setActiveLanguageTag(tag)
         }
 
