@@ -24,6 +24,12 @@ kotlin {
                 implementation(libs.highlights)
             }
         }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 
