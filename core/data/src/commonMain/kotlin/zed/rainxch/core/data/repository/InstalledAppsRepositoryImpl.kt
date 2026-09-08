@@ -16,13 +16,16 @@ import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.data.local.db.AppDatabase
 import zed.rainxch.core.data.local.db.dao.InstalledAppDao
 import zed.rainxch.core.data.local.db.dao.UpdateHistoryDao
+import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
 import zed.rainxch.core.data.local.db.entities.UpdateHistoryEntity
 import zed.rainxch.core.data.mappers.toDomain
+import zed.rainxch.core.data.mappers.toReleaseWindow
 import zed.rainxch.core.data.mappers.toEntity
 import zed.rainxch.core.data.network.GitHubClientProvider
 import zed.rainxch.core.data.network.executeRequest
 import zed.rainxch.core.domain.model.account.github.GithubAsset
 import zed.rainxch.core.domain.model.account.github.GithubRelease
+import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
 import zed.rainxch.core.domain.model.installation.InstallSource
 import zed.rainxch.core.domain.model.installation.InstalledApp
 import zed.rainxch.core.domain.model.installation.clearPending
@@ -31,7 +34,6 @@ import zed.rainxch.core.domain.model.installation.markPending
 import zed.rainxch.core.domain.model.smart_detect.MatchingPreview
 import zed.rainxch.core.domain.repository.InstalledAppsRepository
 import zed.rainxch.core.domain.system.Installer
-import zed.rainxch.core.domain.model.account.github.isEffectivelyPreRelease
 import zed.rainxch.core.domain.utils.AssetFilter
 import zed.rainxch.core.domain.utils.AssetVariant
 import zed.rainxch.core.domain.utils.UpdateVerdict
@@ -121,13 +123,7 @@ class InstalledAppsRepositoryImpl(
             },
         )
         if (backendReleases != null) {
-            return backendReleases
-                .asSequence()
-                .filter { it.draft != true }
-                .sortedByDescending { it.publishedAt ?: it.createdAt ?: "" }
-                .map { it.toDomain() }
-                .filter { includePreReleases || !it.isEffectivelyPreRelease() }
-                .toList()
+            return backendReleases.toReleaseWindow(includePreReleases)
         }
 
         return try {
@@ -279,6 +275,24 @@ class InstalledAppsRepositoryImpl(
         }
     }
 
+    // Sole legitimate installed-tag rewrite: the verdict already proved the
+    // package really is that build (versionCode matches), only the stored tag
+    // drifted from the release tag. Column-level DAO write on purpose — the
+    // `app` snapshot is stale after updateVersionInfo above, so a whole-row
+    // write would revert the latest*/isUpdateAvailable fields just computed.
+    private suspend fun adoptMatchedTag(
+        app: InstalledAppEntity,
+        matchedTag: String,
+    ) {
+        installedAppsDao.updateInstalledVersion(
+            packageName = app.packageName,
+            installedVersion = matchedTag,
+            installedVersionName = app.installedVersionName,
+            installedVersionCode = app.installedVersionCode,
+            isUpdateAvailable = false,
+        )
+    }
+
     override suspend fun checkForUpdates(packageName: String): Boolean {
         val app = installedAppsDao.getAppByPackage(packageName) ?: return false
 
@@ -390,12 +404,9 @@ class InstalledAppsRepositoryImpl(
             if (verdict.codesAlreadyMatch &&
                 app.installedVersion != matchedRelease.tagName
             ) {
-                installedAppsDao.updateInstalledVersion(
-                    packageName = packageName,
-                    installedVersion = matchedRelease.tagName,
-                    installedVersionName = app.installedVersionName,
-                    installedVersionCode = app.installedVersionCode,
-                    isUpdateAvailable = false,
+                adoptMatchedTag(
+                    app = app,
+                    matchedTag = matchedRelease.tagName,
                 )
             }
 
@@ -683,13 +694,7 @@ class InstalledAppsRepositoryImpl(
         return try {
             val releases = client.getReleases(owner, repo, perPage = RELEASE_WINDOW).getOrNull()
                 ?: return emptyList()
-            releases
-                .asSequence()
-                .filter { it.draft != true }
-                .sortedByDescending { it.publishedAt ?: it.createdAt ?: "" }
-                .map { it.toDomain() }
-                .filter { includePreReleases || !it.isEffectivelyPreRelease() }
-                .toList()
+            releases.toReleaseWindow(includePreReleases)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
