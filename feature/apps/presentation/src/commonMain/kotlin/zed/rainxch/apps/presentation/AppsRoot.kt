@@ -639,7 +639,7 @@ fun AppsScreen(
                                                 key = { _, appItem -> "compact-${appItem.installedApp.packageName}" },
                                                 span = { _, _ -> GridItemSpan(1) },
                                             ) { _, appItem ->
-                                                Box(modifier = Modifier.padding(horizontal = 8.dp)) {
+                                                Box {
                                                     CompactAppRow(
                                                         appItem = appItem,
                                                         onOpenClick = {
