@@ -25,9 +25,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,7 +89,8 @@ import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
-import zed.rainxch.core.presentation.utils.constrainedContentWidth
+import zed.rainxch.core.presentation.layout.CardGridSpec
+import zed.rainxch.core.presentation.layout.rememberGridColumns
 import zed.rainxch.core.presentation.utils.toIcon
 import zed.rainxch.core.presentation.utils.toLabel
 import zed.rainxch.githubstore.core.presentation.res.Res
@@ -345,7 +349,6 @@ fun SearchScreen(
             Column(
                 modifier =
                     Modifier
-                        .constrainedContentWidth()
                         .fillMaxHeight()
                         .padding(horizontal = 16.dp),
             ) {
@@ -545,11 +548,10 @@ fun SearchScreen(
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             LazyVerticalStaggeredGrid(
+                                columns = StaggeredGridCells.Fixed(rememberGridColumns(CardGridSpec.InfoMaxCardWidth)),
                                 state = listState,
-                                columns = StaggeredGridCells.Adaptive(350.dp),
-                                verticalItemSpacing = 12.dp,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-
+                                verticalItemSpacing = 10.dp,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 contentPadding =
                                     PaddingValues(
                                         start = 8.dp,
@@ -562,10 +564,10 @@ fun SearchScreen(
                                         .fillMaxSize()
                                         .arrowKeyScroll(listState, autoFocus = false),
                             ) {
-                                items(
+                                itemsIndexed(
                                     items = state.visibleRepos,
-                                    key = { it.repository.id },
-                                ) { discoveryRepository ->
+                                    key = { _, discoveryRepository -> discoveryRepository.repository.id },
+                                ) { _, discoveryRepository ->
                                     DiscoveryRepoCard(
                                         discoveryRepositoryUi = discoveryRepository,
                                         onClick = {
@@ -600,7 +602,7 @@ fun SearchScreen(
                                                 )
                                             }
                                         },
-                                        modifier = Modifier.animateItem(),
+                                        modifier = Modifier,
                                     )
                                 }
 
