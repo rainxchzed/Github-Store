@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -67,7 +70,8 @@ import zed.rainxch.core.presentation.locals.LocalScrollbarEnabled
 import zed.rainxch.core.presentation.personality.utils.PersonalityPreview
 import zed.rainxch.core.presentation.utils.ObserveAsEvents
 import zed.rainxch.core.presentation.utils.arrowKeyScroll
-import zed.rainxch.core.presentation.utils.constrainedContentWidth
+import zed.rainxch.core.presentation.layout.CardGridSpec
+import zed.rainxch.core.presentation.layout.rememberGridColumns
 import zed.rainxch.core.presentation.utils.formatLastChecked
 import zed.rainxch.githubstore.core.presentation.res.Res
 import zed.rainxch.githubstore.core.presentation.res.add_by_link
@@ -239,7 +243,7 @@ fun AppsScreen(
                 contentAlignment = Alignment.TopCenter,
             ) {
                 Column(
-                    modifier = Modifier.constrainedContentWidth().fillMaxHeight(),
+                    modifier = Modifier.fillMaxHeight(),
                 ) {
                     KomiTextField(
                         value = state.searchQuery,
@@ -310,8 +314,9 @@ fun AppsScreen(
                         }
 
                         else -> {
-                            val listState = rememberLazyListState()
+                            val listState = rememberLazyGridState()
                             val isScrollbarEnabled = LocalScrollbarEnabled.current
+                            val appGridSpan = rememberGridColumns(CardGridSpec.InfoMaxCardWidth)
 
                             val onRowSelect: (InstalledAppUi) -> Unit =
                                 { app ->
@@ -326,11 +331,12 @@ fun AppsScreen(
                                 }
 
                             ScrollbarContainer(
-                                listState = listState,
+                                gridState = listState,
                                 enabled = isScrollbarEnabled,
                                 modifier = Modifier.fillMaxSize(),
                             ) {
-                                LazyColumn(
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(appGridSpan),
                                     state = listState,
                                     modifier = Modifier.fillMaxSize().arrowKeyScroll(listState),
 
@@ -341,9 +347,10 @@ fun AppsScreen(
                                         bottom = 88.dp,
                                     ),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     if (state.showImportProposalBanner) {
-                                        item(key = "external-import-banner") {
+                                        item(key = "external-import-banner", span = { GridItemSpan(maxLineSpan) }) {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 ImportProposalBanner(
                                                     pendingCount = state.pendingExternalImportCount,
@@ -355,7 +362,7 @@ fun AppsScreen(
                                     }
 
                                     if (state.showKaoBanner) {
-                                        item(key = "kao-banner") {
+                                        item(key = "kao-banner", span = { GridItemSpan(maxLineSpan) }) {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 KaoBanner(
                                                     onLearnMore = { onAction(AppsAction.OnKaoLearnMore) },
@@ -366,7 +373,7 @@ fun AppsScreen(
                                     }
 
                                     if (state.pendingApps.isNotEmpty()) {
-                                        item(key = "header-pending-installs") {
+                                        item(key = "header-pending-installs", span = { GridItemSpan(maxLineSpan) }) {
                                             AppsSectionHeader(
                                                 title = stringResource(Res.string.apps_section_pending_installs),
                                                 count = state.pendingApps.size,
@@ -376,10 +383,11 @@ fun AppsScreen(
                                             )
                                         }
 
-                                        items(
-                                            items = state.pendingApps,
-                                            key = { "pending-${it.installedApp.packageName}" },
-                                        ) { appItem ->
+                                        itemsIndexed(
+                                            state.pendingApps,
+                                            key = { _, appItem -> "pending-${appItem.installedApp.packageName}" },
+                                            span = { _, _ -> GridItemSpan(1) },
+                                        ) { _, appItem ->
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 AppItemCard(
                                                     appItem = appItem,
@@ -483,7 +491,7 @@ fun AppsScreen(
                                     }
 
                                     if (state.updateApps.isNotEmpty() || state.isUpdatingAll) {
-                                        item(key = "updates-banner") {
+                                        item(key = "updates-banner", span = { GridItemSpan(maxLineSpan) }) {
                                             Box(
                                                 modifier = Modifier.padding(
                                                     horizontal = 16.dp,
@@ -505,10 +513,11 @@ fun AppsScreen(
                                     }
 
                                     if (state.updateApps.isNotEmpty() && state.isUpdatesSectionExpanded) {
-                                        items(
-                                            items = state.updateApps,
-                                            key = { "rich-${it.installedApp.packageName}" },
-                                        ) { appItem ->
+                                        itemsIndexed(
+                                            state.updateApps,
+                                            key = { _, appItem -> "rich-${appItem.installedApp.packageName}" },
+                                            span = { _, _ -> GridItemSpan(1) },
+                                        ) { _, appItem ->
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 AppItemCard(
                                                     appItem = appItem,
@@ -612,7 +621,7 @@ fun AppsScreen(
                                     }
 
                                     if (state.idleApps.isNotEmpty()) {
-                                        item(key = "header-up-to-date") {
+                                        item(key = "header-up-to-date", span = { GridItemSpan(maxLineSpan) }) {
                                             AppsSectionHeader(
                                                 title = stringResource(Res.string.apps_section_up_to_date),
                                                 count = state.idleApps.size,
@@ -625,10 +634,11 @@ fun AppsScreen(
                                         }
 
                                         if (state.isUpToDateSectionExpanded) {
-                                            items(
-                                                items = state.idleApps,
-                                                key = { "compact-${it.installedApp.packageName}" },
-                                            ) { appItem ->
+                                            itemsIndexed(
+                                                state.idleApps,
+                                                key = { _, appItem -> "compact-${appItem.installedApp.packageName}" },
+                                                span = { _, _ -> GridItemSpan(1) },
+                                            ) { _, appItem ->
                                                 Box(modifier = Modifier.padding(horizontal = 8.dp)) {
                                                     CompactAppRow(
                                                         appItem = appItem,
@@ -705,7 +715,7 @@ fun AppsScreen(
                                         }
                                     }
 
-                                    item {
+                                    item(key = "trailing-spacer", span = { GridItemSpan(maxLineSpan) }) {
                                         Spacer(Modifier.height(32.dp))
                                     }
                                 }
