@@ -214,7 +214,7 @@ private fun BoxScope.FeedContent(
             columns = StaggeredGridCells.Fixed(infoColumns),
             state = listState,
             modifier = Modifier.fillMaxWidth().weight(1f),
-            contentPadding = PaddingValues(bottom = 32.dp),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 32.dp),
             verticalItemSpacing = 10.dp,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
