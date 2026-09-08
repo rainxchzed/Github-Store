@@ -126,7 +126,7 @@ private fun CategoryListScreen(
                     columns = StaggeredGridCells.Fixed(rememberGridColumns(CardGridSpec.InfoMaxCardWidth)),
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp),
                     verticalItemSpacing = 10.dp,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
