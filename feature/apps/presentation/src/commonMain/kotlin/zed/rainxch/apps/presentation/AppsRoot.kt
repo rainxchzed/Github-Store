@@ -492,12 +492,7 @@ fun AppsScreen(
 
                                     if (state.updateApps.isNotEmpty() || state.isUpdatingAll) {
                                         item(key = "updates-banner", span = { GridItemSpan(maxLineSpan) }) {
-                                            Box(
-                                                modifier = Modifier.padding(
-                                                    horizontal = 16.dp,
-                                                    vertical = 4.dp
-                                                )
-                                            ) {
+                                            Box {
                                                 UpdatesBanner(
                                                     count = state.updateApps.size,
                                                     isExpanded = state.isUpdatesSectionExpanded,
