@@ -16,7 +16,6 @@ fun gridColumnCount(contentWidthDp: Float, maxCardWidthDp: Float, spacingDp: Flo
 
 object CardGridSpec {
     val InfoMaxCardWidth: Dp = 550.dp
-    val LowDensityMaxCardWidth: Dp = 270.dp
     val GridSpacing: Dp = 10.dp
 }
 
