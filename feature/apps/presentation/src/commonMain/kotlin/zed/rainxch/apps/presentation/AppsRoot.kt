@@ -341,17 +341,17 @@ fun AppsScreen(
                                     modifier = Modifier.fillMaxSize().arrowKeyScroll(listState),
 
                                     contentPadding = PaddingValues(
-                                        start = 0.dp,
-                                        end = 0.dp,
+                                        start = 12.dp,
+                                        end = 12.dp,
                                         top = 8.dp,
                                         bottom = 88.dp,
                                     ),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 ) {
                                     if (state.showImportProposalBanner) {
                                         item(key = "external-import-banner", span = { GridItemSpan(maxLineSpan) }) {
-                                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                            Box {
                                                 ImportProposalBanner(
                                                     pendingCount = state.pendingExternalImportCount,
                                                     onReview = { onAction(AppsAction.OnImportProposalReview) },
@@ -363,7 +363,7 @@ fun AppsScreen(
 
                                     if (state.showKaoBanner) {
                                         item(key = "kao-banner", span = { GridItemSpan(maxLineSpan) }) {
-                                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                            Box {
                                                 KaoBanner(
                                                     onLearnMore = { onAction(AppsAction.OnKaoLearnMore) },
                                                     onDismiss = { onAction(AppsAction.OnDismissKaoBanner) },
@@ -388,7 +388,7 @@ fun AppsScreen(
                                             key = { _, appItem -> "pending-${appItem.installedApp.packageName}" },
                                             span = { _, _ -> GridItemSpan(1) },
                                         ) { _, appItem ->
-                                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                            Box {
                                                 AppItemCard(
                                                     appItem = appItem,
                                                     onOpenClick = {
@@ -518,7 +518,7 @@ fun AppsScreen(
                                             key = { _, appItem -> "rich-${appItem.installedApp.packageName}" },
                                             span = { _, _ -> GridItemSpan(1) },
                                         ) { _, appItem ->
-                                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                            Box {
                                                 AppItemCard(
                                                     appItem = appItem,
                                                     onOpenClick = {
