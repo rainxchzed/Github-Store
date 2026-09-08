@@ -350,7 +350,7 @@ fun SearchScreen(
                 modifier =
                     Modifier
                         .fillMaxHeight()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 12.dp),
             ) {
                 AnimatedVisibility(
                     visible = state.isClipboardBannerVisible && state.clipboardLinks.isNotEmpty(),
@@ -554,8 +554,6 @@ fun SearchScreen(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 contentPadding =
                                     PaddingValues(
-                                        start = 12.dp,
-                                        end = 12.dp,
                                         top = 12.dp,
                                         bottom = 12.dp,
                                     ),
